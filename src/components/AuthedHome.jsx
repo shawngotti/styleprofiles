@@ -10,6 +10,8 @@ import Awards from './Awards.jsx'
 import Shop from './Shop.jsx'
 import Lineup from './Lineup.jsx'
 import CutOfTheWeek from './CutOfTheWeek.jsx'
+import ConsentRequests from './ConsentRequests.jsx'
+import NotificationsBell from './NotificationsBell.jsx'
 import { useSettings } from '../lib/useSettings.js'
 import { track } from '../lib/analytics.js'
 
@@ -49,7 +51,18 @@ export default function AuthedHome() {
           Style<span style={{ color: GOLD }}>Profiles</span>
         </div>
         <div className="flex items-center gap-3 text-sm">
-          <span className="text-white/60">{user?.email}</span>
+          <span className="hidden text-white/60 sm:inline">{user?.email}</span>
+          <NotificationsBell
+            lineupOn={lineupOn}
+            onNavigate={(screen) => {
+              setPerspective('client')
+              const tab = screen === 'dashboard' ? null : screen
+              if (tab && ['discover', 'appointments', 'rewards', 'awards', 'household', 'lineup', 'cotw', 'shop', 'tags'].includes(tab)) {
+                setSelectedPro(null)
+                setClientTab(tab)
+              }
+            }}
+          />
           <button
             onClick={signOut}
             className="rounded-lg border border-white/15 px-3 py-1.5 hover:bg-white/10"
@@ -111,6 +124,7 @@ export default function AuthedHome() {
                     ['appointments', 'My Appointments'],
                     ['rewards', 'Rewards'],
                     ['awards', 'Awards'],
+                    ['tags', 'Tag requests'],
                     ['household', 'Household'],
                     ...(lineupOn ? [['lineup', 'The Lineup'], ['cotw', 'Cut of the Week']] : []),
                     ...(marketplaceOn ? [['shop', 'Shop']] : []),
@@ -137,6 +151,7 @@ export default function AuthedHome() {
                 )}
                 {clientTab === 'rewards' && <Rewards />}
                 {clientTab === 'awards' && <Awards />}
+                {clientTab === 'tags' && <ConsentRequests />}
                 {clientTab === 'household' && <HouseholdManager />}
                 {clientTab === 'lineup' && lineupOn && (
                   <Lineup onOpenPro={(pro, color) => openPro(pro, color, 'lineup')} />

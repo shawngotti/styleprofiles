@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabaseClient.js'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import ProMembershipTiers from './ProMembershipTiers.jsx'
 import SubmitAwardEntry from './SubmitAwardEntry.jsx'
+import StorefrontForm from './StorefrontForm.jsx'
 
 const GOLD = '#F4A93C'
 
@@ -14,11 +15,12 @@ export default function ProDashboard() {
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState(null)
+  const [editing, setEditing] = useState(false)
 
   const loadPro = useCallback(async () => {
     const { data, error } = await supabase
       .from('pros')
-      .select('id,display_name,category,charges_enabled,payouts_enabled,stripe_account_id')
+      .select('id,handle,display_name,category,bio,city,price_from,travel_mode,charges_enabled,payouts_enabled,stripe_account_id')
       .eq('profile_id', user.id)
       .maybeSingle()
     if (error) setMsg({ type: 'error', text: error.message })
@@ -64,12 +66,25 @@ export default function ProDashboard() {
 
   return (
     <div className="space-y-5">
-      <h2 className="text-lg font-semibold">Pro dashboard</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Pro dashboard</h2>
+        {pro && !editing && (
+          <button onClick={() => setEditing(true)} className="rounded-lg border border-white/15 px-3 py-1.5 text-sm hover:bg-white/10">
+            Edit storefront
+          </button>
+        )}
+      </div>
 
       {!pro ? (
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-white/50">
-          You have the pro role but no storefront yet. (Storefront creation UI comes in a later ticket.)
-        </div>
+        <StorefrontForm onSaved={() => loadPro()} />
+      ) : editing ? (
+        <StorefrontForm
+          pro={pro}
+          onSaved={() => {
+            setEditing(false)
+            loadPro()
+          }}
+        />
       ) : (
         <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
           <div className="flex items-center justify-between">

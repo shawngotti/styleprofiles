@@ -33,22 +33,28 @@ export default function MyAppointments({ onRebook }) {
   const [busyId, setBusyId] = useState(null)
   const [msg, setMsg] = useState(null)
 
+  const [reviewed, setReviewed] = useState(new Set())
+
   const load = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('bookings')
-      .select(
-        'id,status,service_date,start_time,service_total,deposit_total,deposit_outcome,' +
-          'pro:pros(id,handle,display_name,category,city,bio,verified,rating_avg,rating_count,price_from),' +
-          'booking_line_items(service_name,price,is_addon,sort)',
-      )
-      .eq('client_profile_id', user.id)
-      .order('service_date', { ascending: false })
+    const [{ data, error }, { data: revs }] = await Promise.all([
+      supabase
+        .from('bookings')
+        .select(
+          'id,status,client_profile_id,service_date,start_time,service_total,deposit_total,deposit_outcome,' +
+            'pro:pros(id,handle,display_name,category,city,bio,verified,rating_avg,rating_count,price_from),' +
+            'booking_line_items(service_name,price,is_addon,sort)',
+        )
+        .eq('client_profile_id', user.id)
+        .order('service_date', { ascending: false }),
+      supabase.from('reviews').select('booking_id').eq('author_profile_id', user.id),
+    ])
     if (error) {
       setError(error.message)
       setLoading(false)
       return
     }
     setBookings(data)
+    setReviewed(new Set((revs || []).map((r) => r.booking_id)))
     setLoading(false)
   }, [user.id])
 
@@ -118,9 +124,12 @@ export default function MyAppointments({ onRebook }) {
                 Rebook
               </button>
             )}
-            {b.status === 'completed' && (
-              <span className="self-center text-xs text-white/40">Reviews arrive with the booking UI</span>
-            )}
+            {b.status === 'completed' &&
+              (reviewed.has(b.id) ? (
+                <span className="self-center text-xs" style={{ color: '#34D399' }}>✓ Reviewed</span>
+              ) : (
+                <ReviewForm booking={b} onDone={load} />
+              ))}
           </BookingCard>
         ))}
       </Group>
@@ -169,6 +178,88 @@ function BookingCard({ b, children }) {
           {b.deposit_total > 0 && <span className="text-white/40"> · {centsToUsd(b.deposit_total)} deposit</span>}
         </div>
         <div className="flex gap-2">{children}</div>
+      </div>
+    </div>
+  )
+}
+
+// Inline review for a completed booking. `verified` is set server-side (the
+// trigger checks the booking is the author's own completed visit); the pro's
+// rating cache is recomputed by trigger too.
+function ReviewForm({ booking, onDone }) {
+  const [open, setOpen] = useState(false)
+  const [rating, setRating] = useState(5)
+  const [body, setBody] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState(null)
+
+  if (!open) {
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        className="self-center rounded-lg border border-white/15 px-3 py-1.5 text-sm hover:bg-white/10"
+      >
+        Leave a review
+      </button>
+    )
+  }
+
+  async function submit() {
+    setBusy(true)
+    setErr(null)
+    const { error } = await supabase.from('reviews').insert({
+      pro_id: booking.pro.id,
+      author_profile_id: booking.client_profile_id ?? undefined,
+      booking_id: booking.id,
+      rating,
+      body: body.trim() || null,
+    })
+    setBusy(false)
+    if (error) {
+      setErr(error.message)
+      return
+    }
+    onDone()
+  }
+
+  return (
+    <div className="w-full">
+      <div className="flex items-center gap-1" role="radiogroup" aria-label="Rating">
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button
+            key={n}
+            type="button"
+            role="radio"
+            aria-checked={rating === n}
+            aria-label={`${n} star${n > 1 ? 's' : ''}`}
+            onClick={() => setRating(n)}
+            className="text-lg"
+            style={{ color: n <= rating ? GOLD : 'rgba(255,255,255,0.25)' }}
+          >
+            ★
+          </button>
+        ))}
+      </div>
+      <textarea
+        value={body}
+        onChange={(e) => setBody(e.target.value)}
+        placeholder="How was your visit? (optional)"
+        rows={2}
+        className="mt-2 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-white/30"
+      />
+      {err && <p className="mt-1 text-sm text-red-400" role="alert">{err}</p>}
+      <div className="mt-2 flex gap-2">
+        <button
+          onClick={submit}
+          disabled={busy}
+          className="rounded-lg px-3 py-1.5 text-sm font-semibold text-black disabled:opacity-60"
+          style={{ backgroundColor: GOLD }}
+        >
+          {busy ? 'Posting…' : 'Post review'}
+        </button>
+        <button onClick={() => setOpen(false)} className="rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white/70">
+          Cancel
+        </button>
       </div>
     </div>
   )
