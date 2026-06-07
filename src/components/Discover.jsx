@@ -36,7 +36,7 @@ export default function Discover({ onOpenPro }) {
         ? await supabase.rpc('pros_near', { _lat: coords.lat, _lng: coords.lng, _radius_mi: radiusMi })
         : await supabase
             .from('pros')
-            .select('id,handle,display_name,category,bio,city,verified,rating_avg,rating_count,price_from,charges_enabled')
+            .select('id,handle,display_name,category,bio,city,verified,rating_avg,rating_count,price_from,charges_enabled,featured_until,champion_boost')
             .order('rating_avg', { ascending: false })
       if (!on) return
       if (res.error) {
@@ -54,7 +54,18 @@ export default function Discover({ onOpenPro }) {
 
   const catColor = useMemo(() => Object.fromEntries(cats.map((c) => [c.slug, c.color])), [cats])
   const catLabel = useMemo(() => Object.fromEntries(cats.map((c) => [c.slug, c.label])), [cats])
-  const shown = active === 'all' ? pros : pros.filter((p) => p.category === active)
+  // Champion perk: a live featured slot floats the pro to the top; the permanent
+  // boost nudges the rating-sorted ranking. In "near me" mode distance order is
+  // preserved (stable sort) — featured is only a top lift.
+  const isFeatured = (p) => p.featured_until && new Date(p.featured_until) > new Date()
+  const filtered = active === 'all' ? pros : pros.filter((p) => p.category === active)
+  const shown = [...filtered].sort((a, b) => {
+    const fa = isFeatured(a) ? 1 : 0
+    const fb = isFeatured(b) ? 1 : 0
+    if (fa !== fb) return fb - fa
+    if (coords) return 0 // keep distance order from pros_near
+    return (b.rating_avg + (b.champion_boost || 0)) - (a.rating_avg + (a.champion_boost || 0))
+  })
 
   function useMyLocation() {
     setGeoMsg(null)
@@ -136,6 +147,11 @@ export default function Discover({ onOpenPro }) {
                       {p.verified && (
                         <span title="Verified" style={{ color: '#56C2FF' }}>
                           ✓
+                        </span>
+                      )}
+                      {isFeatured(p) && (
+                        <span className="shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold text-black" style={{ backgroundColor: GOLD }} title="Lineup champion — featured">
+                          👑 Champion
                         </span>
                       )}
                     </div>

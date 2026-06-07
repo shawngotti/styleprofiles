@@ -71,6 +71,10 @@ Deno.serve(async (req) => {
           // Authoritative settle: flips to 'paid' + decrements inventory. Idempotent.
           await svc.rpc('mark_order_paid', { _order_id: meta.order_id })
         }
+        if (meta?.event_attendee_id) {
+          // Confirm the ticket (capacity-guarded, idempotent).
+          await svc.rpc('mark_ticket_paid', { _attendee_id: meta.event_attendee_id })
+        }
         break
       }
       case 'account.updated': {
