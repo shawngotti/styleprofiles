@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import { initials } from '../lib/format.js'
+import { track } from '../lib/analytics.js'
 
 const GOLD = '#F4A93C'
 const TAG_OPTIONS = [
@@ -81,6 +82,7 @@ export default function CutOfTheWeek() {
       setMsg({ type: 'error', text })
       return
     }
+    track('fan_vote', { context: 'cotw', window_id: challenge.voting_window_id, entry_id: entryId })
     setMyVote(entryId)
     load()
   }
@@ -100,7 +102,7 @@ export default function CutOfTheWeek() {
       <p className="text-xs text-white/40">One vote this week · closes {new Date(challenge.closes_at).toLocaleDateString()}.</p>
 
       {myPro && <SubmitPanel proId={myPro.id} onDone={load} />}
-      {msg && <p className="text-sm text-red-400">{msg.text}</p>}
+      {msg && <p className="text-sm text-red-400" role="alert" aria-live="assertive">{msg.text}</p>}
 
       <div className="grid gap-3 sm:grid-cols-2">
         {board.map((e, i) => {
@@ -180,6 +182,7 @@ function SubmitPanel({ proId, onDone }) {
         } catch { /* keep generic */ }
         throw new Error(text)
       }
+      track('cotw_entry_submitted', { status: data.status })
       setMsg({ type: 'ok', text: data.status === 'submitted' ? 'Entry saved — goes live once your tagged client approves.' : "You're entered this week." })
       setOpen(false)
       setBefore(null)
@@ -233,7 +236,7 @@ function SubmitPanel({ proId, onDone }) {
           </div>
         </div>
       )}
-      {msg && <p className={`mt-2 text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>{msg.text}</p>}
+      {msg && <p className={`mt-2 text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{msg.text}</p>}
     </section>
   )
 }

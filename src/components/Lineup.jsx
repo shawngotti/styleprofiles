@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import { initials } from '../lib/format.js'
 import EventTickets from './EventTickets.jsx'
+import { track } from '../lib/analytics.js'
 
 const GOLD = '#F4A93C'
 const PRO_FIELDS = 'id,handle,display_name,category,bio,city,verified,rating_avg,rating_count,price_from,charges_enabled'
@@ -73,6 +74,7 @@ export default function Lineup({ onOpenPro }) {
       setMsg({ type: 'error', text })
       return
     }
+    track('fan_vote', { context: 'lineup', window_id: openWindow.id, contestant_id: contestantId })
     setMyVote(contestantId)
   }
 
@@ -148,7 +150,7 @@ export default function Lineup({ onOpenPro }) {
           </p>
         </section>
       )}
-      {msg && <p className="text-sm text-red-400">{msg.text}</p>}
+      {msg && <p className="text-sm text-red-400" role="alert" aria-live="assertive">{msg.text}</p>}
 
       <EventTickets competitionId={comp.id} />
 

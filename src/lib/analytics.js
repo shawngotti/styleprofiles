@@ -1,5 +1,12 @@
 import { supabase } from './supabaseClient.js'
 
+// Optional error-monitoring sink (Sentry or any provider). main.jsx loads + sets
+// it only when VITE_SENTRY_DSN is configured, so there's zero cost otherwise.
+let _monitor = null
+export function setErrorMonitor(m) {
+  _monitor = m
+}
+
 // Fire-and-forget analytics. Writes to the analytics_events table (RLS lets a
 // user append only their own events). Never throws into the caller — analytics
 // must not break a user flow. Swap this sink for a provider later; call sites
@@ -23,6 +30,7 @@ export function reportError(error, context = {}) {
   try {
     // eslint-disable-next-line no-console
     console.error('[reportError]', error, context)
+    if (_monitor) _monitor.captureException(error, { extra: context })
     track('client_error', {
       message: String(error?.message || error),
       stack: String(error?.stack || '').slice(0, 2000),

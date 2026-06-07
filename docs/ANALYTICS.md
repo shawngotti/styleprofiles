@@ -11,7 +11,12 @@ it for a provider later without changing call sites. Reads are admin-only (RLS).
 | `signup` | LoginScreen | `method` | Acquisition |
 | `legal_accepted` | LegalGate | `tos`, `privacy` | Activation |
 | `pro_profile_open` | AuthedHome (Discover + Lineup) | `pro_id`, `source` | Consideration |
+| `booking_created` | BookingFlow | `pro_id`, `booking_id` | Core conversion |
+| `membership_subscribed` | MembershipCard | `tier_id` | Recurring revenue |
+| `consent_resolved` | ConsentRequests | `status` | Media activation |
 | `award_vote` | Awards | `submission_id` | Engagement |
+| `fan_vote` | Lineup / CutOfTheWeek | `context`, `window_id` | Engagement |
+| `cotw_entry_submitted` | CutOfTheWeek | `status` | Pro engagement |
 | `order_placed` | Shop | `order_id`, `total` | Marketplace revenue |
 | `ticket_purchased` | EventTickets | `attendee_id`, `total` | Events revenue |
 | `client_error` | ErrorBoundary / reportError | `message`, `stack` | Reliability |
@@ -36,6 +41,6 @@ props, never PII beyond IDs. `track` never throws into the caller.
 
 ## Next (not yet instrumented)
 
-`booking_created`, `membership_subscribed`, `fan_vote`, `cotw_entry_submitted`,
-and server-side events (Edge Functions can insert with the service role). Add as
-funnels mature.
+Server-side events (Edge Functions can insert with the service role — e.g.
+deposit captured, order paid, prize paid) for funnels that complete off the
+client. Add as funnels mature.

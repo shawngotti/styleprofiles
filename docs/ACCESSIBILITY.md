@@ -20,8 +20,9 @@ with a screen reader (VoiceOver/NVDA) and `axe`/Lighthouse.
 - **Color contrast:** `text-white/40` (~3.7:1 on the dark bg) fails AA (4.5:1) for
   body text — acceptable for large/secondary text only. Audit each use; bump to
   `text-white/55`+ where it's meaningful copy.
-- **aria-live on all toasts:** only the gated/error regions are wired; give every
-  success/error `msg` paragraph `role="status"`/`role="alert"`.
+- **aria-live on all toasts:** wired on the main transactional flows (Awards,
+  Shop, EventTickets, Lineup, Cut of the Week, consent, reviews); extend to the
+  remaining secondary screens (Rewards, Household, ProDashboard).
 - **Images:** reveal/portfolio `<img>` have `alt` = pro name; confirm meaningful
   alt for all and `alt=""` for decorative.
 - **Modals/checkout:** Stripe PaymentElement flows should trap focus and restore

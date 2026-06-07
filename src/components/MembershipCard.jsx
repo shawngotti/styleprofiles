@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabaseClient.js'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import { stripePromise } from '../lib/stripe.js'
 import { centsToUsd } from '../lib/format.js'
+import { track } from '../lib/analytics.js'
 
 const GOLD = '#F4A93C'
 
@@ -58,6 +59,7 @@ export default function MembershipCard({ pro }) {
       setMsg({ type: 'error', text })
       return
     }
+    track('membership_subscribed', { tier_id: tier.id })
     setClientSecret(data.clientSecret)
   }
 

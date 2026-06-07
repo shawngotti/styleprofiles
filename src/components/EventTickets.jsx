@@ -82,7 +82,7 @@ export default function EventTickets({ competitionId }) {
   return (
     <section className="space-y-3">
       <h3 className="text-sm font-semibold uppercase tracking-wide text-white/50">Live events</h3>
-      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>{msg.text}</p>}
+      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{msg.text}</p>}
       <div className="grid gap-3 sm:grid-cols-2">
         {events.map((ev) => {
           const going = mine.has(ev.id)

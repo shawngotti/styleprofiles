@@ -92,7 +92,7 @@ export default function Shop() {
   return (
     <div className="space-y-5">
       <h2 className="text-lg font-semibold">Self-care shop</h2>
-      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>{msg.text}</p>}
+      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{msg.text}</p>}
 
       <div className="grid gap-3 sm:grid-cols-2">
         {products.map((p) => {

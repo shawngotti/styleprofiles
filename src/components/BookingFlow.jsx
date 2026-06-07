@@ -5,6 +5,7 @@ import { useAuth } from '../auth/AuthProvider.jsx'
 import { listMembers } from '../lib/household.js'
 import { stripePromise } from '../lib/stripe.js'
 import { centsToUsd } from '../lib/format.js'
+import { track } from '../lib/analytics.js'
 
 const GOLD = '#F4A93C'
 const YOU = { id: 'you', label: 'You', household_member_id: null }
@@ -110,6 +111,7 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
       setError(text)
       return
     }
+    track('booking_created', { pro_id: pro?.id, booking_id: data?.booking?.id })
     // If a deposit is due, collect it; otherwise the booking is done.
     if (data?.clientSecret && data?.booking?.id) {
       setPay({ clientSecret: data.clientSecret, bookingId: data.booking.id, amount: totals.deposit })

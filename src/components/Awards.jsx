@@ -100,7 +100,7 @@ export default function Awards() {
         </section>
       )}
       <p className="text-xs text-white/40">One vote per category. Closes {new Date(cycle.closes_at).toLocaleDateString()}.</p>
-      {msg && <p className="text-sm text-red-400">{msg.text}</p>}
+      {msg && <p className="text-sm text-red-400" role="alert" aria-live="assertive">{msg.text}</p>}
 
       {groups.map(({ cat, noms }) => {
         const votedFor = myVotes[cat.slug]
