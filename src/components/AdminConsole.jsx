@@ -5,6 +5,7 @@ const GOLD = '#F4A93C'
 const TABS = [
   ['reports', 'Reports'],
   ['integrity', 'Vote Integrity'],
+  ['attendees', 'Attendees'],
   ['flags', 'Feature Flags'],
 ]
 
@@ -32,6 +33,7 @@ export default function AdminConsole() {
       </div>
       {tab === 'reports' && <Reports />}
       {tab === 'integrity' && <Integrity />}
+      {tab === 'attendees' && <ImportAttendees />}
       {tab === 'flags' && <Flags />}
     </div>
   )
@@ -191,3 +193,222 @@ function Flags() {
     </div>
   )
 }
+
+// CSV parser that respects quoted fields, embedded commas, and "" escapes.
+function parseCSV(text) {
+  const rows = []
+  let cur = []
+  let field = ''
+  let inQ = false
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i]
+    if (inQ) {
+      if (c === '"') {
+        if (text[i + 1] === '"') {
+          field += '"'
+          i++
+        } else inQ = false
+      } else field += c
+    } else if (c === '"') inQ = true
+    else if (c === ',') {
+      cur.push(field)
+      field = ''
+    } else if (c === '\n' || c === '\r') {
+      if (c === '\r' && text[i + 1] === '\n') i++
+      cur.push(field)
+      rows.push(cur)
+      cur = []
+      field = ''
+    } else field += c
+  }
+  if (field.length || cur.length) {
+    cur.push(field)
+    rows.push(cur)
+  }
+  return rows.filter((r) => r.some((c) => c.trim() !== ''))
+}
+
+// Header aliases -> our attendee fields.
+const ALIASES = {
+  external_ref: ['external_ref', 'order_id', 'order id', 'order #', 'ticket_id', 'ticket id', 'confirmation', 'id'],
+  email: ['email', 'email address', 'e-mail'],
+  name: ['name', 'attendee', 'full name', 'attendee name'],
+  ticket_type: ['ticket_type', 'ticket type', 'type', 'ticket', 'tier'],
+  qty: ['qty', 'quantity', 'tickets'],
+  amount: ['amount', 'total', 'price', 'paid', 'gross'],
+  status: ['status'],
+}
+
+function mapRows(text) {
+  const grid = parseCSV(text)
+  if (grid.length < 2) return { rows: [], error: 'Need a header row plus at least one data row.' }
+  const header = grid[0].map((h) => h.trim().toLowerCase())
+  const idx = {}
+  for (const [field, names] of Object.entries(ALIASES)) {
+    idx[field] = header.findIndex((h) => names.includes(h))
+  }
+  const rows = grid.slice(1).map((cols) => {
+    const get = (f) => (idx[f] >= 0 ? (cols[idx[f]] ?? '').trim() : '')
+    const amt = get('amount')
+    const qty = parseInt(get('qty'), 10)
+    return {
+      external_ref: get('external_ref') || null,
+      email: get('email') || null,
+      name: get('name') || null,
+      ticket_type: get('ticket_type') || null,
+      qty: Number.isFinite(qty) && qty > 0 ? qty : 1,
+      amount: amt ? Math.round(parseFloat(amt.replace(/[^0-9.]/g, '')) * 100) : null, // dollars -> cents
+      status: get('status') || 'confirmed',
+    }
+  })
+  return { rows, error: null }
+}
+
+// Import ticket attendees sold off-platform (Posh, Eventbrite export, manual)
+// into the unified event_attendees ledger via the admin import RPC. Idempotent
+// on (source, external_ref); rows with an email are matched to a profile.
+function ImportAttendees() {
+  const [events, setEvents] = useState([])
+  const [eventId, setEventId] = useState('')
+  const [source, setSource] = useState('posh_vip')
+  const [csv, setCsv] = useState('')
+  const [parsed, setParsed] = useState([])
+  const [parseErr, setParseErr] = useState(null)
+  const [busy, setBusy] = useState(false)
+  const [result, setResult] = useState(null)
+
+  useEffect(() => {
+    supabase
+      .from('events')
+      .select('id,title,venue,event_date')
+      .order('event_date', { ascending: false })
+      .then(({ data }) => {
+        setEvents(data || [])
+        if (data?.[0]) setEventId(data[0].id)
+      })
+  }, [])
+
+  function onCsv(text) {
+    setCsv(text)
+    setResult(null)
+    if (!text.trim()) {
+      setParsed([])
+      setParseErr(null)
+      return
+    }
+    const { rows, error } = mapRows(text)
+    setParsed(rows)
+    setParseErr(error)
+  }
+
+  async function doImport() {
+    setBusy(true)
+    setResult(null)
+    const { data, error } = await supabase.rpc('import_event_attendees', {
+      _event_id: eventId,
+      _source: source,
+      _rows: parsed,
+    })
+    setBusy(false)
+    setResult(error ? { type: 'error', text: error.message } : { type: 'ok', text: `Imported ${data} attendee row(s).` })
+    if (!error) {
+      setCsv('')
+      setParsed([])
+    }
+  }
+
+  const matched = parsed.filter((r) => r.email).length
+
+  if (events.length === 0) {
+    return <p className="text-sm text-white/40">No events yet. Create an event before importing attendees.</p>
+  }
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-white/60">
+        Import attendees sold off-platform (Posh, Eventbrite export, or a manual list) into the unified ledger.
+        Re-importing the same rows is safe — they upsert on order/ticket id.
+      </p>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="block text-sm">
+          <span className="text-white/50">Event</span>
+          <select value={eventId} onChange={(e) => setEventId(e.target.value)} className={inputCls}>
+            {events.map((ev) => (
+              <option key={ev.id} value={ev.id} className="bg-neutral-900">
+                {ev.title || 'Event'}{ev.event_date ? ` · ${new Date(ev.event_date).toLocaleDateString()}` : ''}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="block text-sm">
+          <span className="text-white/50">Source</span>
+          <select value={source} onChange={(e) => setSource(e.target.value)} className={inputCls}>
+            <option value="posh_vip" className="bg-neutral-900">Posh.Vip</option>
+            <option value="eventbrite" className="bg-neutral-900">Eventbrite (export)</option>
+            <option value="manual" className="bg-neutral-900">Manual list</option>
+          </select>
+        </label>
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-white/50">CSV</span>
+          <label className="cursor-pointer text-xs text-white/50 hover:text-white/80">
+            Upload .csv
+            <input
+              type="file"
+              accept=".csv,text/csv"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0]
+                if (f) f.text().then(onCsv)
+              }}
+            />
+          </label>
+        </div>
+        <textarea
+          value={csv}
+          onChange={(e) => onCsv(e.target.value)}
+          rows={6}
+          placeholder={'order_id,email,name,ticket_type,qty,amount\nA1001,fan@example.com,Jordan Fan,GA,2,50.00'}
+          className={`${inputCls} font-mono text-xs`}
+        />
+        <p className="mt-1 text-xs text-white/40">
+          Recognized columns: order_id/ticket_id, email, name, ticket_type, qty, amount (USD). Header row required.
+        </p>
+      </div>
+
+      {parseErr && <p className="text-sm text-red-400" role="alert">{parseErr}</p>}
+      {parsed.length > 0 && (
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-sm">
+          <div className="text-white/70">
+            {parsed.length} row(s) parsed · {matched} with an email (matched to accounts on import)
+          </div>
+          <div className="mt-2 max-h-40 overflow-auto text-xs text-white/50">
+            {parsed.slice(0, 5).map((r, i) => (
+              <div key={i} className="truncate">
+                {r.external_ref || '—'} · {r.email || 'no email'} · {r.name || ''} · {r.ticket_type || ''} · x{r.qty}
+                {r.amount != null ? ` · $${(r.amount / 100).toFixed(2)}` : ''}
+              </div>
+            ))}
+            {parsed.length > 5 && <div className="text-white/30">…and {parsed.length - 5} more</div>}
+          </div>
+        </div>
+      )}
+
+      {result && <p className={`text-sm ${result.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{result.text}</p>}
+
+      <button
+        onClick={doImport}
+        disabled={busy || parsed.length === 0 || !eventId}
+        className="rounded-lg px-4 py-2 text-sm font-semibold text-black disabled:opacity-50"
+        style={{ backgroundColor: GOLD }}
+      >
+        {busy ? 'Importing…' : `Import ${parsed.length || ''} attendee${parsed.length === 1 ? '' : 's'}`}
+      </button>
+    </div>
+  )
+}
+
+const inputCls = 'mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-white/30'
