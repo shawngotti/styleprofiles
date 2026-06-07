@@ -99,7 +99,7 @@ export default function NotificationsBell({ lineupOn, onNavigate }) {
           </div>
           <div className="max-h-96 overflow-y-auto">
             {items.length === 0 ? (
-              <p className="px-2 py-6 text-center text-sm text-white/40">You're all caught up.</p>
+              <p className="px-2 py-6 text-center text-sm text-white/55">You're all caught up.</p>
             ) : (
               items.map((n) => (
                 <button
@@ -110,7 +110,7 @@ export default function NotificationsBell({ lineupOn, onNavigate }) {
                   <span aria-hidden>{ICON[n.kind] || '🔔'}</span>
                   <span className="min-w-0 flex-1">
                     <span className="block">{n.body}</span>
-                    <span className="text-xs text-white/40">{new Date(n.created_at).toLocaleDateString()}</span>
+                    <span className="text-xs text-white/55">{new Date(n.created_at).toLocaleDateString()}</span>
                   </span>
                   {!n.read && <span className="mt-1 h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: GOLD }} />}
                 </button>

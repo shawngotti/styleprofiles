@@ -68,7 +68,7 @@ function Reports() {
         ))}
       </div>
       {rows.length === 0 ? (
-        <p className="text-sm text-white/40">No reports.</p>
+        <p className="text-sm text-white/55">No reports.</p>
       ) : (
         rows.map((r) => (
           <div key={r.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -87,7 +87,7 @@ function Reports() {
                 <button onClick={() => resolve(r.id, 'dismissed')} className="rounded-lg border border-white/15 px-3 py-1.5 text-sm">Dismiss</button>
               </div>
             ) : (
-              <div className="mt-2 text-xs text-white/40">{r.status}</div>
+              <div className="mt-2 text-xs text-white/55">{r.status}</div>
             )}
           </div>
         ))
@@ -131,13 +131,13 @@ function Integrity() {
       </div>
       {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>{msg.text}</p>}
       {flags.length === 0 ? (
-        <p className="text-sm text-white/40">No vote flags.</p>
+        <p className="text-sm text-white/55">No vote flags.</p>
       ) : (
         flags.map((f) => (
           <div key={f.id} className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 p-3">
             <div className="min-w-0">
               <div className="text-sm">{f.note}</div>
-              <div className="text-xs text-white/40">{f.context} · {f.vote_count} votes · {f.status}</div>
+              <div className="text-xs text-white/55">{f.context} · {f.vote_count} votes · {f.status}</div>
             </div>
             {f.status === 'open' && (
               <div className="flex shrink-0 gap-2">
@@ -320,7 +320,7 @@ function ImportAttendees() {
   const matched = parsed.filter((r) => r.email).length
 
   if (events.length === 0) {
-    return <p className="text-sm text-white/40">No events yet. Create an event before importing attendees.</p>
+    return <p className="text-sm text-white/55">No events yet. Create an event before importing attendees.</p>
   }
 
   return (
@@ -374,7 +374,7 @@ function ImportAttendees() {
           placeholder={'order_id,email,name,ticket_type,qty,amount\nA1001,fan@example.com,Jordan Fan,GA,2,50.00'}
           className={`${inputCls} font-mono text-xs`}
         />
-        <p className="mt-1 text-xs text-white/40">
+        <p className="mt-1 text-xs text-white/55">
           Recognized columns: order_id/ticket_id, email, name, ticket_type, qty, amount (USD). Header row required.
         </p>
       </div>

@@ -79,7 +79,7 @@ export default function Lineup({ onOpenPro }) {
   }
 
   if (comp === undefined) return <p className="text-sm text-white/50">Loading The Lineup…</p>
-  if (comp === null) return <p className="text-sm text-white/40">No competition is running right now.</p>
+  if (comp === null) return <p className="text-sm text-white/55">No competition is running right now.</p>
 
   const champion = Object.values(byId).find((c) => c.status === 'champion')
 
@@ -98,7 +98,7 @@ export default function Lineup({ onOpenPro }) {
             {initials(c.pro?.display_name)}
           </span>
           <span className={`truncate text-sm ${isWinner ? 'font-semibold' : ''}`}>
-            <span className="text-white/40">#{c.seed} </span>
+            <span className="text-white/55">#{c.seed} </span>
             {c.pro?.display_name}
           </span>
           {c.status === 'champion' && <span title="Champion">👑</span>}
@@ -143,9 +143,9 @@ export default function Lineup({ onOpenPro }) {
             <span className="font-semibold" style={{ color: GOLD }}>
               {openWindow.vote_type === 'redemption' ? 'Redemption Wildcard' : openWindow.vote_type === 'fan_favorite' ? 'Fan Favorite' : 'Fan vote'} voting is open
             </span>
-            <span className="text-white/40">· closes {new Date(openWindow.closes_at).toLocaleDateString()}</span>
+            <span className="text-white/55">· closes {new Date(openWindow.closes_at).toLocaleDateString()}</span>
           </div>
-          <p className="mt-1 text-xs text-white/40">
+          <p className="mt-1 text-xs text-white/55">
             Fan votes decide only the wildcard &amp; fan favorite — never the bracket itself. One vote per window.
           </p>
         </section>
@@ -175,7 +175,7 @@ export default function Lineup({ onOpenPro }) {
             </section>
           )
         })}
-        {rounds.length === 0 && <p className="text-sm text-white/40">The bracket hasn't been drawn yet.</p>}
+        {rounds.length === 0 && <p className="text-sm text-white/55">The bracket hasn't been drawn yet.</p>}
       </div>
     </div>
   )

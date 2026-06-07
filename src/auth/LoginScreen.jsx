@@ -59,7 +59,7 @@ export default function LoginScreen() {
           Continue with Google
         </button>
 
-        <div className="my-5 flex items-center gap-3 text-xs text-white/40">
+        <div className="my-5 flex items-center gap-3 text-xs text-white/55">
           <div className="h-px flex-1 bg-white/10" />
           or
           <div className="h-px flex-1 bg-white/10" />

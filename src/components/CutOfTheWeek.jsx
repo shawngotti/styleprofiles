@@ -88,7 +88,7 @@ export default function CutOfTheWeek() {
   }
 
   if (challenge === undefined) return <p className="text-sm text-white/50">Loading Cut of the Week…</p>
-  if (challenge === null) return <p className="text-sm text-white/40">No Cut of the Week is open right now.</p>
+  if (challenge === null) return <p className="text-sm text-white/55">No Cut of the Week is open right now.</p>
 
   return (
     <div className="space-y-5">
@@ -99,7 +99,7 @@ export default function CutOfTheWeek() {
         </span>
       </div>
       {brief?.description && <p className="text-sm text-white/60">{brief.description}</p>}
-      <p className="text-xs text-white/40">One vote this week · closes {new Date(challenge.closes_at).toLocaleDateString()}.</p>
+      <p className="text-xs text-white/55">One vote this week · closes {new Date(challenge.closes_at).toLocaleDateString()}.</p>
 
       {myPro && <SubmitPanel proId={myPro.id} onDone={load} />}
       {msg && <p className="text-sm text-red-400" role="alert" aria-live="assertive">{msg.text}</p>}
@@ -121,7 +121,7 @@ export default function CutOfTheWeek() {
                   <div className="truncate text-sm font-medium">
                     {i === 0 && Number(e.votes) > 0 ? '🥇 ' : ''}{e.display_name}
                   </div>
-                  <div className="text-xs text-white/40">{Number(e.votes)} vote{Number(e.votes) === 1 ? '' : 's'}</div>
+                  <div className="text-xs text-white/55">{Number(e.votes)} vote{Number(e.votes) === 1 ? '' : 's'}</div>
                 </div>
                 {isPick ? (
                   <span className="shrink-0 text-sm font-medium" style={{ color: GOLD }}>✓ Your pick</span>
@@ -139,7 +139,7 @@ export default function CutOfTheWeek() {
             </div>
           )
         })}
-        {board.length === 0 && <p className="text-sm text-white/40">No entries yet — be the first.</p>}
+        {board.length === 0 && <p className="text-sm text-white/55">No entries yet — be the first.</p>}
       </div>
     </div>
   )

@@ -95,7 +95,7 @@ export default function MyAppointments({ onRebook }) {
   return (
     <div className="space-y-6">
       {msg && (
-        <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>{msg.text}</p>
+        <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{msg.text}</p>
       )}
 
       <Group title="Upcoming" empty="No upcoming appointments — browse Discover to book.">
@@ -142,8 +142,8 @@ function Group({ title, empty, children }) {
   const isEmpty = !items || (Array.isArray(items) && items.length === 0)
   return (
     <section>
-      <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/40">{title}</h3>
-      {isEmpty ? <p className="text-sm text-white/40">{empty}</p> : <div className="space-y-3">{items}</div>}
+      <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/55">{title}</h3>
+      {isEmpty ? <p className="text-sm text-white/55">{empty}</p> : <div className="space-y-3">{items}</div>}
     </section>
   )
 }
@@ -175,7 +175,7 @@ function BookingCard({ b, children }) {
       <div className="mt-3 flex items-center justify-between">
         <div className="text-sm text-white/60">
           {centsToUsd(b.service_total)}
-          {b.deposit_total > 0 && <span className="text-white/40"> · {centsToUsd(b.deposit_total)} deposit</span>}
+          {b.deposit_total > 0 && <span className="text-white/55"> · {centsToUsd(b.deposit_total)} deposit</span>}
         </div>
         <div className="flex gap-2">{children}</div>
       </div>

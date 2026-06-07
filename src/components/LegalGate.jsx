@@ -79,13 +79,13 @@ export default function LegalGate({ children }) {
             <a className="underline" style={{ color: GOLD }} href="https://github.com" target="_blank" rel="noreferrer">
               Terms of Service
             </a>{' '}
-            <span className="text-white/40">(v{versions.tos})</span>
+            <span className="text-white/55">(v{versions.tos})</span>
           </li>
           <li>
             <a className="underline" style={{ color: GOLD }} href="https://github.com" target="_blank" rel="noreferrer">
               Privacy Policy
             </a>{' '}
-            <span className="text-white/40">(v{versions.privacy})</span>
+            <span className="text-white/55">(v{versions.privacy})</span>
           </li>
         </ul>
         {error && (
@@ -101,7 +101,7 @@ export default function LegalGate({ children }) {
         >
           {busy ? 'Saving…' : 'I agree to the Terms & Privacy Policy'}
         </button>
-        <p className="mt-3 text-xs text-white/40">
+        <p className="mt-3 text-xs text-white/55">
           You can withdraw media consent at any time from Tag requests. Accepting is required to use
           StyleProfiles.
         </p>

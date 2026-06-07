@@ -154,7 +154,7 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
         <>
         {stepName === 'People' && (
           <div>
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/40">Who's coming?</h3>
+            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/55">Who's coming?</h3>
             <div className="space-y-2">
               {people.map((p) => {
                 const checked = selectedPeople.has(p.id)
@@ -217,7 +217,7 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
                 className="mt-1 w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm outline-none focus:border-white/40"
               />
             </label>
-            <p className="text-xs text-white/40">
+            <p className="text-xs text-white/55">
               The pro confirms your slot. Total time: ~{totals.minutes} min. Back-to-back times are computed server-side.
             </p>
           </div>
@@ -225,7 +225,7 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
 
         {stepName === 'Confirm' && (
           <div>
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/40">Review</h3>
+            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/55">Review</h3>
             <div className="rounded-xl border border-white/10 bg-white/5 p-3 text-sm">
               {activePeople.map((p) => {
                 const ids = [...(svcSel[p.id] || [])]
@@ -255,11 +255,11 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
                 <span>{centsToUsd(totals.deposit)}</span>
               </div>
             </div>
-            <p className="mt-3 text-xs text-white/40">
+            <p className="mt-3 text-xs text-white/55">
               One combined deposit secures every slot and applies to your total. Cancellations within 24h forfeit the
               deposit. Card payment is added in Batch 8 — for now this creates a pending booking.
             </p>
-            {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
+            {error && <p className="mt-2 text-sm text-red-400" role="alert">{error}</p>}
           </div>
         )}
 
@@ -329,9 +329,9 @@ function PayForm({ amount, onPaid }) {
 
   return (
     <div>
-      <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/40">Payment</h3>
+      <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/55">Payment</h3>
       <PaymentElement options={{ layout: 'tabs' }} />
-      {err && <p className="mt-2 text-sm text-red-400">{err}</p>}
+      {err && <p className="mt-2 text-sm text-red-400" role="alert">{err}</p>}
       <button
         onClick={pay}
         disabled={busy || !stripe}
@@ -340,7 +340,7 @@ function PayForm({ amount, onPaid }) {
       >
         {busy ? 'Processing…' : `Pay ${centsToUsd(amount)} deposit`}
       </button>
-      <p className="mt-2 text-center text-xs text-white/40">
+      <p className="mt-2 text-center text-xs text-white/55">
         Test mode — card 4242 4242 4242 4242, any future date & CVC.
       </p>
     </div>

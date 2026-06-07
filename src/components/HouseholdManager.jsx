@@ -75,7 +75,7 @@ export default function HouseholdManager() {
         <p className="text-sm text-white/50">Add the people you book for. They can share one appointment and deposit.</p>
       </div>
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-red-400" role="alert">{error}</p>}
 
       <div className="rounded-2xl border border-white/10 bg-white/5 p-2">
         <div className="flex items-center justify-between p-3">
@@ -99,12 +99,12 @@ export default function HouseholdManager() {
           </div>
         ))}
         {members.length === 0 && (
-          <p className="border-t border-white/5 p-3 text-sm text-white/40">No additional members yet.</p>
+          <p className="border-t border-white/5 p-3 text-sm text-white/55">No additional members yet.</p>
         )}
       </div>
 
       <form onSubmit={add} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/40">Add a member</h3>
+        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/55">Add a member</h3>
         <div className="flex flex-wrap gap-2">
           <input
             value={name}

@@ -110,7 +110,7 @@ export default function Discover({ onOpenPro }) {
           </button>
         )}
       </div>
-      {geoMsg && <p className="mb-2 text-xs text-amber-400">{geoMsg}</p>}
+      {geoMsg && <p className="mb-2 text-xs text-amber-400" role="status" aria-live="polite">{geoMsg}</p>}
 
       {/* Category filter */}
       <div className="flex flex-wrap gap-2">
@@ -173,7 +173,7 @@ export default function Discover({ onOpenPro }) {
                     {catLabel[p.category] || p.category}
                   </span>
                   <span className="text-white/70">
-                    ★ {p.rating_avg} <span className="text-white/40">({p.rating_count})</span>
+                    ★ {p.rating_avg} <span className="text-white/55">({p.rating_count})</span>
                   </span>
                 </div>
 

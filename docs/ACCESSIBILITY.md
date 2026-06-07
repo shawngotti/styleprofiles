@@ -1,9 +1,9 @@
 # StyleProfiles — Accessibility (WCAG 2.1 AA) Audit
 
-Status: **first pass complete.** This is a living checklist — re-run before launch
-with a screen reader (VoiceOver/NVDA) and `axe`/Lighthouse.
+Status: **AA code pass complete.** This is a living checklist — re-run before
+launch with a screen reader (VoiceOver/NVDA) and `axe`/Lighthouse on real flows.
 
-## Fixed in this pass
+## Fixed
 
 | Issue | WCAG | Fix |
 |---|---|---|
@@ -11,24 +11,24 @@ with a screen reader (VoiceOver/NVDA) and `axe`/Lighthouse.
 | No way to skip nav | 2.4.1 | "Skip to content" link in `App.jsx` → `#main-content` on the `<main>` |
 | Clickable pro card not keyboard-operable | 2.1.1 | Discover card got `role="button"`, `tabIndex`, Enter/Space handler, `aria-label` |
 | Motion with no reduce option | 2.3.3 | `prefers-reduced-motion` media query disables transitions |
-| Errors not announced | 4.1.3 | `role="alert"` on LegalGate / error regions (extend to all message areas) |
-| `lang` on document | 3.1.1 | already present (`<html lang="en">`) |
-| Form inputs labelled | 3.3.2 | inputs use `<label>` wrappers (verified in Shop, CotW, SubmitAwardEntry) |
+| **Color contrast** | 1.4.3 | Eliminated `text-white/40` (~3.8:1 on the dark bg) → `text-white/55` (~6.2:1) app-wide. `/50`+ already pass; `border-white/40` focus rings (≥3:1 UI) left as-is. |
+| **Errors/status not announced** | 4.1.3 | `role="alert"` on error regions + `role="status" aria-live="polite"` on status toasts across every screen (transactional + secondary). |
+| Top-level heading | 1.3.1 / 2.4.6 | App header brand is now an `<h1>`; LoginScreen already had one. |
+| `lang` on document | 3.1.1 | present (`<html lang="en">`) |
+| Form inputs labelled | 3.3.2 | inputs use `<label>` wrappers + `aria-label` on icon/switch controls |
+| Switches/radios | 4.1.2 | feature-flag/email/email toggles use `role="switch" aria-checked`; review stars use `role="radio"` |
 
-## Known gaps to close before launch
+## Remaining (verify with a real screen reader before launch)
 
-- **Color contrast:** `text-white/40` (~3.7:1 on the dark bg) fails AA (4.5:1) for
-  body text — acceptable for large/secondary text only. Audit each use; bump to
-  `text-white/55`+ where it's meaningful copy.
-- **aria-live on all toasts:** wired on the main transactional flows (Awards,
-  Shop, EventTickets, Lineup, Cut of the Week, consent, reviews); extend to the
-  remaining secondary screens (Rewards, Household, ProDashboard).
-- **Images:** reveal/portfolio `<img>` have `alt` = pro name; confirm meaningful
-  alt for all and `alt=""` for decorative.
-- **Modals/checkout:** Stripe PaymentElement flows should trap focus and restore
-  it on close.
-- **Tab order & headings:** verify a logical heading hierarchy (one `<h1>` per
-  view) and tab order with a screen reader.
+- **Focus management on the Stripe PaymentElement views.** They're full-screen
+  step replacements (not overlays over live content), so there's no background to
+  trap — but confirm focus lands sensibly on entry and returns to the trigger on
+  cancel. The notifications popover already closes on Escape/outside-click.
+- **Images:** reveal/portfolio `<img>` use `alt` = pro name; confirm meaningful
+  alt for all content images and `alt=""` for any decorative ones.
+- **Full manual pass:** keyboard-only, VoiceOver/NVDA, 200% zoom, reduced-motion
+  — plus `axe`/Lighthouse on authenticated flows (the automated tools below only
+  see the login screen without a session).
 
 ## How to test
 

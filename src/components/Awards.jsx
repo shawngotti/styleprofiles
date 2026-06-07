@@ -69,7 +69,7 @@ export default function Awards() {
   }
 
   if (cycle === undefined) return <p className="text-sm text-white/50">Loading awards…</p>
-  if (cycle === null) return <p className="text-sm text-white/40">No awards voting is open right now.</p>
+  if (cycle === null) return <p className="text-sm text-white/55">No awards voting is open right now.</p>
 
   const period = new Date(cycle.period + 'T00:00:00').toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
   const groups = cats
@@ -99,7 +99,7 @@ export default function Awards() {
           </div>
         </section>
       )}
-      <p className="text-xs text-white/40">One vote per category. Closes {new Date(cycle.closes_at).toLocaleDateString()}.</p>
+      <p className="text-xs text-white/55">One vote per category. Closes {new Date(cycle.closes_at).toLocaleDateString()}.</p>
       {msg && <p className="text-sm text-red-400" role="alert" aria-live="assertive">{msg.text}</p>}
 
       {groups.map(({ cat, noms }) => {

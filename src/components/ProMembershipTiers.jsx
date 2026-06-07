@@ -54,7 +54,7 @@ export default function ProMembershipTiers({ proId }) {
 
   return (
     <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
-      <h3 className="text-sm font-semibold uppercase tracking-wide text-white/40">Membership tiers</h3>
+      <h3 className="text-sm font-semibold uppercase tracking-wide text-white/55">Membership tiers</h3>
       {tiers.length > 0 ? (
         <div className="mt-3 space-y-2">
           {tiers.map((t) => (
@@ -71,7 +71,7 @@ export default function ProMembershipTiers({ proId }) {
           ))}
         </div>
       ) : (
-        <p className="mt-2 text-sm text-white/40">No tiers yet — create one to offer memberships.</p>
+        <p className="mt-2 text-sm text-white/55">No tiers yet — create one to offer memberships.</p>
       )}
 
       <form onSubmit={create} className="mt-4 flex flex-wrap gap-2">

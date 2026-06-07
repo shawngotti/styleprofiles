@@ -61,9 +61,9 @@ export default function ConsentRequests() {
       {msg && <p className="text-sm text-red-400" role="alert">{msg.text}</p>}
 
       <section>
-        <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/40">Pending</h3>
+        <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/55">Pending</h3>
         {pending.length === 0 ? (
-          <p className="text-sm text-white/40">No pending requests.</p>
+          <p className="text-sm text-white/55">No pending requests.</p>
         ) : (
           <div className="space-y-3">
             {pending.map((r) => (
@@ -92,7 +92,7 @@ export default function ConsentRequests() {
 
       {resolved.length > 0 && (
         <section>
-          <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/40">History</h3>
+          <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/55">History</h3>
           <div className="space-y-2">
             {resolved.map((r) => (
               <div key={r.id} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm">

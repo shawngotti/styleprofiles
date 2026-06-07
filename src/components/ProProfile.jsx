@@ -111,7 +111,7 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
         </span>
         <span>
           <Stars value={pro.rating_avg} /> <b>{pro.rating_avg}</b>{' '}
-          <span className="text-white/40">({pro.rating_count} reviews)</span>
+          <span className="text-white/55">({pro.rating_count} reviews)</span>
         </span>
         <span className="text-white/50">📍 {pro.city}</span>
       </div>
@@ -134,7 +134,7 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           {/* Services */}
           <section>
-            <h3 className="mb-2 px-2 text-sm font-semibold uppercase tracking-wide text-white/40">Services</h3>
+            <h3 className="mb-2 px-2 text-sm font-semibold uppercase tracking-wide text-white/55">Services</h3>
             <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
               {mainServices.map((s, i) => (
                 <div key={s.id} className={`flex items-center justify-between gap-3 p-4 ${i ? 'border-t border-white/5' : ''}`}>
@@ -142,7 +142,7 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
                     <div className="truncate font-medium">{s.name}</div>
                     <div className="text-xs text-white/50">
                       {s.duration_min} min · {centsToUsd(s.price)}
-                      {s.deposit > 0 && <span className="text-white/40"> · {centsToUsd(s.deposit)} deposit</span>}
+                      {s.deposit > 0 && <span className="text-white/55"> · {centsToUsd(s.deposit)} deposit</span>}
                     </div>
                   </div>
                   <button
@@ -159,7 +159,7 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
 
             {addons.length > 0 && (
               <>
-                <h3 className="mb-2 mt-5 px-2 text-sm font-semibold uppercase tracking-wide text-white/40">
+                <h3 className="mb-2 mt-5 px-2 text-sm font-semibold uppercase tracking-wide text-white/55">
                   Frequently added
                 </h3>
                 <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
@@ -177,9 +177,9 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
 
           {/* Reviews */}
           <section>
-            <h3 className="mb-2 px-2 text-sm font-semibold uppercase tracking-wide text-white/40">Recent reviews</h3>
+            <h3 className="mb-2 px-2 text-sm font-semibold uppercase tracking-wide text-white/55">Recent reviews</h3>
             {reviews.length === 0 ? (
-              <p className="px-2 text-sm text-white/40">No written reviews yet.</p>
+              <p className="px-2 text-sm text-white/55">No written reviews yet.</p>
             ) : (
               <div className="space-y-3">
                 {reviews.map((r) => (

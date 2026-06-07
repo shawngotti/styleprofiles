@@ -74,11 +74,11 @@ export default function FillMyChair({ proId }) {
 
   return (
     <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
-      <h3 className="text-sm font-semibold uppercase tracking-wide text-white/40">Fill my chair</h3>
+      <h3 className="text-sm font-semibold uppercase tracking-wide text-white/55">Fill my chair</h3>
       <p className="mt-1 text-sm text-white/60">Turn a cancellation or slow day into a booked slot — post a flash deal and blast it to your clients.</p>
 
       {services.length === 0 ? (
-        <p className="mt-3 text-sm text-white/40">Add a service to your storefront first.</p>
+        <p className="mt-3 text-sm text-white/55">Add a service to your storefront first.</p>
       ) : (
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <label className="block text-sm">
@@ -130,14 +130,14 @@ export default function FillMyChair({ proId }) {
 
       {promos.length > 0 && (
         <div className="mt-5">
-          <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/40">Your deals</h4>
+          <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/55">Your deals</h4>
           <div className="space-y-2">
             {promos.map((p) => (
               <div key={p.id} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm">
                 <div>
                   <span className="font-medium">{p.service?.name || 'Service'}</span>
                   {p.discount_pct > 0 && <span className="ml-2" style={{ color: '#34D399' }}>{p.discount_pct}% off</span>}
-                  <div className="text-xs text-white/40">
+                  <div className="text-xs text-white/55">
                     {p.slot_at ? new Date(p.slot_at).toLocaleString() : p.slot_label} · {p.notified_count} notified
                   </div>
                 </div>

@@ -70,7 +70,7 @@ export default function StorefrontForm({ pro, onSaved }) {
 
   return (
     <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
-      <h3 className="text-sm font-semibold uppercase tracking-wide text-white/40">
+      <h3 className="text-sm font-semibold uppercase tracking-wide text-white/55">
         {editing ? 'Edit storefront' : 'Create your storefront'}
       </h3>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">

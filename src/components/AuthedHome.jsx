@@ -50,9 +50,9 @@ export default function AuthedHome() {
   return (
     <div className="min-h-screen p-6">
       <header className="mx-auto flex max-w-3xl items-center justify-between">
-        <div className="text-xl font-semibold">
+        <h1 className="text-xl font-semibold">
           Style<span style={{ color: GOLD }}>Profiles</span>
-        </div>
+        </h1>
         <div className="flex items-center gap-3 text-sm">
           <span className="hidden text-white/60 sm:inline">{user?.email}</span>
           <NotificationsBell
@@ -82,7 +82,7 @@ export default function AuthedHome() {
       <main id="main-content" className="mx-auto mt-10 max-w-3xl space-y-6">
         {/* Perspective switcher — only shows perspectives the user's roles allow */}
         <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
-          <p className="text-xs uppercase tracking-wide text-white/40">Perspective</p>
+          <p className="text-xs uppercase tracking-wide text-white/55">Perspective</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {available.map((p) => {
               const active = p.key === perspective
@@ -103,7 +103,7 @@ export default function AuthedHome() {
             })}
           </div>
           {available.length === 1 && (
-            <p className="mt-3 text-xs text-white/40">
+            <p className="mt-3 text-xs text-white/55">
               You have the <strong>client</strong> role only. Pro and Admin perspectives
               appear here once those roles are granted.
             </p>
@@ -177,7 +177,7 @@ export default function AuthedHome() {
         {perspective === 'admin' && <AdminConsole />}
 
         <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
-          <p className="text-xs uppercase tracking-wide text-white/40">Your account</p>
+          <p className="text-xs uppercase tracking-wide text-white/55">Your account</p>
           <dl className="mt-3 space-y-2 text-sm">
             <div className="flex justify-between">
               <dt className="text-white/50">User ID</dt>
@@ -197,13 +197,13 @@ export default function AuthedHome() {
                     </span>
                   ))
                 ) : (
-                  <span className="text-white/40">none</span>
+                  <span className="text-white/55">none</span>
                 )}
               </dd>
             </div>
             <EmailPrefToggle />
           </dl>
-          <p className="mt-4 text-xs text-white/40">
+          <p className="mt-4 text-xs text-white/55">
             Viewing as <strong className="text-white/70">{perspective}</strong>. This is the
             auth foundation (Batch 6); the prototype screens migrate on top of it next.
           </p>

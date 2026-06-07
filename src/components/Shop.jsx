@@ -105,12 +105,12 @@ export default function Shop() {
                   <div className="font-medium">{p.name}</div>
                   <div className="shrink-0 font-semibold" style={{ color: GOLD }}>{money(p.price)}</div>
                 </div>
-                {p.brand && <div className="text-xs text-white/40">{p.brand}</div>}
+                {p.brand && <div className="text-xs text-white/55">{p.brand}</div>}
                 {p.blurb && <p className="mt-1 text-sm text-white/60">{p.blurb}</p>}
               </div>
               <div className="mt-3">
                 {out ? (
-                  <span className="text-xs text-white/40">Out of stock</span>
+                  <span className="text-xs text-white/55">Out of stock</span>
                 ) : qty > 0 ? (
                   <div className="flex items-center gap-3">
                     <button onClick={() => setQty(p.id, qty - 1, p.inventory_qty)} className="h-7 w-7 rounded-lg bg-white/10">−</button>
@@ -130,7 +130,7 @@ export default function Shop() {
             </div>
           )
         })}
-        {products.length === 0 && <p className="text-sm text-white/40">No products yet.</p>}
+        {products.length === 0 && <p className="text-sm text-white/55">No products yet.</p>}
       </div>
 
       {items.length > 0 && (

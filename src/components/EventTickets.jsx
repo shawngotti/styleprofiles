@@ -94,7 +94,7 @@ export default function EventTickets({ competitionId }) {
                 {ev.venue}{ev.event_date ? ` · ${new Date(ev.event_date).toLocaleDateString()}` : ''}
               </div>
               <div className="mt-3 flex items-center justify-between">
-                {inApp ? <span className="text-sm font-semibold" style={{ color: GOLD }}>{money(ev.ticket_price)}</span> : <span className="text-xs text-white/40">Tickets via {ev.ticketing_provider}</span>}
+                {inApp ? <span className="text-sm font-semibold" style={{ color: GOLD }}>{money(ev.ticket_price)}</span> : <span className="text-xs text-white/55">Tickets via {ev.ticketing_provider}</span>}
                 {going ? (
                   <span className="text-sm font-medium" style={{ color: '#34D399' }}>✓ You're going</span>
                 ) : inApp ? (

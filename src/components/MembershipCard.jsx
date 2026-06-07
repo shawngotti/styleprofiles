@@ -106,7 +106,7 @@ export default function MembershipCard({ pro }) {
         )
       )}
 
-      {msg && <p className="mt-2 text-sm text-red-400">{msg.text}</p>}
+      {msg && <p className="mt-2 text-sm text-red-400" role="alert">{msg.text}</p>}
 
       {clientSecret && (
         <div className="mt-4">
@@ -150,7 +150,7 @@ function SubscriptionPay({ onPaid }) {
   return (
     <div>
       <PaymentElement options={{ layout: 'tabs' }} />
-      {err && <p className="mt-2 text-sm text-red-400">{err}</p>}
+      {err && <p className="mt-2 text-sm text-red-400" role="alert">{err}</p>}
       <button
         onClick={pay}
         disabled={busy || !stripe}

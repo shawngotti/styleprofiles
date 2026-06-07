@@ -60,7 +60,7 @@ export default function Rewards() {
     <div className="space-y-6">
       {/* Balance / tier */}
       <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
-        <p className="text-xs uppercase tracking-wide text-white/40">StylePoints</p>
+        <p className="text-xs uppercase tracking-wide text-white/55">StylePoints</p>
         <div className="mt-1 flex items-end justify-between">
           <div className="text-3xl font-semibold" style={{ color: GOLD }}>
             {balance.toLocaleString()} <span className="text-base font-normal text-white/50">pts</span>
@@ -72,14 +72,14 @@ export default function Rewards() {
             {tier}
           </span>
         </div>
-        <p className="mt-2 text-xs text-white/40">Earn 1 point per $1 on completed visits.</p>
+        <p className="mt-2 text-xs text-white/55">Earn 1 point per $1 on completed visits.</p>
       </section>
 
-      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>{msg.text}</p>}
+      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{msg.text}</p>}
 
       {/* Rewards */}
       <section>
-        <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/40">Rewards</h3>
+        <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/55">Rewards</h3>
         <div className="grid gap-3 sm:grid-cols-2">
           {rewards.map((r) => {
             const affordable = balance >= r.cost_points
@@ -106,16 +106,16 @@ export default function Rewards() {
 
       {/* Activity */}
       <section>
-        <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/40">Recent activity</h3>
+        <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/55">Recent activity</h3>
         {txns.length === 0 ? (
-          <p className="text-sm text-white/40">No points activity yet — book and complete a visit to earn.</p>
+          <p className="text-sm text-white/55">No points activity yet — book and complete a visit to earn.</p>
         ) : (
           <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
             {txns.map((t, i) => (
               <div key={t.id} className={`flex items-center justify-between p-3 text-sm ${i ? 'border-t border-white/5' : ''}`}>
                 <div>
                   <div>{t.reason}</div>
-                  <div className="text-xs text-white/40">{new Date(t.created_at).toLocaleDateString()}</div>
+                  <div className="text-xs text-white/55">{new Date(t.created_at).toLocaleDateString()}</div>
                 </div>
                 <span className={t.delta >= 0 ? 'text-emerald-400' : 'text-white/60'}>
                   {t.delta >= 0 ? '+' : ''}

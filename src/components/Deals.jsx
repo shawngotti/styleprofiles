@@ -88,7 +88,7 @@ export default function Deals({ onClaimed }) {
       {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{msg.text}</p>}
 
       {deals.length === 0 ? (
-        <p className="text-sm text-white/40">No flash deals running right now.</p>
+        <p className="text-sm text-white/55">No flash deals running right now.</p>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
           {deals.map((d) => {
@@ -100,7 +100,7 @@ export default function Deals({ onClaimed }) {
                   <span className="rounded-full px-2 py-0.5 text-xs font-medium" style={{ backgroundColor: `${GOLD}1a`, color: GOLD }}>
                     {TYPE_LABEL[d.promo_type] || 'Deal'}
                   </span>
-                  {d.expires_at && <span className="text-xs text-white/40">ends {new Date(d.expires_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span>}
+                  {d.expires_at && <span className="text-xs text-white/55">ends {new Date(d.expires_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span>}
                 </div>
                 <div className="mt-3 flex items-center gap-3">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-black" style={{ backgroundColor: GOLD }}>
@@ -116,7 +116,7 @@ export default function Deals({ onClaimed }) {
                     {d.discount_pct > 0 ? (
                       <>
                         <span className="font-semibold" style={{ color: GOLD }}>{centsToUsd(discounted)}</span>{' '}
-                        <span className="text-white/40 line-through">{centsToUsd(full)}</span>
+                        <span className="text-white/55 line-through">{centsToUsd(full)}</span>
                       </>
                     ) : (
                       <span className="font-semibold">{centsToUsd(full)}</span>

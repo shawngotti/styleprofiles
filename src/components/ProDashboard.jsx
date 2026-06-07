@@ -89,7 +89,7 @@ export default function ProDashboard() {
       ) : (
         <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-white/40">Payouts</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-white/55">Payouts</h3>
             <span
               className="rounded-full px-2.5 py-0.5 text-xs font-medium"
               style={{
@@ -122,7 +122,7 @@ export default function ProDashboard() {
             </>
           )}
 
-          {msg && <p className={`mt-3 text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>{msg.text}</p>}
+          {msg && <p className={`mt-3 text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{msg.text}</p>}
         </section>
       )}
 
