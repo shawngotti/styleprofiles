@@ -3,6 +3,7 @@ import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-
 import { supabase } from '../lib/supabaseClient.js'
 import { stripePromise } from '../lib/stripe.js'
 import { centsToUsd as money } from '../lib/format.js'
+import { track } from '../lib/analytics.js'
 
 const GOLD = '#F4A93C'
 
@@ -67,6 +68,7 @@ export default function EventTickets({ competitionId }) {
           total={checkout.total}
           title={checkout.title}
           onDone={() => {
+            track('ticket_purchased', { attendee_id: checkout.attendee_id, total: checkout.total })
             setCheckout(null)
             setMsg({ type: 'ok', text: "You're going! 🎟" })
             load()

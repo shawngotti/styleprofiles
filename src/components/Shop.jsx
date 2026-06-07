@@ -3,6 +3,7 @@ import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-
 import { supabase } from '../lib/supabaseClient.js'
 import { stripePromise } from '../lib/stripe.js'
 import { centsToUsd as money } from '../lib/format.js'
+import { track } from '../lib/analytics.js'
 
 const GOLD = '#F4A93C'
 
@@ -76,6 +77,7 @@ export default function Shop() {
           orderId={checkout.order_id}
           total={checkout.total}
           onDone={() => {
+            track('order_placed', { order_id: checkout.order_id, total: checkout.total })
             setCheckout(null)
             setCart({})
             setMsg({ type: 'ok', text: 'Order placed — thank you!' })

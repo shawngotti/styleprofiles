@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build (Vite)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      # Build is the gate: it compiles every component, so import/syntax errors
+      # across the app fail the build. Vite needs the public env vars present.
+      - name: Build
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://example.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'public-anon-key' }}
+          VITE_STRIPE_PUBLISHABLE_KEY: ${{ secrets.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_placeholder' }}
+
+  # Integration tests (scripts/test-*.mjs) hit a live Supabase + Stripe test mode
+  # and create/delete real auth users, so they run against the dev project only
+  # when its secrets are configured — never on forks. Gated on a manual dispatch.
+  integration:
+    name: Integration tests (dev DB)
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - name: Run test suite
+        run: |
+          for t in scripts/test-*.mjs; do
+            echo "== $t =="
+            node --env-file=.env "$t" || exit 1
+          done
+        env:
+          # Provide via repo secrets; written to .env at runtime.
+          DOTENV: ${{ secrets.DEV_DOTENV }}
+        # NOTE: write $DOTENV to .env in a prior step in your environment.

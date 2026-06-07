@@ -131,7 +131,16 @@ export default function Discover({ onOpenPro }) {
               <div
                 key={p.id}
                 data-testid={`pro-${p.handle}`}
+                role={onOpenPro ? 'button' : undefined}
+                tabIndex={onOpenPro ? 0 : undefined}
+                aria-label={onOpenPro ? `View ${p.display_name}'s storefront` : undefined}
                 onClick={() => onOpenPro?.(p, catColor[p.category] || GOLD)}
+                onKeyDown={(e) => {
+                  if (onOpenPro && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault()
+                    onOpenPro(p, catColor[p.category] || GOLD)
+                  }
+                }}
                 className={`rounded-2xl border border-white/10 bg-white/5 p-4 ${onOpenPro ? 'cursor-pointer hover:bg-white/[0.07]' : ''} transition`}
               >
                 <div className="flex items-center gap-3">

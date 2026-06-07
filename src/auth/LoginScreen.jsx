@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
+import { track } from '../lib/analytics.js'
 
 const GOLD = '#F4A93C'
 
@@ -24,6 +25,7 @@ export default function LoginScreen() {
       setMsg({ type: 'error', text: error.message })
       return
     }
+    if (mode === 'signup') track('signup', { method: 'email' })
     // If email confirmations are ON, signUp returns no session until confirmed.
     if (mode === 'signup' && !data.session) {
       setMsg({ type: 'info', text: 'Account created. Check your email to confirm, then sign in.' })

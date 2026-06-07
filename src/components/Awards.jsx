@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import { initials } from '../lib/format.js'
+import { track } from '../lib/analytics.js'
 
 const GOLD = '#F4A93C'
 
@@ -63,6 +64,7 @@ export default function Awards() {
       setMsg({ type: 'error', text })
       return
     }
+    track('award_vote', { submission_id: submissionId })
     load()
   }
 

@@ -11,6 +11,7 @@ import Shop from './Shop.jsx'
 import Lineup from './Lineup.jsx'
 import CutOfTheWeek from './CutOfTheWeek.jsx'
 import { useSettings } from '../lib/useSettings.js'
+import { track } from '../lib/analytics.js'
 
 const GOLD = '#F4A93C'
 
@@ -34,6 +35,13 @@ export default function AuthedHome() {
   const [selectedPro, setSelectedPro] = useState(null) // { pro, color }
   const [clientTab, setClientTab] = useState('discover') // 'discover' | 'appointments'
 
+  // Central place a pro storefront opens — instrument the conversion funnel
+  // (e.g. contestant profile -> book) from one spot.
+  const openPro = (pro, color, source) => {
+    track('pro_profile_open', { pro_id: pro?.id, source })
+    setSelectedPro({ pro, color })
+  }
+
   return (
     <div className="min-h-screen p-6">
       <header className="mx-auto flex max-w-3xl items-center justify-between">
@@ -51,7 +59,7 @@ export default function AuthedHome() {
         </div>
       </header>
 
-      <main className="mx-auto mt-10 max-w-3xl space-y-6">
+      <main id="main-content" className="mx-auto mt-10 max-w-3xl space-y-6">
         {/* Perspective switcher — only shows perspectives the user's roles allow */}
         <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
           <p className="text-xs uppercase tracking-wide text-white/40">Perspective</p>
@@ -122,7 +130,7 @@ export default function AuthedHome() {
                   ))}
                 </div>
                 {clientTab === 'discover' && (
-                  <Discover onOpenPro={(pro, color) => setSelectedPro({ pro, color })} />
+                  <Discover onOpenPro={(pro, color) => openPro(pro, color, 'discover')} />
                 )}
                 {clientTab === 'appointments' && (
                   <MyAppointments onRebook={(pro) => setSelectedPro({ pro, color: GOLD })} />
@@ -131,7 +139,7 @@ export default function AuthedHome() {
                 {clientTab === 'awards' && <Awards />}
                 {clientTab === 'household' && <HouseholdManager />}
                 {clientTab === 'lineup' && lineupOn && (
-                  <Lineup onOpenPro={(pro, color) => setSelectedPro({ pro, color })} />
+                  <Lineup onOpenPro={(pro, color) => openPro(pro, color, 'lineup')} />
                 )}
                 {clientTab === 'cotw' && lineupOn && <CutOfTheWeek />}
                 {clientTab === 'shop' && marketplaceOn && <Shop />}
