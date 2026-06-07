@@ -45,3 +45,11 @@ export async function getUser(authHeader: string) {
   if (error || !data.user) return null
   return data.user
 }
+
+// Feature-flag check (§4.9). Flags gate the API too: a disabled feature's
+// endpoints must reject. Pass a service client to read platform_settings.
+// deno-lint-ignore no-explicit-any
+export async function featureEnabled(svc: any, key: string): Promise<boolean> {
+  const { data } = await svc.from('platform_settings').select('value').eq('key', key).maybeSingle()
+  return data?.value === true
+}

@@ -4,7 +4,8 @@
 // verifying the Stripe-Signature against STRIPE_WEBHOOK_SECRET.
 //
 // Handled events:
-//   payment_intent.succeeded  -> booking 'pending' becomes 'confirmed'
+//   payment_intent.succeeded  -> booking 'pending' -> 'confirmed', or order
+//                                'pending' -> 'paid' (+ inventory) by metadata
 //   payment_intent.payment_failed -> (left pending; client can retry)
 //   account.updated           -> sync pros.charges_enabled / payouts_enabled
 
@@ -62,9 +63,13 @@ Deno.serve(async (req) => {
   try {
     switch (event.type) {
       case 'payment_intent.succeeded': {
-        const bookingId = (obj.metadata as Record<string, string> | undefined)?.booking_id
-        if (bookingId) {
-          await svc.from('bookings').update({ status: 'confirmed' }).eq('id', bookingId).eq('status', 'pending')
+        const meta = obj.metadata as Record<string, string> | undefined
+        if (meta?.booking_id) {
+          await svc.from('bookings').update({ status: 'confirmed' }).eq('id', meta.booking_id).eq('status', 'pending')
+        }
+        if (meta?.order_id) {
+          // Authoritative settle: flips to 'paid' + decrements inventory. Idempotent.
+          await svc.rpc('mark_order_paid', { _order_id: meta.order_id })
         }
         break
       }
