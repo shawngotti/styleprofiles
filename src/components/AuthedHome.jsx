@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import Discover from './Discover.jsx'
 import ProProfile from './ProProfile.jsx'
+import MyAppointments from './MyAppointments.jsx'
 
 const GOLD = '#F4A93C'
 
@@ -22,6 +23,7 @@ export default function AuthedHome() {
   )
   const [perspective, setPerspective] = useState('client')
   const [selectedPro, setSelectedPro] = useState(null) // { pro, color }
+  const [clientTab, setClientTab] = useState('discover') // 'discover' | 'appointments'
 
   return (
     <div className="min-h-screen p-6">
@@ -71,7 +73,7 @@ export default function AuthedHome() {
           )}
         </section>
 
-        {/* Client perspective: live Discover. Pro/Admin views land in later tickets. */}
+        {/* Client perspective: Discover + My Appointments. */}
         {perspective === 'client' && (
           <section>
             {selectedPro ? (
@@ -82,8 +84,30 @@ export default function AuthedHome() {
               />
             ) : (
               <>
-                <h2 className="mb-3 text-lg font-semibold">Discover</h2>
-                <Discover onOpenPro={(pro, color) => setSelectedPro({ pro, color })} />
+                <div className="mb-4 flex gap-2">
+                  {[
+                    ['discover', 'Discover'],
+                    ['appointments', 'My Appointments'],
+                  ].map(([key, label]) => (
+                    <button
+                      key={key}
+                      onClick={() => setClientTab(key)}
+                      className="rounded-full px-4 py-1.5 text-sm font-medium transition"
+                      style={
+                        clientTab === key
+                          ? { backgroundColor: GOLD, color: '#000' }
+                          : { backgroundColor: 'rgba(255,255,255,0.08)', color: '#fff' }
+                      }
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                {clientTab === 'discover' ? (
+                  <Discover onOpenPro={(pro, color) => setSelectedPro({ pro, color })} />
+                ) : (
+                  <MyAppointments onRebook={(pro) => setSelectedPro({ pro, color: GOLD })} />
+                )}
               </>
             )}
           </section>
