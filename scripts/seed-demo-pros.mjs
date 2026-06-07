@@ -51,6 +51,15 @@ const PROS = [
     services: [{ name: 'Balayage + Gloss', min: 180, price: 200, dep: 70 }, { name: 'Root Touch-Up', min: 90, price: 95, dep: 30 }, { name: 'Vivid / Fashion Color', min: 240, price: 260, dep: 90 }] },
 ]
 
+// A small pool of recent reviews; each pro gets two (authored by demo clients).
+const REVIEW_POOL = [
+  { rating: 5, body: 'Clean work, exactly what I asked for. Booking was seamless.', tags: ['On time', 'Clean space'] },
+  { rating: 5, body: 'Took their time and the result speaks for itself. Worth every dollar.', tags: ['Great detail'] },
+  { rating: 4, body: 'Solid experience — ran a few minutes behind but really happy with it.', tags: [] },
+  { rating: 5, body: 'The deposit made it painless and they nailed the look. Rebooking already.', tags: ['Easy booking'] },
+]
+const REVIEWERS = ['reviewer1', 'reviewer2', 'reviewer3']
+
 const admin = createClient(URL, SERVICE, { auth: { persistSession: false, autoRefreshToken: false } })
 
 async function main() {
@@ -66,8 +75,21 @@ async function main() {
   }
   console.log(`Removed ${removed} existing demo pro user(s).`)
 
+  // Demo client reviewers (default 'client' role from the signup trigger).
+  const reviewerIds = []
+  for (const r of REVIEWERS) {
+    const { data, error } = await admin.auth.admin.createUser({
+      email: `${r}${DEMO_DOMAIN}`,
+      email_confirm: true,
+      user_metadata: { display_name: r.replace(/\d+$/, ' ' + r.slice(-1)) },
+    })
+    if (error) throw new Error(`reviewer ${r}: ${error.message}`)
+    reviewerIds.push(data.user.id)
+  }
+
   let proCount = 0
   let svcCount = 0
+  let reviewCount = 0
   for (const p of PROS) {
     const email = `${p.handle}${DEMO_DOMAIN}`
     const { data: created, error: cerr } = await admin.auth.admin.createUser({
@@ -98,7 +120,6 @@ async function main() {
       .select('id')
       .single()
     if (perr) throw new Error(`pro ${p.handle}: ${perr.message}`)
-    proCount++
 
     const rows = []
     p.services.forEach((s, i) =>
@@ -110,10 +131,28 @@ async function main() {
     const { error: serr } = await admin.from('services').insert(rows)
     if (serr) throw new Error(`services ${p.handle}: ${serr.message}`)
     svcCount += rows.length
-    console.log(`  seeded ${p.name} (${p.cat}) — ${rows.length} services`)
+
+    // Two recent reviews per pro, by two different demo reviewers.
+    const reviewRows = [0, 1].map((k) => {
+      const r = REVIEW_POOL[(proCount + k) % REVIEW_POOL.length]
+      return {
+        pro_id: proRow.id,
+        author_profile_id: reviewerIds[(proCount + k) % reviewerIds.length],
+        rating: r.rating,
+        body: r.body,
+        tags: r.tags,
+        verified: true,
+      }
+    })
+    const { error: rverr } = await admin.from('reviews').insert(reviewRows)
+    if (rverr) throw new Error(`reviews ${p.handle}: ${rverr.message}`)
+    reviewCount += reviewRows.length
+
+    proCount++
+    console.log(`  seeded ${p.name} (${p.cat}) — ${rows.length} services, ${reviewRows.length} reviews`)
   }
 
-  console.log(`\nDone: ${proCount} pros, ${svcCount} services (all prices in integer cents).`)
+  console.log(`\nDone: ${proCount} pros, ${svcCount} services, ${reviewCount} reviews (prices in integer cents).`)
 }
 
 main().catch((e) => {

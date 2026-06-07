@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import Discover from './Discover.jsx'
+import ProProfile from './ProProfile.jsx'
 
 const GOLD = '#F4A93C'
 
@@ -20,6 +21,7 @@ export default function AuthedHome() {
     [roles],
   )
   const [perspective, setPerspective] = useState('client')
+  const [selectedPro, setSelectedPro] = useState(null) // { pro, color }
 
   return (
     <div className="min-h-screen p-6">
@@ -72,8 +74,18 @@ export default function AuthedHome() {
         {/* Client perspective: live Discover. Pro/Admin views land in later tickets. */}
         {perspective === 'client' && (
           <section>
-            <h2 className="mb-3 text-lg font-semibold">Discover</h2>
-            <Discover />
+            {selectedPro ? (
+              <ProProfile
+                pro={selectedPro.pro}
+                catColor={selectedPro.color}
+                onBack={() => setSelectedPro(null)}
+              />
+            ) : (
+              <>
+                <h2 className="mb-3 text-lg font-semibold">Discover</h2>
+                <Discover onOpenPro={(pro, color) => setSelectedPro({ pro, color })} />
+              </>
+            )}
           </section>
         )}
         {perspective !== 'client' && (

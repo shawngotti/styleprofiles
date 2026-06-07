@@ -64,7 +64,8 @@ export default function Discover({ onOpenPro }) {
         {shown.map((p) => (
           <div
             key={p.id}
-            onClick={() => onOpenPro?.(p)}
+            data-testid={`pro-${p.handle}`}
+            onClick={() => onOpenPro?.(p, catColor[p.category] || GOLD)}
             className={`rounded-2xl border border-white/10 bg-white/5 p-4 ${onOpenPro ? 'cursor-pointer hover:bg-white/[0.07]' : ''} transition`}
           >
             <div className="flex items-center gap-3">
