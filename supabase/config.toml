@@ -414,3 +414,6 @@ s3_secret_key = "env(S3_SECRET_KEY)"
 
 [functions.stripe_webhook]
 verify_jwt = false
+
+[functions.eventbrite_webhook]
+verify_jwt = false
