@@ -165,10 +165,10 @@ Sits in front of every vote write as an Edge Function:
 ## 6. Open decisions to settle before coding
 
 1. **Money type** — ✅ **RESOLVED (2026-06-05): integer cents.** All 13 money columns converted from `numeric(10,2)` to `integer` (cents); `flash_deals.deal_price` likewise.
-2. **Live-event ticketing** — in-app Stripe vs keep **Posh.Vip** + sync import. (Plan recommends Posh.Vip near-term to match your TKS workflow.)
+2. **Live-event ticketing** — ✅ **RESOLVED (2026-06-07): multi-source sale, unified ledger.** In-app Stripe is the authoritative first-party seller; **Eventbrite** syncs in via API/webhook; both land in one `event_attendees` table (idempotent on `source` + `external_ref`), with best-effort email→profile matching. **Posh.Vip deferred** (import-only when its API is confirmed). Only in-app Stripe is a financial record; external sources are reported mirrors.
 3. **Fan vote eligibility** — ✅ **RESOLVED (2026-06-05): any verified account.** No separate "fan" role; the vote-integrity layer (§4.7) gates on verified-account status.
-4. **Video reveals** — if Lineup rounds include video, pick a transcoding/CDN path now.
-5. **Champion placement** — fixed discovery boost vs time-limited featured slot.
+4. **Video reveals** — ✅ **RESOLVED (2026-06-07): phase in later.** Ship photo before/after reveals (existing `entries.before_media`/`after_media` + consent) now; design entries so video can be added in a later phase once a transcoding/CDN path (e.g. Mux / Cloudflare Stream) is chosen. No transcoding dependency for launch.
+5. **Champion placement** — ✅ **RESOLVED (2026-06-07): both.** Champion gets a time-limited featured slot in Discover right after winning (e.g. 30 days) plus a smaller permanent metro boost.
 6. **Multi-provider group booking** — ✅ **RESOLVED (2026-06-05): deferred.** No `booking_group_id`/split-deposit logic now; group booking stays N line items under one parent + one deposit.
 
 ---
