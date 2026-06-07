@@ -6,6 +6,7 @@ import MyAppointments from './MyAppointments.jsx'
 import HouseholdManager from './HouseholdManager.jsx'
 import ProDashboard from './ProDashboard.jsx'
 import Rewards from './Rewards.jsx'
+import Awards from './Awards.jsx'
 
 const GOLD = '#F4A93C'
 
@@ -96,6 +97,7 @@ export default function AuthedHome() {
                     ['discover', 'Discover'],
                     ['appointments', 'My Appointments'],
                     ['rewards', 'Rewards'],
+                    ['awards', 'Awards'],
                     ['household', 'Household'],
                   ].map(([key, label]) => (
                     <button
@@ -119,6 +121,7 @@ export default function AuthedHome() {
                   <MyAppointments onRebook={(pro) => setSelectedPro({ pro, color: GOLD })} />
                 )}
                 {clientTab === 'rewards' && <Rewards />}
+                {clientTab === 'awards' && <Awards />}
                 {clientTab === 'household' && <HouseholdManager />}
               </>
             )}
