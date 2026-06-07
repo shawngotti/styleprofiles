@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import { centsToUsd, initials } from '../lib/format.js'
+import BookingFlow from './BookingFlow.jsx'
 
 const GOLD = '#F4A93C'
 
@@ -16,12 +17,12 @@ function Stars({ value = 0 }) {
 
 // Pro Profile: a storefront detail view. Loads the pro's services (real +
 // add-ons) and recent reviews live from Supabase. Booking arrives next ticket.
-export default function ProProfile({ pro, catColor = GOLD, onBack }) {
+export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
   const [services, setServices] = useState([])
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [bookMsg, setBookMsg] = useState(null)
+  const [bookingFor, setBookingFor] = useState(null) // preselected service id, or '' to just open
 
   useEffect(() => {
     let on = true
@@ -118,7 +119,7 @@ export default function ProProfile({ pro, catColor = GOLD, onBack }) {
                     </div>
                   </div>
                   <button
-                    onClick={() => setBookMsg(s.name)}
+                    onClick={() => setBookingFor(s.id)}
                     className="shrink-0 rounded-lg px-3 py-1.5 text-sm font-semibold text-black"
                     style={{ backgroundColor: GOLD }}
                   >
@@ -144,12 +145,6 @@ export default function ProProfile({ pro, catColor = GOLD, onBack }) {
               </>
             )}
 
-            {bookMsg && (
-              <p className="mt-3 px-2 text-xs text-white/50">
-                Booking <strong className="text-white/80">{bookMsg}</strong> — the booking flow lands in the next
-                Batch 7 ticket (atomic booking + deposit).
-              </p>
-            )}
           </section>
 
           {/* Reviews */}
@@ -181,6 +176,19 @@ export default function ProProfile({ pro, catColor = GOLD, onBack }) {
             )}
           </section>
         </div>
+      )}
+
+      {bookingFor !== null && (
+        <BookingFlow
+          pro={pro}
+          services={services}
+          preselectServiceId={bookingFor || undefined}
+          onClose={() => setBookingFor(null)}
+          onBooked={() => {
+            setBookingFor(null)
+            onBooked?.()
+          }}
+        />
       )}
     </div>
   )

@@ -81,6 +81,10 @@ export default function AuthedHome() {
                 pro={selectedPro.pro}
                 catColor={selectedPro.color}
                 onBack={() => setSelectedPro(null)}
+                onBooked={() => {
+                  setSelectedPro(null)
+                  setClientTab('appointments')
+                }}
               />
             ) : (
               <>
