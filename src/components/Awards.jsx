@@ -12,6 +12,7 @@ export default function Awards() {
   const [subs, setSubs] = useState([])
   const [cats, setCats] = useState([])
   const [myVotes, setMyVotes] = useState({})
+  const [winners, setWinners] = useState([])
   const [busy, setBusy] = useState(null)
   const [msg, setMsg] = useState(null)
 
@@ -27,7 +28,7 @@ export default function Awards() {
       setCycle(null)
       return
     }
-    const [s, c, v] = await Promise.all([
+    const [s, c, v, w] = await Promise.all([
       supabase
         .from('award_submissions')
         .select('id,category,look_label,pro:pros(display_name,handle)')
@@ -35,10 +36,12 @@ export default function Awards() {
         .eq('status', 'approved'),
       supabase.from('service_categories').select('slug,label,color').eq('active', true).order('sort'),
       supabase.from('award_votes').select('category,submission_id').eq('cycle_id', cyc.id),
+      supabase.from('award_winners').select('category,pro:pros(display_name,handle)').eq('cycle_id', cyc.id),
     ])
     setSubs(s.data || [])
     setCats(c.data || [])
     setMyVotes(Object.fromEntries((v.data || []).map((x) => [x.category, x.submission_id])))
+    setWinners(w.data || [])
     setCycle(cyc)
   }, [])
 
@@ -70,6 +73,7 @@ export default function Awards() {
   const groups = cats
     .map((c) => ({ cat: c, noms: subs.filter((s) => s.category === c.slug) }))
     .filter((g) => g.noms.length > 0)
+  const catLabel = Object.fromEntries(cats.map((c) => [c.slug, c.label]))
 
   return (
     <div className="space-y-6">
@@ -79,6 +83,20 @@ export default function Awards() {
           Voting open
         </span>
       </div>
+
+      {winners.length > 0 && (
+        <section className="rounded-2xl border p-4" style={{ borderColor: `${GOLD}55`, backgroundColor: `${GOLD}0d` }}>
+          <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide" style={{ color: GOLD }}>🏆 Winners</h3>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {winners.map((w) => (
+              <div key={w.category} className="flex items-center justify-between text-sm">
+                <span className="text-white/60">{catLabel[w.category] || w.category} of the Month</span>
+                <span className="font-medium">{w.pro?.display_name}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
       <p className="text-xs text-white/40">One vote per category. Closes {new Date(cycle.closes_at).toLocaleDateString()}.</p>
       {msg && <p className="text-sm text-red-400">{msg.text}</p>}
 

@@ -23,6 +23,7 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [award, setAward] = useState(null) // { category } if this pro is a current award winner
   const [bookingFor, setBookingFor] = useState(null) // preselected service id, or '' to just open
 
   useEffect(() => {
@@ -50,6 +51,15 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
       setServices(svcRes.data)
       setReviews(revRes.data)
       setLoading(false)
+      // Award winner badge (most recent win for this pro), best-effort.
+      supabase
+        .from('award_winners')
+        .select('category,selected_at')
+        .eq('pro_id', pro.id)
+        .order('selected_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+        .then(({ data }) => on && setAward(data || null))
     })()
     return () => {
       on = false
@@ -86,6 +96,11 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
             {pro.verified && <span style={{ color: GOLD }}>✓</span>}
           </div>
           <div className="text-sm text-white/50">@{pro.handle}</div>
+          {award && (
+            <span className="mt-1 inline-block rounded-full px-2.5 py-0.5 text-xs font-medium" style={{ backgroundColor: `${GOLD}1f`, color: GOLD }}>
+              🏆 {award.category} of the Month
+            </span>
+          )}
         </div>
       </div>
 
