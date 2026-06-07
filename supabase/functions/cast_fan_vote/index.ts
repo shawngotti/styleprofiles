@@ -56,6 +56,19 @@ Deno.serve(async (req) => {
     if (!c) return json({ error: 'that contestant is not in this competition' }, 400)
   }
 
+  // If targeting an entry (e.g. Cut of the Week), it must be approved and belong
+  // to a contestant in this competition.
+  if (targetEntryId) {
+    const { data: e } = await svc
+      .from('entries')
+      .select('id,status,contestants(competition_id)')
+      .eq('id', targetEntryId)
+      .maybeSingle()
+    if (!e || e.status !== 'approved' || e.contestants?.competition_id !== win.competition_id) {
+      return json({ error: 'that entry is not available to vote for' }, 400)
+    }
+  }
+
   // One vote per window (clean check; unique constraint is the backstop).
   const { data: existing } = await svc
     .from('fan_votes')

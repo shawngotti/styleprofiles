@@ -9,6 +9,7 @@ import Rewards from './Rewards.jsx'
 import Awards from './Awards.jsx'
 import Shop from './Shop.jsx'
 import Lineup from './Lineup.jsx'
+import CutOfTheWeek from './CutOfTheWeek.jsx'
 import { useSettings } from '../lib/useSettings.js'
 
 const GOLD = '#F4A93C'
@@ -103,7 +104,7 @@ export default function AuthedHome() {
                     ['rewards', 'Rewards'],
                     ['awards', 'Awards'],
                     ['household', 'Household'],
-                    ...(lineupOn ? [['lineup', 'The Lineup']] : []),
+                    ...(lineupOn ? [['lineup', 'The Lineup'], ['cotw', 'Cut of the Week']] : []),
                     ...(marketplaceOn ? [['shop', 'Shop']] : []),
                   ].map(([key, label]) => (
                     <button
@@ -132,6 +133,7 @@ export default function AuthedHome() {
                 {clientTab === 'lineup' && lineupOn && (
                   <Lineup onOpenPro={(pro, color) => setSelectedPro({ pro, color })} />
                 )}
+                {clientTab === 'cotw' && lineupOn && <CutOfTheWeek />}
                 {clientTab === 'shop' && marketplaceOn && <Shop />}
               </>
             )}
