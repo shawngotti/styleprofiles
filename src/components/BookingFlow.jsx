@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
 import { supabase } from '../lib/supabaseClient.js'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import { listMembers } from '../lib/household.js'
+import { stripePromise } from '../lib/stripe.js'
 import { centsToUsd } from '../lib/format.js'
 
 const GOLD = '#F4A93C'
@@ -25,6 +27,7 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
   const [step, setStep] = useState(0)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
+  const [pay, setPay] = useState(null) // { clientSecret, bookingId, amount } once the booking is created
 
   useEffect(() => {
     let on = true
@@ -107,7 +110,18 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
       setError(text)
       return
     }
-    onBooked?.(data?.booking)
+    // If a deposit is due, collect it; otherwise the booking is done.
+    if (data?.clientSecret && data?.booking?.id) {
+      setPay({ clientSecret: data.clientSecret, bookingId: data.booking.id, amount: totals.deposit })
+    } else {
+      onBooked?.(data?.booking)
+    }
+  }
+
+  async function handlePaid() {
+    // Server re-verifies the payment and confirms the booking.
+    await supabase.functions.invoke('confirm_deposit', { body: { booking_id: pay.bookingId } }).catch(() => {})
+    onBooked?.()
   }
 
   return (
@@ -132,6 +146,10 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
           ))}
         </div>
 
+        {pay ? (
+          <PaymentPanel clientSecret={pay.clientSecret} amount={pay.amount} onPaid={handlePaid} />
+        ) : (
+        <>
         {stepName === 'People' && (
           <div>
             <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/40">Who's coming?</h3>
@@ -270,7 +288,59 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
             </button>
           )}
         </div>
+        </>
+        )}
       </div>
+    </div>
+  )
+}
+
+function PaymentPanel({ clientSecret, amount, onPaid }) {
+  return (
+    <Elements
+      stripe={stripePromise}
+      options={{ clientSecret, appearance: { theme: 'night', variables: { colorPrimary: GOLD, colorBackground: '#141417' } } }}
+    >
+      <PayForm amount={amount} onPaid={onPaid} />
+    </Elements>
+  )
+}
+
+function PayForm({ amount, onPaid }) {
+  const stripe = useStripe()
+  const elements = useElements()
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState(null)
+
+  async function pay() {
+    if (!stripe || !elements) return
+    setBusy(true)
+    setErr(null)
+    const { error } = await stripe.confirmPayment({ elements, redirect: 'if_required' })
+    setBusy(false)
+    if (error) {
+      setErr(error.message || 'Payment failed')
+      return
+    }
+    onPaid()
+  }
+
+  return (
+    <div>
+      <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/40">Payment</h3>
+      <PaymentElement options={{ layout: 'tabs' }} />
+      {err && <p className="mt-2 text-sm text-red-400">{err}</p>}
+      <button
+        onClick={pay}
+        disabled={busy || !stripe}
+        className="mt-4 w-full rounded-lg px-4 py-2.5 text-sm font-semibold text-black disabled:opacity-60"
+        style={{ backgroundColor: GOLD }}
+      >
+        {busy ? 'Processing…' : `Pay ${centsToUsd(amount)} deposit`}
+      </button>
+      <p className="mt-2 text-center text-xs text-white/40">
+        Test mode — card 4242 4242 4242 4242, any future date & CVC.
+      </p>
     </div>
   )
 }

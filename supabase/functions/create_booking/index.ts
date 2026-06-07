@@ -1,35 +1,26 @@
-// Batch 7 — create_booking Edge Function.
-// Thin, server-authoritative wrapper over the atomic public.create_booking()
-// SQL function. Runs with the CALLER'S JWT so RLS + auth.uid() apply.
-// Batch 8 extends this to create the Stripe deposit PaymentIntent.
+// Batch 8 — create_booking Edge Function (now with deposit PaymentIntent).
+// 1) atomic booking via the public.create_booking RPC (caller's JWT, RLS)
+// 2) a Stripe PaymentIntent for the combined deposit:
+//    - destination charge to the pro's connected account + platform fee, when
+//      the pro has a real onboarded Stripe account;
+//    - plain platform charge otherwise (demo pros have the flag but no account).
+// Returns { booking, clientSecret }. Webhook (ticket 4) reconciles authoritatively.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { cors, json, stripe, serviceClient } from '../_shared/util.ts'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-}
-
-function json(obj: unknown, status = 200) {
-  return new Response(JSON.stringify(obj), {
-    status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  })
-}
+const PLATFORM_FEE_BPS = 1000 // 10% platform fee on the deposit
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
   if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405)
 
   const authHeader = req.headers.get('Authorization')
   if (!authHeader) return json({ error: 'missing Authorization header' }, 401)
 
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_ANON_KEY')!,
-    { global: { headers: { Authorization: authHeader } } },
-  )
+  const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, {
+    global: { headers: { Authorization: authHeader } },
+  })
 
   let body: Record<string, unknown>
   try {
@@ -37,12 +28,12 @@ Deno.serve(async (req) => {
   } catch {
     return json({ error: 'invalid JSON body' }, 400)
   }
-
   const { pro_id, service_date, start_time = null, items } = body ?? {}
   if (!pro_id || !service_date || !Array.isArray(items) || items.length === 0) {
     return json({ error: 'pro_id, service_date, and a non-empty items array are required' }, 400)
   }
 
+  // 1) Atomic booking (gated on charges_enabled inside the RPC).
   const { data: bookingId, error } = await supabase.rpc('create_booking', {
     _pro_id: pro_id,
     _service_date: service_date,
@@ -51,7 +42,38 @@ Deno.serve(async (req) => {
   })
   if (error) return json({ error: error.message }, 400)
 
-  const { data: booking, error: fetchErr } = await supabase
+  const svc = serviceClient()
+
+  // 2) Deposit PaymentIntent (only if there's a deposit to collect).
+  let clientSecret: string | null = null
+  const { data: bk } = await svc.from('bookings').select('deposit_total').eq('id', bookingId).single()
+  const depositTotal = bk?.deposit_total ?? 0
+
+  if (depositTotal > 0) {
+    const { data: pro } = await svc.from('pros').select('stripe_account_id,charges_enabled').eq('id', pro_id).single()
+    const params: Record<string, string> = {
+      amount: String(depositTotal),
+      currency: 'usd',
+      'automatic_payment_methods[enabled]': 'true',
+      'automatic_payment_methods[allow_redirects]': 'never',
+      'metadata[booking_id]': String(bookingId),
+    }
+    // Route to the pro's connected account with a platform fee when onboarded.
+    if (pro?.stripe_account_id && pro?.charges_enabled) {
+      params['transfer_data[destination]'] = pro.stripe_account_id
+      params['application_fee_amount'] = String(Math.round((depositTotal * PLATFORM_FEE_BPS) / 10000))
+    }
+
+    try {
+      const pi = await stripe('payment_intents', 'POST', params)
+      clientSecret = pi.client_secret
+      await svc.from('bookings').update({ stripe_payment_intent_id: pi.id }).eq('id', bookingId)
+    } catch (e) {
+      return json({ error: `payment setup failed: ${(e as Error).message}` }, 400)
+    }
+  }
+
+  const { data: booking } = await supabase
     .from('bookings')
     .select(
       'id,pro_id,status,service_date,start_time,service_total,deposit_total,' +
@@ -61,6 +83,5 @@ Deno.serve(async (req) => {
     .order('sort', { foreignTable: 'booking_line_items', ascending: true })
     .single()
 
-  if (fetchErr) return json({ booking_id: bookingId, warning: fetchErr.message }, 201)
-  return json({ booking }, 201)
+  return json({ booking, clientSecret }, 201)
 })
