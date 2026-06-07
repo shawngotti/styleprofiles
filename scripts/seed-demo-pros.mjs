@@ -13,6 +13,18 @@ if (!URL || !SERVICE) throw new Error('Missing VITE_SUPABASE_URL / SUPABASE_SERV
 const DEMO_DOMAIN = '@demo.styleprofiles.app'
 const c = (dollars) => Math.round(dollars * 100) // dollars -> integer cents
 
+// Approximate coordinates per demo city (for geographic search).
+const CITY_COORDS = {
+  'Chicago, IL': [41.8781, -87.6298],
+  'Atlanta, GA': [33.749, -84.388],
+  'Houston, TX': [29.7604, -95.3698],
+  'Newark, NJ': [40.7357, -74.1724],
+  'Jersey City, NJ': [40.7178, -74.0431],
+  'Brooklyn, NY': [40.6782, -73.9442],
+  'Miami, FL': [25.7617, -80.1918],
+  'Philadelphia, PA': [39.9526, -75.1652],
+}
+
 const ADDONS = {
   barber: [{ name: 'Beard oil finish', min: 5, price: 12, dep: 0 }, { name: 'Hot towel', min: 5, price: 8, dep: 0 }, { name: 'Hairline design', min: 10, price: 15, dep: 5 }],
   stylist: [{ name: 'Deep condition', min: 15, price: 25, dep: 0 }, { name: 'Ends trim', min: 10, price: 15, dep: 0 }],
@@ -116,6 +128,8 @@ async function main() {
         rating_avg: p.rating,
         rating_count: p.reviews,
         price_from: c(p.from),
+        latitude: (CITY_COORDS[p.city] || [null, null])[0],
+        longitude: (CITY_COORDS[p.city] || [null, null])[1],
       })
       .select('id')
       .single()
