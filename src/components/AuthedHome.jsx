@@ -8,6 +8,7 @@ import ProDashboard from './ProDashboard.jsx'
 import Rewards from './Rewards.jsx'
 import Awards from './Awards.jsx'
 import Shop from './Shop.jsx'
+import Lineup from './Lineup.jsx'
 import { useSettings } from '../lib/useSettings.js'
 
 const GOLD = '#F4A93C'
@@ -22,7 +23,7 @@ const PERSPECTIVES = [
 
 export default function AuthedHome() {
   const { user, roles, signOut } = useAuth()
-  const { marketplaceOn } = useSettings()
+  const { marketplaceOn, lineupOn } = useSettings()
 
   const available = useMemo(
     () => PERSPECTIVES.filter((p) => roles.includes(p.role)),
@@ -102,6 +103,7 @@ export default function AuthedHome() {
                     ['rewards', 'Rewards'],
                     ['awards', 'Awards'],
                     ['household', 'Household'],
+                    ...(lineupOn ? [['lineup', 'The Lineup']] : []),
                     ...(marketplaceOn ? [['shop', 'Shop']] : []),
                   ].map(([key, label]) => (
                     <button
@@ -127,6 +129,9 @@ export default function AuthedHome() {
                 {clientTab === 'rewards' && <Rewards />}
                 {clientTab === 'awards' && <Awards />}
                 {clientTab === 'household' && <HouseholdManager />}
+                {clientTab === 'lineup' && lineupOn && (
+                  <Lineup onOpenPro={(pro, color) => setSelectedPro({ pro, color })} />
+                )}
                 {clientTab === 'shop' && marketplaceOn && <Shop />}
               </>
             )}
