@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import ProMembershipTiers from './ProMembershipTiers.jsx'
+import SubmitAwardEntry from './SubmitAwardEntry.jsx'
 
 const GOLD = '#F4A93C'
 
@@ -17,7 +18,7 @@ export default function ProDashboard() {
   const loadPro = useCallback(async () => {
     const { data, error } = await supabase
       .from('pros')
-      .select('id,display_name,charges_enabled,payouts_enabled,stripe_account_id')
+      .select('id,display_name,category,charges_enabled,payouts_enabled,stripe_account_id')
       .eq('profile_id', user.id)
       .maybeSingle()
     if (error) setMsg({ type: 'error', text: error.message })
@@ -109,6 +110,7 @@ export default function ProDashboard() {
         </section>
       )}
 
+      {pro && <SubmitAwardEntry proId={pro.id} category={pro.category} />}
       {pro && <ProMembershipTiers proId={pro.id} />}
     </div>
   )
