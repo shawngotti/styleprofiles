@@ -12,6 +12,7 @@ import Lineup from './Lineup.jsx'
 import CutOfTheWeek from './CutOfTheWeek.jsx'
 import ConsentRequests from './ConsentRequests.jsx'
 import NotificationsBell from './NotificationsBell.jsx'
+import AdminConsole from './AdminConsole.jsx'
 import { useSettings } from '../lib/useSettings.js'
 import { track } from '../lib/analytics.js'
 
@@ -163,11 +164,7 @@ export default function AuthedHome() {
           </section>
         )}
         {perspective === 'pro' && <ProDashboard />}
-        {perspective === 'admin' && (
-          <section className="rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-white/50">
-            The <strong className="text-white/70">admin</strong> console is built in a later batch.
-          </section>
-        )}
+        {perspective === 'admin' && <AdminConsole />}
 
         <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
           <p className="text-xs uppercase tracking-wide text-white/40">Your account</p>

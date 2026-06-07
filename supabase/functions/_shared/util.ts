@@ -53,3 +53,13 @@ export async function featureEnabled(svc: any, key: string): Promise<boolean> {
   const { data } = await svc.from('platform_settings').select('value').eq('key', key).maybeSingle()
   return data?.value === true
 }
+
+// Vote-integrity metadata (§4.7): client IP + an optional device fingerprint the
+// client sends. IP feeds the admin anomaly scan; fingerprint drives the edge
+// per-device rate limit.
+export function clientMeta(req: Request): { ip: string | null; fingerprint: string | null } {
+  const fwd = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+  const ip = fwd || req.headers.get('x-real-ip') || null
+  const fingerprint = req.headers.get('x-device-fingerprint') || null
+  return { ip, fingerprint }
+}

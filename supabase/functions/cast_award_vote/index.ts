@@ -3,7 +3,9 @@
 // category per cycle (checked + DB-constraint backstop). Weight is 1; verified-
 // client weighting is classified at result-computation time.
 
-import { cors, json, serviceClient, getUser } from '../_shared/util.ts'
+import { cors, json, serviceClient, getUser, clientMeta } from '../_shared/util.ts'
+
+const EDGE_DEVICE_LIMIT = 8 // votes per device per minute before we flag + reject
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
@@ -47,12 +49,34 @@ Deno.serve(async (req) => {
     .maybeSingle()
   if (existing) return json({ error: 'you already voted in this category' }, 409)
 
+  // Per-device edge rate limit (§4.7). Only applies when a fingerprint is sent.
+  const { ip, fingerprint } = clientMeta(req)
+  if (fingerprint) {
+    const since = new Date(Date.now() - 60_000).toISOString()
+    const { count } = await svc
+      .from('award_votes')
+      .select('id', { count: 'exact', head: true })
+      .eq('fingerprint', fingerprint)
+      .gte('created_at', since)
+    if ((count ?? 0) >= EDGE_DEVICE_LIMIT) {
+      await svc.from('vote_flags').insert({
+        context: 'awards',
+        note: `device ${fingerprint.slice(0, 16)} exceeded vote rate (${count} in 60s)`,
+        vote_count: count,
+        status: 'open',
+      })
+      return json({ error: 'too many votes from this device — try again shortly' }, 429)
+    }
+  }
+
   const { error } = await svc.from('award_votes').insert({
     cycle_id: sub.cycle_id,
     category: sub.category,
     submission_id: sub.id,
     voter_profile_id: user.id,
     weight: 1,
+    ip,
+    fingerprint,
   })
   if (error) {
     if (error.code === '23505') return json({ error: 'you already voted in this category' }, 409)

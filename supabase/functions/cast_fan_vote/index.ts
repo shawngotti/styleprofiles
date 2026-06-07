@@ -6,7 +6,9 @@
 // window open, one vote per window (+ DB unique backstop), metro weighting, and
 // a light per-window device-fingerprint rate check.
 
-import { cors, json, serviceClient, getUser, featureEnabled } from '../_shared/util.ts'
+import { cors, json, serviceClient, getUser, featureEnabled, clientMeta } from '../_shared/util.ts'
+
+const EDGE_DEVICE_LIMIT = 8 // votes per device per minute before we flag + reject
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
@@ -78,6 +80,26 @@ Deno.serve(async (req) => {
     .maybeSingle()
   if (existing) return json({ error: 'you already voted in this window' }, 409)
 
+  // Per-device edge rate limit (§4.7). Only applies when a fingerprint is sent.
+  const { ip, fingerprint } = clientMeta(req)
+  if (fingerprint) {
+    const since = new Date(Date.now() - 60_000).toISOString()
+    const { count } = await svc
+      .from('fan_votes')
+      .select('id', { count: 'exact', head: true })
+      .eq('fingerprint', fingerprint)
+      .gte('created_at', since)
+    if ((count ?? 0) >= EDGE_DEVICE_LIMIT) {
+      await svc.from('vote_flags').insert({
+        context: 'lineup',
+        note: `device ${fingerprint.slice(0, 16)} exceeded vote rate (${count} in 60s)`,
+        vote_count: count,
+        status: 'open',
+      })
+      return json({ error: 'too many votes from this device — try again shortly' }, 429)
+    }
+  }
+
   // Metro weighting: an in-metro vote counts slightly more for city rounds.
   const weight = metro && metro === (body.home_metro as string) ? 1.5 : 1
 
@@ -88,6 +110,8 @@ Deno.serve(async (req) => {
     target_entry_id: targetEntryId,
     metro,
     weight,
+    ip,
+    fingerprint,
   })
   if (error) {
     if (error.code === '23505') return json({ error: 'you already voted in this window' }, 409)
