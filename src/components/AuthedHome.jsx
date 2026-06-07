@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useAuth } from '../auth/AuthProvider.jsx'
+import Discover from './Discover.jsx'
 
 const GOLD = '#F4A93C'
 
@@ -67,6 +68,20 @@ export default function AuthedHome() {
             </p>
           )}
         </section>
+
+        {/* Client perspective: live Discover. Pro/Admin views land in later tickets. */}
+        {perspective === 'client' && (
+          <section>
+            <h2 className="mb-3 text-lg font-semibold">Discover</h2>
+            <Discover />
+          </section>
+        )}
+        {perspective !== 'client' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-white/50">
+            The <strong className="text-white/70">{perspective}</strong> workspace is built in a later
+            Batch 7 ticket. Switch to <strong className="text-white/70">Client</strong> to browse live pros.
+          </section>
+        )}
 
         <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
           <p className="text-xs uppercase tracking-wide text-white/40">Your account</p>
