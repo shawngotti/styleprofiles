@@ -13,6 +13,7 @@ import CutOfTheWeek from './CutOfTheWeek.jsx'
 import ConsentRequests from './ConsentRequests.jsx'
 import NotificationsBell from './NotificationsBell.jsx'
 import AdminConsole from './AdminConsole.jsx'
+import Deals from './Deals.jsx'
 import { useSettings } from '../lib/useSettings.js'
 import { track } from '../lib/analytics.js'
 
@@ -56,11 +57,15 @@ export default function AuthedHome() {
           <NotificationsBell
             lineupOn={lineupOn}
             onNavigate={(screen) => {
+              // Pro-only destinations switch to the pro perspective.
+              if (screen === 'fillchair' || screen === 'dashboard') {
+                setPerspective('pro')
+                return
+              }
               setPerspective('client')
-              const tab = screen === 'dashboard' ? null : screen
-              if (tab && ['discover', 'appointments', 'rewards', 'awards', 'household', 'lineup', 'cotw', 'shop', 'tags'].includes(tab)) {
+              if (['discover', 'deals', 'appointments', 'rewards', 'awards', 'household', 'lineup', 'cotw', 'shop', 'tags'].includes(screen)) {
                 setSelectedPro(null)
-                setClientTab(tab)
+                setClientTab(screen)
               }
             }}
           />
@@ -122,6 +127,7 @@ export default function AuthedHome() {
                 <div className="mb-4 flex gap-2">
                   {[
                     ['discover', 'Discover'],
+                    ['deals', 'Deals'],
                     ['appointments', 'My Appointments'],
                     ['rewards', 'Rewards'],
                     ['awards', 'Awards'],
@@ -152,6 +158,9 @@ export default function AuthedHome() {
                 )}
                 {clientTab === 'rewards' && <Rewards />}
                 {clientTab === 'awards' && <Awards />}
+                {clientTab === 'deals' && (
+                  <Deals onClaimed={() => setClientTab('appointments')} />
+                )}
                 {clientTab === 'tags' && <ConsentRequests />}
                 {clientTab === 'household' && <HouseholdManager />}
                 {clientTab === 'lineup' && lineupOn && (

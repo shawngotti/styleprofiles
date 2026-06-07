@@ -4,6 +4,7 @@ import { useAuth } from '../auth/AuthProvider.jsx'
 import ProMembershipTiers from './ProMembershipTiers.jsx'
 import SubmitAwardEntry from './SubmitAwardEntry.jsx'
 import StorefrontForm from './StorefrontForm.jsx'
+import FillMyChair from './FillMyChair.jsx'
 
 const GOLD = '#F4A93C'
 
@@ -125,6 +126,7 @@ export default function ProDashboard() {
         </section>
       )}
 
+      {pro && <FillMyChair proId={pro.id} />}
       {pro && <SubmitAwardEntry proId={pro.id} category={pro.category} />}
       {pro && <ProMembershipTiers proId={pro.id} />}
     </div>
