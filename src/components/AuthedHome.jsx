@@ -4,6 +4,7 @@ import Discover from './Discover.jsx'
 import ProProfile from './ProProfile.jsx'
 import MyAppointments from './MyAppointments.jsx'
 import HouseholdManager from './HouseholdManager.jsx'
+import ProDashboard from './ProDashboard.jsx'
 
 const GOLD = '#F4A93C'
 
@@ -120,10 +121,10 @@ export default function AuthedHome() {
             )}
           </section>
         )}
-        {perspective !== 'client' && (
+        {perspective === 'pro' && <ProDashboard />}
+        {perspective === 'admin' && (
           <section className="rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-white/50">
-            The <strong className="text-white/70">{perspective}</strong> workspace is built in a later
-            Batch 7 ticket. Switch to <strong className="text-white/70">Client</strong> to browse live pros.
+            The <strong className="text-white/70">admin</strong> console is built in a later batch.
           </section>
         )}
 

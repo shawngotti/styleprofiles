@@ -130,6 +130,8 @@ async function main() {
         price_from: c(p.from),
         latitude: (CITY_COORDS[p.city] || [null, null])[0],
         longitude: (CITY_COORDS[p.city] || [null, null])[1],
+        charges_enabled: true, // demo pros are treated as Stripe-onboarded so they stay bookable
+        payouts_enabled: true,
       })
       .select('id')
       .single()

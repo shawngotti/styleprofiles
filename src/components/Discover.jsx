@@ -36,7 +36,7 @@ export default function Discover({ onOpenPro }) {
         ? await supabase.rpc('pros_near', { _lat: coords.lat, _lng: coords.lng, _radius_mi: radiusMi })
         : await supabase
             .from('pros')
-            .select('id,handle,display_name,category,bio,city,verified,rating_avg,rating_count,price_from')
+            .select('id,handle,display_name,category,bio,city,verified,rating_avg,rating_count,price_from,charges_enabled')
             .order('rating_avg', { ascending: false })
       if (!on) return
       if (res.error) {

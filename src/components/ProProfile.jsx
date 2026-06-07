@@ -57,6 +57,7 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
 
   const mainServices = services.filter((s) => !s.is_addon)
   const addons = services.filter((s) => s.is_addon)
+  const acceptingBookings = pro.charges_enabled !== false // undefined (e.g. near-me rows) treated as open
 
   return (
     <div>
@@ -100,6 +101,12 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
       </div>
       {pro.bio && <p className="mt-3 max-w-xl px-2 text-sm leading-relaxed text-white/60">{pro.bio}</p>}
 
+      {!acceptingBookings && (
+        <div className="mx-2 mt-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-300">
+          This pro is setting up payments and isn't accepting bookings yet.
+        </div>
+      )}
+
       {loading && <p className="mt-6 px-2 text-sm text-white/50">Loading services…</p>}
       {error && <p className="mt-6 px-2 text-sm text-red-400">Could not load: {error}</p>}
 
@@ -120,7 +127,8 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
                   </div>
                   <button
                     onClick={() => setBookingFor(s.id)}
-                    className="shrink-0 rounded-lg px-3 py-1.5 text-sm font-semibold text-black"
+                    disabled={!acceptingBookings}
+                    className="shrink-0 rounded-lg px-3 py-1.5 text-sm font-semibold text-black disabled:opacity-40"
                     style={{ backgroundColor: GOLD }}
                   >
                     Book
