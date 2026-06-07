@@ -63,11 +63,13 @@ async function main() {
   ])
 
   // --- Cycle in 'voting' whose window has closed but whose results window is
-  //     still open -> should land in 'review' and DWELL there (judges score). ---
+  //     still open -> should land in 'review' and DWELL there (judges score).
+  //     ProB has an approved nominee here, so the voting-closed notice fires. ---
   const { data: cVote } = await admin.from('award_cycles').insert({
     period: P_VOTE, status: 'voting',
     opens_at: iso(now - 30 * DAY), closes_at: iso(now - DAY), results_at: iso(now + 3 * DAY),
   }).select('id').single()
+  await admin.from('award_submissions').insert({ cycle_id: cVote.id, category: 'barber', pro_id: proB.id, look_label: 'B-vote', status: 'approved' })
 
   // --- Cycle in 'review' past its results window, with nominees + votes -> complete ---
   const { data: cRev } = await admin.from('award_cycles').insert({
@@ -106,13 +108,16 @@ async function main() {
   check('winner written for completed cycle', !!win)
   check('winner is ProA (more public votes)', win?.pro_id === proA.id, win?.pro_id === proB.id ? 'got ProB' : '')
 
-  // Notifications: ProA got a voting-open notice (approved in submissions cycle)
-  // AND a winner notice (review cycle) = +2. ProB had only a pending submission
-  // and did not win = +0.
+  // Notifications across the run:
+  //  ProA: voting-open (approved in P_SUB) + winner congrats (P_REVIEW)      = 2
+  //  ProB: voting-closed (approved in P_VOTE) + results-in (non-winner P_REV) = 2
   const proANotifAfter = await baseline(proAId)
   const proBNotifAfter = await baseline(proBId)
   check('ProA received 2 award notifications (voting-open + winner)', proANotifAfter - proANotifBefore === 2, `delta ${proANotifAfter - proANotifBefore}`)
-  check('ProB received 0 award notifications (pending sub, no win)', proBNotifAfter - proBNotifBefore === 0, `delta ${proBNotifAfter - proBNotifBefore}`)
+  check('ProB received 2 award notifications (voting-closed + results)', proBNotifAfter - proBNotifBefore === 2, `delta ${proBNotifAfter - proBNotifBefore}`)
+  const proBBodies = (await admin.from('notifications').select('body').eq('recipient_profile_id', proBId).eq('kind', 'awards')).data.map((n) => n.body)
+  check('ProB got a voting-closed notice', proBBodies.some((b) => b.includes('Voting has closed')))
+  check('ProB got a results-in notice', proBBodies.some((b) => b.includes('results are in')))
 
   // --- Idempotency: a second run is a no-op (everything already advanced) ---
   const { data: summary2 } = await admin.rpc('advance_award_cycles')
