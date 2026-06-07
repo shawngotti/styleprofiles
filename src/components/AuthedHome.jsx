@@ -14,6 +14,7 @@ import ConsentRequests from './ConsentRequests.jsx'
 import NotificationsBell from './NotificationsBell.jsx'
 import AdminConsole from './AdminConsole.jsx'
 import Deals from './Deals.jsx'
+import EmailPrefToggle from './EmailPrefToggle.jsx'
 import { useSettings } from '../lib/useSettings.js'
 import { track } from '../lib/analytics.js'
 
@@ -200,6 +201,7 @@ export default function AuthedHome() {
                 )}
               </dd>
             </div>
+            <EmailPrefToggle />
           </dl>
           <p className="mt-4 text-xs text-white/40">
             Viewing as <strong className="text-white/70">{perspective}</strong>. This is the

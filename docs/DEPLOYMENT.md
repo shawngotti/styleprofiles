@@ -23,6 +23,7 @@ prod build at the dev project.
 - `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`
 - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
 - (P5) `EVENTBRITE_API_TOKEN` once the Eventbrite webhook wrapper is wired
+- (email) `RESEND_API_KEY`, `EMAIL_FROM` (e.g. `StyleProfiles <hi@yourdomain>`), `APP_URL`
 
 The repo `.env` (gitignored) holds dev URL + service role + Stripe test keys for
 the local `node scripts/test-*.mjs` harness.
@@ -34,8 +35,14 @@ the local `node scripts/test-*.mjs` harness.
 4. **Stripe webhook:** point a webhook at the `stripe_webhook` function URL;
    subscribe to `payment_intent.succeeded`, `account.updated`,
    `customer.subscription.*`; copy the signing secret to `STRIPE_WEBHOOK_SECRET`.
-5. **Cron:** pg_cron jobs are created by migrations (awards + Cut of the Week).
-   Verify with `award_scheduler_status()` / `select * from cron.job`.
+5. **Cron:** pg_cron jobs are created by migrations (awards, Cut of the Week,
+   chair-promotion expiry). Verify with `award_scheduler_status()` /
+   `select * from cron.job`.
+   - **Email:** set `RESEND_API_KEY` + verify your sending domain in Resend, then
+     schedule `process_email_outbox` (verify_jwt=false) to run every minute — a
+     cron hitting its function URL, or Supabase scheduled functions. It drains
+     `email_outbox` (filled by the notification trigger) with retries; without the
+     key it fails safe. Per-user opt-out is `profiles.email_notifications`.
 6. **Frontend:** set the three `VITE_*` vars in the host, deploy `npm run build`
    output (`dist/`).
 
@@ -59,5 +66,6 @@ init in `main.jsx`, and call `Sentry.captureException` inside `reportError`.
 - [ ] Accessibility: `axe` + screen-reader pass (see `docs/ACCESSIBILITY.md`).
 - [ ] Analytics dashboard reads `analytics_events` (see `docs/ANALYTICS.md`).
 - [ ] Error monitoring wired (Sentry DSN or equivalent).
+- [ ] Email: Resend key + verified domain; `process_email_outbox` scheduled.
 - [ ] Backups/PITR enabled on the prod Supabase project.
 - [ ] Custom domain + TLS; CORS/allowed origins set for Edge Functions.

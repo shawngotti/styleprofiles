@@ -417,3 +417,6 @@ verify_jwt = false
 
 [functions.eventbrite_webhook]
 verify_jwt = false
+
+[functions.process_email_outbox]
+verify_jwt = false
