@@ -72,6 +72,14 @@ const REVIEW_POOL = [
 ]
 const REVIEWERS = ['reviewer1', 'reviewer2', 'reviewer3']
 
+// Membership tiers per pro handle (price in cents/month, member discount %).
+const TIERS = {
+  'dre.thebarber': { name: 'The Chair Club', price: 9900, includes: '2 cuts / month', perks: ['15% off add-ons', 'Priority booking', 'Free line-ups'], member_discount_pct: 15 },
+  'imani.silkpress': { name: 'Silk Circle', price: 15000, includes: '2 styles / month', perks: ['Free deep condition', 'Priority weekends'], member_discount_pct: 10 },
+  'knotbynia': { name: 'Crown Club', price: 18000, includes: '1 install / month', perks: ['Free takedown', '10% off boho styles', 'Priority dates'], member_discount_pct: 10 },
+  'priya.nails': { name: 'Nail Society', price: 12000, includes: '2 fills / month', perks: ['Free nail art', '15% off full sets', 'Birthday set on us'], member_discount_pct: 15 },
+}
+
 const admin = createClient(URL, SERVICE, { auth: { persistSession: false, autoRefreshToken: false } })
 
 async function main() {
@@ -147,6 +155,13 @@ async function main() {
     const { error: serr } = await admin.from('services').insert(rows)
     if (serr) throw new Error(`services ${p.handle}: ${serr.message}`)
     svcCount += rows.length
+
+    // Optional membership tier for this pro.
+    const tier = TIERS[p.handle]
+    if (tier) {
+      const { error: terr } = await admin.from('membership_tiers').insert({ pro_id: proRow.id, ...tier })
+      if (terr) throw new Error(`tier ${p.handle}: ${terr.message}`)
+    }
 
     // Two recent reviews per pro, by two different demo reviewers.
     const reviewRows = [0, 1].map((k) => {

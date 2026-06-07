@@ -76,6 +76,23 @@ Deno.serve(async (req) => {
           .eq('stripe_account_id', acctId)
         break
       }
+      case 'customer.subscription.created':
+      case 'customer.subscription.updated':
+      case 'customer.subscription.deleted': {
+        const subId = obj.id as string
+        const s = obj.status as string
+        const status =
+          s === 'active'
+            ? 'active'
+            : s === 'canceled' || s === 'incomplete_expired' || event.type === 'customer.subscription.deleted'
+              ? 'cancelled'
+              : 'past_due'
+        const update: Record<string, unknown> = { status }
+        if (obj.current_period_end) update.current_period_end = new Date((obj.current_period_end as number) * 1000).toISOString()
+        if (status === 'cancelled') update.cancelled_at = new Date().toISOString()
+        await svc.from('memberships').update(update).eq('stripe_subscription_id', subId)
+        break
+      }
       default:
         // Acknowledge unhandled events so Stripe stops retrying.
         break

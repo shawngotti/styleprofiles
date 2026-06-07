@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import { useAuth } from '../auth/AuthProvider.jsx'
+import ProMembershipTiers from './ProMembershipTiers.jsx'
 
 const GOLD = '#F4A93C'
 
@@ -107,6 +108,8 @@ export default function ProDashboard() {
           {msg && <p className={`mt-3 text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>{msg.text}</p>}
         </section>
       )}
+
+      {pro && <ProMembershipTiers proId={pro.id} />}
     </div>
   )
 }

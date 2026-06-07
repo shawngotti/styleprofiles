@@ -12,13 +12,16 @@ export function json(obj: unknown, status = 200) {
 }
 
 // Minimal Stripe REST client (form-encoded). Throws on non-2xx.
-export async function stripe(path: string, method = 'GET', params?: Record<string, string>) {
+// Pass `account` to act on a connected account (Stripe-Account header).
+export async function stripe(path: string, method = 'GET', params?: Record<string, string>, account?: string) {
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${Deno.env.get('STRIPE_SECRET_KEY')}`,
+    'Content-Type': 'application/x-www-form-urlencoded',
+  }
+  if (account) headers['Stripe-Account'] = account
   const res = await fetch(`https://api.stripe.com/v1/${path}`, {
     method,
-    headers: {
-      Authorization: `Bearer ${Deno.env.get('STRIPE_SECRET_KEY')}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
+    headers,
     body: params ? new URLSearchParams(params).toString() : undefined,
   })
   const data = await res.json()

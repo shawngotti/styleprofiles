@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import { centsToUsd, initials } from '../lib/format.js'
 import BookingFlow from './BookingFlow.jsx'
+import MembershipCard from './MembershipCard.jsx'
 
 const GOLD = '#F4A93C'
 
@@ -106,6 +107,10 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
           This pro is setting up payments and isn't accepting bookings yet.
         </div>
       )}
+
+      <div className="px-2">
+        <MembershipCard pro={pro} />
+      </div>
 
       {loading && <p className="mt-6 px-2 text-sm text-white/50">Loading services…</p>}
       {error && <p className="mt-6 px-2 text-sm text-red-400">Could not load: {error}</p>}
