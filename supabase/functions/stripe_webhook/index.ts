@@ -1,17 +1,27 @@
 // Batch 8 ticket 4 — Stripe webhook handler (authoritative reconciler).
 // Stripe pushes events here; we mirror its truth into the DB. This endpoint is
 // public (verify_jwt = false) and instead authenticates each request by
-// verifying the Stripe-Signature against STRIPE_WEBHOOK_SECRET.
+// verifying the Stripe-Signature.
+//
+// A Connect platform needs events from two sources, so we accept TWO signing
+// secrets (one per Stripe endpoint) and a request passes if it matches either:
+//   STRIPE_WEBHOOK_SECRET          -> your account: payment_intent.succeeded
+//   STRIPE_WEBHOOK_SECRET_CONNECT  -> connected accounts: account.updated,
+//                                     customer.subscription.*
 //
 // Handled events:
 //   payment_intent.succeeded  -> booking 'pending' -> 'confirmed', or order
-//                                'pending' -> 'paid' (+ inventory) by metadata
-//   payment_intent.payment_failed -> (left pending; client can retry)
+//                                'pending' -> 'paid' (+ inventory), or event
+//                                ticket 'pending' -> 'confirmed' (by metadata)
 //   account.updated           -> sync pros.charges_enabled / payouts_enabled
+//   customer.subscription.*   -> mirror membership status
 
 import { serviceClient } from '../_shared/util.ts'
 
-const WEBHOOK_SECRET = Deno.env.get('STRIPE_WEBHOOK_SECRET')!
+const WEBHOOK_SECRETS = [
+  Deno.env.get('STRIPE_WEBHOOK_SECRET'),
+  Deno.env.get('STRIPE_WEBHOOK_SECRET_CONNECT'),
+].filter(Boolean) as string[]
 const encoder = new TextEncoder()
 
 function hex(buf: ArrayBuffer) {
@@ -32,15 +42,19 @@ async function verify(rawBody: string, sigHeader: string | null): Promise<boolea
   const t = parts['t']
   const v1 = parts['v1']
   if (!t || !v1) return false
-  const key = await crypto.subtle.importKey(
-    'raw',
-    encoder.encode(WEBHOOK_SECRET),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign'],
-  )
-  const mac = await crypto.subtle.sign('HMAC', key, encoder.encode(`${t}.${rawBody}`))
-  return safeEqual(hex(mac), v1)
+  // Passes if the signature matches EITHER configured endpoint secret.
+  for (const secret of WEBHOOK_SECRETS) {
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign'],
+    )
+    const mac = await crypto.subtle.sign('HMAC', key, encoder.encode(`${t}.${rawBody}`))
+    if (safeEqual(hex(mac), v1)) return true
+  }
+  return false
 }
 
 Deno.serve(async (req) => {
