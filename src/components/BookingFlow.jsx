@@ -1,52 +1,101 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
+import { useAuth } from '../auth/AuthProvider.jsx'
+import { listMembers } from '../lib/household.js'
 import { centsToUsd } from '../lib/format.js'
 
 const GOLD = '#F4A93C'
-const STEPS = ['Services', 'Date & Time', 'Confirm']
+const YOU = { id: 'you', label: 'You', household_member_id: null }
 
-// Booking flow modal. Faithful subset of the prototype's 6-step flow
-// (People + Upgrade steps arrive with Household CRUD / memberships). Calls the
-// create_booking Edge Function — the server is authoritative for prices and the
-// schedule; the totals shown here are an estimate for the user.
+// Booking flow modal. People step (group booking) appears only when the client
+// has household members. Calls create_booking — server stays authoritative for
+// prices and schedule; totals here are an estimate. Upgrade/membership step
+// arrives with Batch 8.
 export default function BookingFlow({ pro, services, preselectServiceId, onClose, onBooked }) {
+  const { user } = useAuth()
   const main = services.filter((s) => !s.is_addon)
   const addons = services.filter((s) => s.is_addon)
+  const svcById = useMemo(() => Object.fromEntries(services.map((s) => [s.id, s])), [services])
 
-  const [step, setStep] = useState(0)
-  const [selected, setSelected] = useState(() => new Set(preselectServiceId ? [preselectServiceId] : []))
+  const [people, setPeople] = useState([YOU])
+  const [selectedPeople, setSelectedPeople] = useState(() => new Set(['you']))
+  const [svcSel, setSvcSel] = useState(() => ({ you: new Set(preselectServiceId ? [preselectServiceId] : []) }))
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
+  const [step, setStep] = useState(0)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
 
-  const chosen = useMemo(() => services.filter((s) => selected.has(s.id)), [services, selected])
-  const totals = useMemo(
-    () => ({
-      price: chosen.reduce((s, x) => s + x.price, 0),
-      deposit: chosen.reduce((s, x) => s + x.deposit, 0),
-      minutes: chosen.reduce((s, x) => s + x.duration_min, 0),
-    }),
-    [chosen],
-  )
+  useEffect(() => {
+    let on = true
+    listMembers(user.id)
+      .then((ms) => {
+        if (!on) return
+        setPeople([YOU, ...ms.map((m) => ({ id: m.id, label: m.display_name, household_member_id: m.id }))])
+      })
+      .catch(() => {})
+    return () => {
+      on = false
+    }
+  }, [user.id])
 
-  function toggle(id) {
-    setSelected((prev) => {
-      const next = new Set(prev)
-      next.has(id) ? next.delete(id) : next.add(id)
-      return next
+  const hasMembers = people.length > 1
+  const STEPS = hasMembers ? ['People', 'Services', 'Date & Time', 'Confirm'] : ['Services', 'Date & Time', 'Confirm']
+  const stepName = STEPS[step]
+
+  function togglePerson(id) {
+    setSelectedPeople((prev) => {
+      const n = new Set(prev)
+      n.has(id) ? n.delete(id) : n.add(id)
+      return n
+    })
+    setSvcSel((prev) => (prev[id] ? prev : { ...prev, [id]: new Set() }))
+  }
+  function toggleSvc(personId, serviceId) {
+    setSvcSel((prev) => {
+      const set = new Set(prev[personId] || [])
+      set.has(serviceId) ? set.delete(serviceId) : set.add(serviceId)
+      return { ...prev, [personId]: set }
     })
   }
 
-  const canNext = (step === 0 && selected.size > 0) || (step === 1 && date && time) || step === 2
+  const activePeople = people.filter((p) => selectedPeople.has(p.id))
+  const items = activePeople.flatMap((p) =>
+    [...(svcSel[p.id] || [])].map((sid) => ({ service_id: sid, household_member_id: p.household_member_id })),
+  )
+  const totals = items.reduce(
+    (acc, it) => {
+      const s = svcById[it.service_id]
+      if (s) {
+        acc.price += s.price
+        acc.deposit += s.deposit
+        acc.minutes += s.duration_min
+      }
+      return acc
+    },
+    { price: 0, deposit: 0, minutes: 0 },
+  )
+
+  const everyoneHasService = activePeople.every((p) => (svcSel[p.id]?.size || 0) > 0)
+  const canNext =
+    (stepName === 'People' && selectedPeople.size > 0) ||
+    (stepName === 'Services' && everyoneHasService) ||
+    (stepName === 'Date & Time' && date && time) ||
+    stepName === 'Confirm'
 
   async function confirm() {
     setBusy(true)
     setError(null)
     const startIso = new Date(`${date}T${time}`).toISOString()
-    const items = chosen.map((s) => ({ service_id: s.id }))
     const { data, error } = await supabase.functions.invoke('create_booking', {
-      body: { pro_id: pro.id, service_date: date, start_time: startIso, items },
+      body: {
+        pro_id: pro.id,
+        service_date: date,
+        start_time: startIso,
+        items: items.map((it) =>
+          it.household_member_id ? { service_id: it.service_id, household_member_id: it.household_member_id } : { service_id: it.service_id },
+        ),
+      },
     })
     setBusy(false)
     if (error) {
@@ -62,12 +111,14 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4"
+      onClick={onClose}
+    >
       <div
         className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-2xl border border-white/10 bg-[#141417] p-5 sm:rounded-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header / stepper */}
         <div className="mb-4 flex items-center justify-between">
           <div>
             <div className="text-sm text-white/50">Book with</div>
@@ -81,30 +132,52 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
           ))}
         </div>
 
-        {/* Step 0 — Services */}
-        {step === 0 && (
+        {stepName === 'People' && (
           <div>
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/40">Services</h3>
+            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/40">Who's coming?</h3>
             <div className="space-y-2">
-              {main.map((s) => (
-                <ServiceRow key={s.id} s={s} checked={selected.has(s.id)} onToggle={() => toggle(s.id)} />
-              ))}
+              {people.map((p) => {
+                const checked = selectedPeople.has(p.id)
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => togglePerson(p.id)}
+                    className="flex w-full items-center justify-between rounded-xl border p-3 text-left transition"
+                    style={{ borderColor: checked ? GOLD : 'rgba(255,255,255,0.12)', backgroundColor: checked ? 'rgba(244,169,60,0.08)' : 'transparent' }}
+                  >
+                    <span className="text-sm font-medium">{p.label}</span>
+                    <span
+                      className="flex h-5 w-5 items-center justify-center rounded-md border text-xs text-black"
+                      style={{ borderColor: checked ? GOLD : 'rgba(255,255,255,0.3)', backgroundColor: checked ? GOLD : 'transparent' }}
+                    >
+                      {checked ? '✓' : ''}
+                    </span>
+                  </button>
+                )
+              })}
             </div>
-            {addons.length > 0 && (
-              <>
-                <h3 className="mb-2 mt-4 text-sm font-semibold uppercase tracking-wide text-white/40">Add-ons</h3>
-                <div className="space-y-2">
-                  {addons.map((s) => (
-                    <ServiceRow key={s.id} s={s} checked={selected.has(s.id)} onToggle={() => toggle(s.id)} addon />
-                  ))}
-                </div>
-              </>
-            )}
           </div>
         )}
 
-        {/* Step 1 — Date & Time */}
-        {step === 1 && (
+        {stepName === 'Services' && (
+          <div className="space-y-5">
+            {activePeople.map((p) => (
+              <div key={p.id}>
+                {hasMembers && <h3 className="mb-2 text-sm font-semibold text-white/70">{p.label}</h3>}
+                <div className="space-y-2">
+                  {main.map((s) => (
+                    <ServiceRow key={s.id} s={s} checked={svcSel[p.id]?.has(s.id)} onToggle={() => toggleSvc(p.id, s.id)} />
+                  ))}
+                  {addons.map((s) => (
+                    <ServiceRow key={s.id} s={s} checked={svcSel[p.id]?.has(s.id)} onToggle={() => toggleSvc(p.id, s.id)} addon />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {stepName === 'Date & Time' && (
           <div className="space-y-4">
             <label className="block">
               <span className="text-sm text-white/60">Date</span>
@@ -125,23 +198,30 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
               />
             </label>
             <p className="text-xs text-white/40">
-              The pro confirms your slot. Total time: ~{totals.minutes} min. Back-to-back times are computed
-              server-side.
+              The pro confirms your slot. Total time: ~{totals.minutes} min. Back-to-back times are computed server-side.
             </p>
           </div>
         )}
 
-        {/* Step 2 — Confirm */}
-        {step === 2 && (
+        {stepName === 'Confirm' && (
           <div>
             <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/40">Review</h3>
             <div className="rounded-xl border border-white/10 bg-white/5 p-3 text-sm">
-              {chosen.map((s) => (
-                <div key={s.id} className="flex justify-between py-0.5">
-                  <span className="text-white/70">{s.name}</span>
-                  <span>{centsToUsd(s.price)}</span>
-                </div>
-              ))}
+              {activePeople.map((p) => {
+                const ids = [...(svcSel[p.id] || [])]
+                if (!ids.length) return null
+                return (
+                  <div key={p.id} className="mb-1">
+                    {hasMembers && <div className="text-xs font-semibold text-white/50">{p.label}</div>}
+                    {ids.map((sid) => (
+                      <div key={sid} className="flex justify-between py-0.5">
+                        <span className="text-white/70">{svcById[sid]?.name}</span>
+                        <span>{centsToUsd(svcById[sid]?.price)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )
+              })}
               <div className="mt-2 flex justify-between border-t border-white/10 pt-2 text-white/60">
                 <span>{new Date(`${date}T${time}`).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</span>
                 <span>{totals.minutes} min</span>
@@ -156,21 +236,20 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
               </div>
             </div>
             <p className="mt-3 text-xs text-white/40">
-              One combined deposit secures your slot and applies to your total. Cancellations within 24h forfeit
-              the deposit. Card payment is added in Batch 8 — for now this creates a pending booking.
+              One combined deposit secures every slot and applies to your total. Cancellations within 24h forfeit the
+              deposit. Card payment is added in Batch 8 — for now this creates a pending booking.
             </p>
             {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
           </div>
         )}
 
-        {/* Footer */}
         <div className="mt-5 flex gap-2">
           {step > 0 && (
             <button onClick={() => setStep(step - 1)} className="rounded-lg border border-white/15 px-4 py-2.5 text-sm hover:bg-white/10">
               Back
             </button>
           )}
-          {step < 2 && (
+          {step < STEPS.length - 1 && (
             <button
               disabled={!canNext}
               onClick={() => setStep(step + 1)}
@@ -180,7 +259,7 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
               Continue
             </button>
           )}
-          {step === 2 && (
+          {step === STEPS.length - 1 && (
             <button
               disabled={busy}
               onClick={confirm}
@@ -210,7 +289,10 @@ function ServiceRow({ s, checked, onToggle, addon }) {
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-sm">{addon ? '+' : ''}{centsToUsd(s.price)}</span>
+        <span className="text-sm">
+          {addon ? '+' : ''}
+          {centsToUsd(s.price)}
+        </span>
         <span
           className="flex h-5 w-5 items-center justify-center rounded-md border text-xs text-black"
           style={{ borderColor: checked ? GOLD : 'rgba(255,255,255,0.3)', backgroundColor: checked ? GOLD : 'transparent' }}

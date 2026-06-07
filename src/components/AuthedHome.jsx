@@ -3,6 +3,7 @@ import { useAuth } from '../auth/AuthProvider.jsx'
 import Discover from './Discover.jsx'
 import ProProfile from './ProProfile.jsx'
 import MyAppointments from './MyAppointments.jsx'
+import HouseholdManager from './HouseholdManager.jsx'
 
 const GOLD = '#F4A93C'
 
@@ -92,6 +93,7 @@ export default function AuthedHome() {
                   {[
                     ['discover', 'Discover'],
                     ['appointments', 'My Appointments'],
+                    ['household', 'Household'],
                   ].map(([key, label]) => (
                     <button
                       key={key}
@@ -107,11 +109,13 @@ export default function AuthedHome() {
                     </button>
                   ))}
                 </div>
-                {clientTab === 'discover' ? (
+                {clientTab === 'discover' && (
                   <Discover onOpenPro={(pro, color) => setSelectedPro({ pro, color })} />
-                ) : (
+                )}
+                {clientTab === 'appointments' && (
                   <MyAppointments onRebook={(pro) => setSelectedPro({ pro, color: GOLD })} />
                 )}
+                {clientTab === 'household' && <HouseholdManager />}
               </>
             )}
           </section>
