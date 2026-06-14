@@ -203,10 +203,6 @@ export default function AuthedHome() {
             </div>
             <EmailPrefToggle />
           </dl>
-          <p className="mt-4 text-xs text-white/55">
-            Viewing as <strong className="text-white/70">{perspective}</strong>. This is the
-            auth foundation (Batch 6); the prototype screens migrate on top of it next.
-          </p>
         </section>
       </main>
     </div>
