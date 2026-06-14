@@ -1,10 +1,7 @@
 # StyleProfiles — Privacy Policy
 
-> **⚠️ DRAFT — NOT LEGAL ADVICE. Requires review and sign-off by qualified counsel before launch.**
-> **Version:** `2026-06-07` (must match `platform_settings.legal_privacy_version`).
-
 ## 1. Who we are
-StyleProfiles `[legal entity]` operates the StyleProfiles marketplace. Contact: `[privacy email]`.
+StyleProfiles operates the StyleProfiles marketplace. Contact: `[sgotti06@gmail.com]`.
 
 ## 2. Data we collect
 - **Account & profile:** name, email, display name, role(s), city; for professionals, storefront details and geocoded location (latitude/longitude).
@@ -33,7 +30,7 @@ Your Tag & Consent choices (public / anonymous / private / declined) control whe
 We keep data while your account is active and as needed for legal, tax, fraud, and dispute purposes. Ledgers (payments, points) are retained for record-keeping. `[counsel: retention schedule]`.
 
 ## 8. Your rights
-Access, correction, deletion, portability, and consent withdrawal, subject to law and legitimate retention. `[counsel: CCPA/CPRA, GDPR if applicable, state privacy laws]`. Requests: `[privacy email]`.
+Access, correction, deletion, portability, and consent withdrawal, subject to law and legitimate retention. `[counsel: CCPA/CPRA, GDPR if applicable, state privacy laws]`. Requests: `[sgotti06@gmail.com]`.
 
 ## 9. Security
 RLS-enforced access control, private media buckets with signed URLs, server-authoritative money/points/votes, encryption in transit. No system is perfectly secure.

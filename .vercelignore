@@ -1,0 +1,10 @@
+# Never upload local env/secrets or backend-only code to the Vercel build.
+.env
+.env.*
+!.env.example
+supabase
+scripts
+docs
+.claude
+dist
+node_modules

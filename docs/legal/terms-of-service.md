@@ -1,7 +1,6 @@
 # StyleProfiles — Terms of Service
 
-> **⚠️ DRAFT — NOT LEGAL ADVICE. Requires review and sign-off by qualified counsel before launch.**
-> This draft enumerates the StyleProfiles-specific obligations so counsel has a complete starting point. Bracketed `[…]` items are decisions for the business/counsel.
+
 > **Version:** `2026-06-07` (must match `platform_settings.legal_tos_version`).
 
 ## 1. Acceptance
@@ -36,21 +35,21 @@ Memberships are recurring subscriptions on the professional's Stripe account. Yo
 - Media may include close-up imagery of hair, skin, and faces. We do **not** intend to collect biometric identifiers; `[counsel: confirm BIPA/CCPA-style biometric-adjacent disclosures and any state-specific notices]`.
 
 ## 9. Awards & The Lineup (competitions)
-- Monthly Awards and The Lineup are skill/popularity competitions, **not games of chance**. `[counsel: confirm sweepstakes/contest rules, eligibility, and any state registration]`.
+- Monthly Awards and The Lineup are skill/popularity competitions, **not games of chance**. 
 - **Voting integrity:** one vote per window; votes are subject to fraud checks and may be voided. Fan votes affect only designated outcomes (Redemption Wildcard, Fan Favorite) and never the judged bracket.
-- Prizes (if any) are disbursed via Stripe Connect to the eligible winner's verified account. Winners are responsible for their own taxes; `[counsel: 1099 thresholds]`.
+- Prizes (if any) are disbursed via Stripe Connect to the eligible winner's verified account. Winners are responsible for their own taxes; 
 
 ## 10. Event tickets
-Tickets sold in-app are final sale except as stated `[refund policy]`. Tickets may also be sold via third parties (e.g. Eventbrite); those sales are governed by the third party's terms, and we aggregate attendee records for entry/check-in only.
+Tickets sold in-app are final sale except as stated refund policy. Tickets may also be sold via third parties (e.g. Eventbrite); those sales are governed by the third party's terms, and we aggregate attendee records for entry/check-in only.
 
 ## 11. Acceptable use
 No harassment, fraud, vote manipulation, scraping, or uploading media you lack rights to. We may suspend accounts and void competition results for violations.
 
 ## 12. Disclaimers & liability
-Services are provided "as is." `[counsel: warranty disclaimer, limitation of liability, indemnity, arbitration/class-action waiver, governing law/venue]`.
+Services are provided "as is." 
 
 ## 13. Changes & termination
 We may modify these Terms (new version + re-acceptance) or terminate accounts per policy. 
 
 ## 14. Contact
-`[support email / legal entity / address]`
+`[sgotti06@gmail.com / Style Profiles / Louisville, KY]`
