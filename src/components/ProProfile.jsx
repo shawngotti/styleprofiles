@@ -18,7 +18,7 @@ function Stars({ value = 0 }) {
 
 // Pro Profile: a storefront detail view. Loads the pro's services (real +
 // add-ons) and recent reviews live from Supabase. Booking arrives next ticket.
-export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
+export default function ProProfile({ pro, catColor = GOLD, logSource, onBack, onBooked }) {
   const [services, setServices] = useState([])
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
@@ -38,7 +38,7 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
           .order('sort'),
         supabase
           .from('reviews')
-          .select('id,rating,body,tags,verified,created_at')
+          .select('id,rating,body,tags,verified,created_at,photo_urls,review_responses(body,created_at)')
           .eq('pro_id', pro.id)
           .order('created_at', { ascending: false }),
       ])
@@ -65,6 +65,13 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
       on = false
     }
   }, [pro.id])
+
+  // Log a storefront visit for the pro's analytics. Server-side the RPC
+  // throttles repeats and excludes the owner; we skip admin-browse / self-preview.
+  useEffect(() => {
+    if (!pro?.id || !logSource || logSource === 'admin' || logSource === 'preview') return
+    supabase.rpc('log_profile_view', { _pro_id: pro.id, _source: logSource }).then(() => {})
+  }, [pro?.id, logSource])
 
   const mainServices = services.filter((s) => !s.is_addon)
   const addons = services.filter((s) => s.is_addon)
@@ -210,6 +217,13 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
                       <Stars value={r.rating} />
                     </div>
                     {r.body && <p className="mt-1.5 text-sm text-black/70">{r.body}</p>}
+                    {r.photo_urls?.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {r.photo_urls.map((u, i) => (
+                          <img key={i} src={u} alt="" loading="lazy" className="h-16 w-16 rounded-lg object-cover" />
+                        ))}
+                      </div>
+                    )}
                     {r.tags?.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         {r.tags.map((t) => (
@@ -217,6 +231,14 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
                             {t}
                           </span>
                         ))}
+                      </div>
+                    )}
+                    {r.review_responses?.length > 0 && (
+                      <div className="mt-3 rounded-xl border-l-2 bg-black/[0.03] px-3 py-2" style={{ borderColor: GOLD }}>
+                        <div className="text-xs font-semibold" style={{ color: GOLD }}>
+                          Response from {pro.display_name}
+                        </div>
+                        <p className="mt-0.5 text-sm text-black/70">{r.review_responses[0].body}</p>
                       </div>
                     )}
                   </div>

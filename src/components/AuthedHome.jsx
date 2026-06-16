@@ -15,6 +15,7 @@ import NotificationsBell from './NotificationsBell.jsx'
 import AdminConsole from './AdminConsole.jsx'
 import Deals from './Deals.jsx'
 import EmailPrefToggle from './EmailPrefToggle.jsx'
+import ProfileViewsToggle from './ProfileViewsToggle.jsx'
 import LandingPage from './LandingPage.jsx'
 import { useSettings } from '../lib/useSettings.js'
 import { track } from '../lib/analytics.js'
@@ -41,6 +42,8 @@ export default function AuthedHome() {
   const [selectedPro, setSelectedPro] = useState(null) // { pro, color }
   const [clientTab, setClientTab] = useState('discover') // 'discover' | 'appointments'
   const [previewLanding, setPreviewLanding] = useState(false)
+  const [previewPro, setPreviewPro] = useState(null) // a pro previewing their own public profile
+  const [adminView, setAdminView] = useState('console') // 'console' | 'browse'
 
   // Preview the public marketing landing without signing out.
   if (previewLanding) {
@@ -58,11 +61,33 @@ export default function AuthedHome() {
     )
   }
 
+  // A pro previewing their own public storefront (exactly what a client sees),
+  // without leaving the dashboard.
+  if (previewPro) {
+    return (
+      <div className="min-h-screen p-6">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-4 flex items-center justify-between rounded-xl border border-black/10 bg-black/5 px-4 py-2 text-sm">
+            <span className="text-black/60">👁 Previewing your public profile</span>
+            <button
+              onClick={() => setPreviewPro(null)}
+              className="rounded-lg px-3 py-1.5 font-semibold text-black"
+              style={{ backgroundColor: GOLD }}
+            >
+              ← Back to dashboard
+            </button>
+          </div>
+          <ProProfile pro={previewPro} onBack={() => setPreviewPro(null)} />
+        </div>
+      </div>
+    )
+  }
+
   // Central place a pro storefront opens — instrument the conversion funnel
   // (e.g. contestant profile -> book) from one spot.
   const openPro = (pro, color, source) => {
     track('pro_profile_open', { pro_id: pro?.id, source })
-    setSelectedPro({ pro, color })
+    setSelectedPro({ pro, color, source })
   }
 
   return (
@@ -128,13 +153,30 @@ export default function AuthedHome() {
           )}
         </section>
 
-        {/* Client perspective: Discover + My Appointments. */}
-        {perspective === 'client' && (
+        {/* Admin can browse the live client experience without leaving admin. */}
+        {perspective === 'admin' && (
+          <div className="inline-flex rounded-full border border-black/10 p-0.5">
+            {[['console', 'Console'], ['browse', 'Browse site']].map(([k, label]) => (
+              <button
+                key={k}
+                onClick={() => setAdminView(k)}
+                className="rounded-full px-4 py-1.5 text-sm font-medium transition"
+                style={adminView === k ? { backgroundColor: GOLD, color: '#000' } : { color: '#1f1714' }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Client experience (also shown to admins in Browse mode). */}
+        {(perspective === 'client' || (perspective === 'admin' && adminView === 'browse')) && (
           <section>
             {selectedPro ? (
               <ProProfile
                 pro={selectedPro.pro}
                 catColor={selectedPro.color}
+                logSource={selectedPro.source}
                 onBack={() => setSelectedPro(null)}
                 onBooked={() => {
                   setSelectedPro(null)
@@ -191,8 +233,16 @@ export default function AuthedHome() {
             )}
           </section>
         )}
-        {perspective === 'pro' && <ProDashboard />}
-        {perspective === 'admin' && <AdminConsole />}
+        {perspective === 'pro' && <ProDashboard onPreviewProfile={setPreviewPro} />}
+        {perspective === 'admin' && adminView === 'console' && (
+          <AdminConsole
+            onOpenPro={(pro, color) => {
+              setAdminView('browse')
+              setClientTab('discover')
+              openPro(pro, color, 'admin')
+            }}
+          />
+        )}
 
         <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
           <p className="text-xs uppercase tracking-wide text-black/55">Your account</p>
@@ -220,6 +270,7 @@ export default function AuthedHome() {
               </dd>
             </div>
             <EmailPrefToggle />
+            <ProfileViewsToggle />
           </dl>
           <button onClick={() => setPreviewLanding(true)} className="mt-4 text-sm underline" style={{ color: GOLD }}>
             Preview the landing page →

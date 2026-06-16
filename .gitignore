@@ -21,3 +21,7 @@ supabase/.branches/
 .vscode/
 .idea/
 .vercel
+
+# Capacitor native projects (generated locally with `npx cap add`)
+/ios
+/android

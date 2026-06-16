@@ -128,7 +128,13 @@ export default function MyAppointments({ onRebook }) {
               (reviewed.has(b.id) ? (
                 <span className="self-center text-xs" style={{ color: '#34D399' }}>✓ Reviewed</span>
               ) : (
-                <ReviewForm booking={b} onDone={load} />
+                <ReviewForm
+                  booking={b}
+                  onDone={(text) => {
+                    if (text) setMsg({ type: 'ok', text })
+                    load()
+                  }}
+                />
               ))}
           </BookingCard>
         ))}
@@ -183,13 +189,20 @@ function BookingCard({ b, children }) {
   )
 }
 
-// Inline review for a completed booking. `verified` is set server-side (the
-// trigger checks the booking is the author's own completed visit); the pro's
-// rating cache is recomputed by trigger too.
+const REVIEW_TAGS = ['On time', 'Great vibe', 'Clean space', 'Skilled', 'Friendly', 'Would return']
+
+// Inline review for a completed booking. Posts through the submit_review Edge
+// Function, which verifies the visit, screens the text + photos (OpenAI
+// moderation), and publishes or queues per the platform's moderation mode.
+// `verified` and the pro's rating cache are still maintained by DB triggers.
 function ReviewForm({ booking, onDone }) {
+  const { user } = useAuth()
   const [open, setOpen] = useState(false)
   const [rating, setRating] = useState(5)
   const [body, setBody] = useState('')
+  const [tags, setTags] = useState([])
+  const [photos, setPhotos] = useState([]) // public URLs
+  const [uploading, setUploading] = useState(false)
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState(null)
 
@@ -204,22 +217,60 @@ function ReviewForm({ booking, onDone }) {
     )
   }
 
+  function toggleTag(t) {
+    setTags((s) => (s.includes(t) ? s.filter((x) => x !== t) : [...s, t]))
+  }
+
+  async function onPickPhotos(e) {
+    const files = [...(e.target.files || [])]
+    if (!files.length) return
+    setUploading(true)
+    setErr(null)
+    try {
+      const urls = []
+      for (const f of files.slice(0, 6 - photos.length)) {
+        const ext = (f.name.split('.').pop() || 'jpg').toLowerCase()
+        const path = `${user.id}/review-${booking.id}-${Date.now()}-${urls.length}.${ext}`
+        const { error } = await supabase.storage.from('review-media').upload(path, f, {
+          upsert: true,
+          contentType: f.type || undefined,
+        })
+        if (error) throw new Error(error.message)
+        urls.push(supabase.storage.from('review-media').getPublicUrl(path).data.publicUrl)
+      }
+      setPhotos((s) => [...s, ...urls].slice(0, 6))
+    } catch (e2) {
+      setErr(`Upload failed: ${e2.message}`)
+    } finally {
+      setUploading(false)
+      e.target.value = ''
+    }
+  }
+
   async function submit() {
     setBusy(true)
     setErr(null)
-    const { error } = await supabase.from('reviews').insert({
-      pro_id: booking.pro.id,
-      author_profile_id: booking.client_profile_id ?? undefined,
-      booking_id: booking.id,
-      rating,
-      body: body.trim() || null,
+    const { data, error } = await supabase.functions.invoke('submit_review', {
+      body: {
+        pro_id: booking.pro.id,
+        booking_id: booking.id,
+        rating,
+        body: body.trim() || null,
+        tags,
+        photo_urls: photos,
+      },
     })
     setBusy(false)
-    if (error) {
-      setErr(error.message)
+    if (error || !data?.ok) {
+      let text = 'Could not post review'
+      try {
+        const j = await error.context.json()
+        if (j?.error) text = j.error
+      } catch { /* keep generic */ }
+      setErr(data?.error || text)
       return
     }
-    onDone()
+    onDone(data.message)
   }
 
   return (
@@ -240,6 +291,26 @@ function ReviewForm({ booking, onDone }) {
           </button>
         ))}
       </div>
+
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        {REVIEW_TAGS.map((t) => {
+          const on = tags.includes(t)
+          return (
+            <button
+              key={t}
+              type="button"
+              onClick={() => toggleTag(t)}
+              className="rounded-full border px-2.5 py-1 text-xs transition"
+              style={on
+                ? { backgroundColor: GOLD, color: '#000', borderColor: GOLD }
+                : { backgroundColor: 'rgba(0,0,0,0.04)', color: '#1f1714', borderColor: 'rgba(0,0,0,0.10)' }}
+            >
+              {t}
+            </button>
+          )
+        })}
+      </div>
+
       <textarea
         value={body}
         onChange={(e) => setBody(e.target.value)}
@@ -247,11 +318,36 @@ function ReviewForm({ booking, onDone }) {
         rows={2}
         className="mt-2 w-full rounded-lg border border-black/10 bg-black/5 px-3 py-2 text-sm outline-none focus:border-black/30"
       />
+
+      {/* Photos */}
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        {photos.map((u, i) => (
+          <div key={i} className="relative">
+            <img src={u} alt="" className="h-14 w-14 rounded-lg object-cover" />
+            <button
+              type="button"
+              aria-label="Remove photo"
+              onClick={() => setPhotos((s) => s.filter((_, j) => j !== i))}
+              className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-xs text-white"
+            >
+              ×
+            </button>
+          </div>
+        ))}
+        {photos.length < 6 && (
+          <label className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-lg border border-dashed border-black/20 text-lg text-black/40">
+            {uploading ? '…' : '＋'}
+            <input type="file" accept="image/*" multiple className="hidden" onChange={onPickPhotos} />
+          </label>
+        )}
+        <span className="text-xs text-black/40">Add photos (optional)</span>
+      </div>
+
       {err && <p className="mt-1 text-sm text-red-600" role="alert">{err}</p>}
       <div className="mt-2 flex gap-2">
         <button
           onClick={submit}
-          disabled={busy}
+          disabled={busy || uploading}
           className="rounded-lg px-3 py-1.5 text-sm font-semibold text-black disabled:opacity-60"
           style={{ backgroundColor: GOLD }}
         >

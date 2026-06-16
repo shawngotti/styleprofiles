@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabaseClient.js'
 import { useAuth } from '../auth/AuthProvider.jsx'
 
 const GOLD = '#F4A93C'
-const ICON = { awards: '🏆', lineup: '🎬', booking: '📅', points: '✨', review: '⭐', chair: '📣', tag: '🏷' }
+const ICON = { awards: '🏆', lineup: '🎬', booking: '📅', points: '✨', review: '⭐', review_reply: '💬', chair: '📣', tag: '🏷' }
 
 // Notification inbox in the header. Reads the user's notifications (RLS: self
 // only), shows an unread badge, marks read on open/click. Feature-gated rows

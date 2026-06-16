@@ -3,7 +3,10 @@ import { supabase } from '../lib/supabaseClient.js'
 
 const GOLD = '#F4A93C'
 const TABS = [
+  ['directory', 'Directory'],
+  ['analytics', 'Analytics'],
   ['reports', 'Reports'],
+  ['reviews', 'Reviews'],
   ['integrity', 'Vote Integrity'],
   ['attendees', 'Attendees'],
   ['demo', 'Demo'],
@@ -13,8 +16,8 @@ const TABS = [
 // Admin moderation console. RLS already restricts every table here to admins;
 // this is the UI over it. Reports queue, the §4.7 Vote Integrity tab (flags +
 // anomaly scan), and the feature-flag switches that gate marketplace / lineup.
-export default function AdminConsole() {
-  const [tab, setTab] = useState('reports')
+export default function AdminConsole({ onOpenPro }) {
+  const [tab, setTab] = useState('directory')
   return (
     <div className="space-y-5">
       <h2 className="text-lg font-semibold">Admin console</h2>
@@ -32,11 +35,273 @@ export default function AdminConsole() {
           </button>
         ))}
       </div>
+      {tab === 'directory' && <Directory onOpenPro={onOpenPro} />}
+      {tab === 'analytics' && <Analytics onOpenPro={onOpenPro} />}
       {tab === 'reports' && <Reports />}
+      {tab === 'reviews' && <ReviewsModeration />}
       {tab === 'integrity' && <Integrity />}
       {tab === 'attendees' && <ImportAttendees />}
       {tab === 'demo' && <Demo />}
       {tab === 'flags' && <Flags />}
+    </div>
+  )
+}
+
+// Directory: admin browse of every pro and client, with a detail panel
+// (roles, bookings, reviews, points). Reads ride on the is_admin() RLS policies.
+function Directory({ onOpenPro }) {
+  const [kind, setKind] = useState('pros') // 'pros' | 'clients'
+  const [pros, setPros] = useState([])
+  const [clients, setClients] = useState([])
+  const [q, setQ] = useState('')
+  const [sel, setSel] = useState(null) // { type, row, detail }
+
+  useEffect(() => {
+    supabase
+      .from('pros')
+      .select('id,handle,display_name,category,city,verified,charges_enabled,rating_avg,rating_count,avatar_url,cover_url,gallery_urls,bio,price_from,is_demo')
+      .order('rating_avg', { ascending: false })
+      .limit(500)
+      .then(({ data }) => setPros(data || []))
+    supabase
+      .from('profiles')
+      .select('id,display_name,email,city,style_points,loyalty_tier,created_at,user_roles(role)')
+      .order('created_at', { ascending: false })
+      .limit(500)
+      .then(({ data }) => setClients(data || []))
+  }, [])
+
+  async function openPro(p) {
+    const [{ count: bookings }, { count: reviews }, { count: services }] = await Promise.all([
+      supabase.from('bookings').select('id', { count: 'exact', head: true }).eq('pro_id', p.id),
+      supabase.from('reviews').select('id', { count: 'exact', head: true }).eq('pro_id', p.id),
+      supabase.from('services').select('id', { count: 'exact', head: true }).eq('pro_id', p.id).eq('active', true),
+    ])
+    setSel({ type: 'pro', row: p, detail: { bookings, reviews, services } })
+  }
+  async function openClient(c) {
+    const [{ count: bookings }, { count: reviews }] = await Promise.all([
+      supabase.from('bookings').select('id', { count: 'exact', head: true }).eq('client_profile_id', c.id),
+      supabase.from('reviews').select('id', { count: 'exact', head: true }).eq('author_profile_id', c.id),
+    ])
+    setSel({ type: 'client', row: c, detail: { bookings, reviews } })
+  }
+
+  const ql = q.trim().toLowerCase()
+  const proRows = pros.filter((p) => !ql || `${p.handle} ${p.display_name} ${p.category} ${p.city}`.toLowerCase().includes(ql))
+  const clientRows = clients.filter((c) => !ql || `${c.display_name || ''} ${c.email || ''} ${c.city || ''}`.toLowerCase().includes(ql))
+
+  // Detail panel
+  if (sel) {
+    const r = sel.row
+    return (
+      <div className="space-y-4">
+        <button onClick={() => setSel(null)} className="text-sm text-black/55 underline">← Back to directory</button>
+        {sel.type === 'pro' ? (
+          <div className="rounded-2xl border border-black/10 bg-black/5 p-5">
+            <div className="flex items-center gap-3">
+              {r.avatar_url
+                ? <img src={r.avatar_url} alt="" className="h-14 w-14 rounded-full object-cover" />
+                : <div className="flex h-14 w-14 items-center justify-center rounded-full text-lg font-semibold text-black" style={{ backgroundColor: GOLD }}>{(r.display_name || '?')[0]}</div>}
+              <div>
+                <div className="flex items-center gap-2 text-lg font-semibold">{r.display_name}{r.verified && <span style={{ color: GOLD }}>✓</span>}{r.is_demo && <span className="rounded-full bg-black/10 px-2 py-0.5 text-xs text-black/50">demo</span>}</div>
+                <div className="text-sm text-black/50">@{r.handle} · {r.category}{r.city ? ` · ${r.city}` : ''}</div>
+              </div>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <Stat label="Rating" value={`${r.rating_avg ?? 0} (${r.rating_count})`} />
+              <Stat label="Services" value={sel.detail.services ?? 0} />
+              <Stat label="Bookings" value={sel.detail.bookings ?? 0} />
+              <Stat label="Reviews" value={sel.detail.reviews ?? 0} />
+            </div>
+            <div className="mt-3 text-sm">
+              <span className="rounded-full px-2.5 py-0.5 text-xs font-medium" style={{ backgroundColor: 'rgba(0,0,0,0.06)', color: r.charges_enabled ? '#34D399' : GOLD }}>
+                {r.charges_enabled ? 'Accepting bookings' : 'Payouts not set up'}
+              </span>
+            </div>
+            {r.bio && <p className="mt-3 text-sm text-black/60">{r.bio}</p>}
+            <button onClick={() => onOpenPro?.(r, GOLD)} className="mt-4 rounded-lg px-4 py-2 text-sm font-semibold text-black" style={{ backgroundColor: GOLD }}>
+              View public profile →
+            </button>
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-black/10 bg-black/5 p-5">
+            <div className="text-lg font-semibold">{r.display_name || 'Client'}</div>
+            <div className="text-sm text-black/50">{r.email}</div>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {(r.user_roles || []).map((x, i) => (
+                <span key={i} className="rounded-full bg-black/10 px-2 py-0.5 text-xs">{x.role}</span>
+              ))}
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <Stat label="StylePoints" value={r.style_points ?? 0} />
+              <Stat label="Tier" value={r.loyalty_tier || 'Bronze'} />
+              <Stat label="Bookings" value={sel.detail.bookings ?? 0} />
+              <Stat label="Reviews" value={sel.detail.reviews ?? 0} />
+            </div>
+            {r.city && <div className="mt-3 text-sm text-black/50">📍 {r.city}</div>}
+            <div className="mt-1 text-xs text-black/40">Joined {new Date(r.created_at).toLocaleDateString()}</div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="inline-flex rounded-full border border-black/10 p-0.5">
+          {[['pros', `Pros (${pros.length})`], ['clients', `Clients (${clients.length})`]].map(([k, label]) => (
+            <button key={k} onClick={() => setKind(k)} className="rounded-full px-4 py-1.5 text-sm font-medium transition"
+              style={kind === k ? { backgroundColor: GOLD, color: '#000' } : { color: '#1f1714' }}>
+              {label}
+            </button>
+          ))}
+        </div>
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search…" className="flex-1 rounded-lg border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-black/40" />
+      </div>
+
+      {kind === 'pros' ? (
+        <div className="space-y-2">
+          {proRows.map((p) => (
+            <button key={p.id} onClick={() => openPro(p)} className="flex w-full items-center justify-between gap-3 rounded-xl border border-black/10 bg-black/5 p-3 text-left hover:bg-black/[0.07]">
+              <div className="flex items-center gap-3">
+                {p.avatar_url
+                  ? <img src={p.avatar_url} alt="" className="h-9 w-9 rounded-full object-cover" />
+                  : <div className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold text-black" style={{ backgroundColor: GOLD }}>{(p.display_name || '?')[0]}</div>}
+                <div>
+                  <div className="text-sm font-medium">{p.display_name} {p.is_demo && <span className="text-xs text-black/40">· demo</span>}</div>
+                  <div className="text-xs text-black/50">@{p.handle} · {p.category}</div>
+                </div>
+              </div>
+              <div className="shrink-0 text-right text-xs text-black/50">
+                <div style={{ color: GOLD }}>★ {p.rating_avg ?? 0}</div>
+                <div>{p.charges_enabled ? 'live' : 'setup'}</div>
+              </div>
+            </button>
+          ))}
+          {proRows.length === 0 && <p className="text-sm text-black/55">No pros match.</p>}
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {clientRows.map((c) => (
+            <button key={c.id} onClick={() => openClient(c)} className="flex w-full items-center justify-between gap-3 rounded-xl border border-black/10 bg-black/5 p-3 text-left hover:bg-black/[0.07]">
+              <div>
+                <div className="text-sm font-medium">{c.display_name || c.email || 'Client'}</div>
+                <div className="text-xs text-black/50">{c.email}</div>
+              </div>
+              <div className="flex shrink-0 gap-1">
+                {(c.user_roles || []).map((x, i) => (
+                  <span key={i} className="rounded-full bg-black/10 px-2 py-0.5 text-xs text-black/55">{x.role}</span>
+                ))}
+              </div>
+            </button>
+          ))}
+          {clientRows.length === 0 && <p className="text-sm text-black/55">No clients match.</p>}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Analytics: per-pro popularity board (views, unique, conversions) + a
+// completeness column so you can spot who needs help building their profile.
+function Analytics({ onOpenPro }) {
+  const [days, setDays] = useState(30)
+  const [rows, setRows] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [err, setErr] = useState(null)
+
+  useEffect(() => {
+    setLoading(true)
+    supabase.rpc('admin_pro_analytics', { _days: days }).then(({ data, error }) => {
+      if (error) setErr(error.message)
+      setRows(data || [])
+      setLoading(false)
+    })
+  }, [days])
+
+  const totalViews = rows.reduce((s, r) => s + Number(r.views), 0)
+  const totalConv = rows.reduce((s, r) => s + Number(r.conversions), 0)
+  // "Needs help" = live but getting little traction or an unfinished profile.
+  const needsHelp = rows.filter((r) => r.completeness < 60 || (Number(r.views) === 0 && r.charges_enabled))
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm text-black/60">Most-visited pros and who converts. Low completeness = a marketing/onboarding nudge.</p>
+        <div className="inline-flex rounded-full border border-black/10 p-0.5 text-sm">
+          {[7, 30, 90].map((d) => (
+            <button key={d} onClick={() => setDays(d)} className="rounded-full px-3 py-1 font-medium transition"
+              style={days === d ? { backgroundColor: GOLD, color: '#000' } : { color: '#1f1714' }}>
+              {d}d
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {err && <p className="text-sm text-red-600">{err}</p>}
+      {loading ? (
+        <p className="text-sm text-black/50">Loading…</p>
+      ) : (
+        <>
+          <div className="grid grid-cols-3 gap-3">
+            <Stat label={`Views (${days}d)`} value={totalViews} />
+            <Stat label="Conversions" value={totalConv} />
+            <Stat label="Needs help" value={needsHelp.length} />
+          </div>
+
+          <div className="overflow-hidden rounded-2xl border border-black/10">
+            <table className="w-full text-sm">
+              <thead className="bg-black/5 text-left text-xs uppercase tracking-wide text-black/45">
+                <tr>
+                  <th className="p-3">Pro</th>
+                  <th className="p-3 text-right">Views</th>
+                  <th className="p-3 text-right">Unique</th>
+                  <th className="p-3 text-right">Booked</th>
+                  <th className="p-3 text-right">Profile</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => {
+                  const conv = Number(r.unique_viewers) ? Math.round((Number(r.conversions) / Number(r.unique_viewers)) * 100) : 0
+                  const weak = r.completeness < 60
+                  return (
+                    <tr key={r.pro_id} className="border-t border-black/5 hover:bg-black/[0.03]">
+                      <td className="p-3">
+                        <button onClick={() => onOpenPro?.({ id: r.pro_id, handle: r.handle, display_name: r.display_name }, GOLD)} className="text-left">
+                          <div className="font-medium">{r.display_name} {r.is_demo && <span className="text-xs text-black/40">· demo</span>}</div>
+                          <div className="text-xs text-black/45">@{r.handle}{!r.charges_enabled && ' · no payouts'}</div>
+                        </button>
+                      </td>
+                      <td className="p-3 text-right font-medium">{r.views}</td>
+                      <td className="p-3 text-right text-black/60">{r.unique_viewers}</td>
+                      <td className="p-3 text-right">
+                        {r.conversions > 0 ? <span className="font-medium" style={{ color: '#059669' }}>{r.conversions} ({conv}%)</span> : <span className="text-black/30">0</span>}
+                      </td>
+                      <td className="p-3 text-right">
+                        <span style={{ color: weak ? '#F87171' : r.completeness >= 80 ? '#34D399' : '#1f1714' }}>{r.completeness}%</span>
+                      </td>
+                    </tr>
+                  )
+                })}
+                {rows.length === 0 && (
+                  <tr><td colSpan={5} className="p-4 text-center text-black/45">No pros yet.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+function Stat({ label, value }) {
+  return (
+    <div className="rounded-xl border border-black/10 bg-white px-3 py-2">
+      <div className="text-xs text-black/45">{label}</div>
+      <div className="text-sm font-semibold">{value}</div>
     </div>
   )
 }
@@ -91,6 +356,165 @@ function Reports() {
             ) : (
               <div className="mt-2 text-xs text-black/55">{r.status}</div>
             )}
+          </div>
+        ))
+      )}
+    </div>
+  )
+}
+
+// Reviews moderation: the auto/manual posting toggle + a queue of reviews to
+// approve, hold, or remove. Admin writes go straight through RLS
+// (reviews_admin_all); the rating cache + notifications react via triggers.
+const REVIEW_FILTERS = [
+  ['queue', 'Needs review'],
+  ['flagged', 'Flagged'],
+  ['pending', 'Pending'],
+  ['approved', 'Live'],
+  ['removed', 'Removed'],
+  ['all', 'All'],
+]
+const RSTATUS_COLOR = { approved: '#34D399', pending: GOLD, flagged: '#FF6F6F', removed: '#9CA3AF' }
+
+function ReviewsModeration() {
+  const [mode, setMode] = useState(null) // 'auto' | 'manual'
+  const [filter, setFilter] = useState('queue')
+  const [rows, setRows] = useState([])
+  const [adminId, setAdminId] = useState(null)
+  const [busyId, setBusyId] = useState(null)
+  const [msg, setMsg] = useState(null)
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setAdminId(data.user?.id || null))
+  }, [])
+
+  const loadMode = useCallback(async () => {
+    const { data } = await supabase.from('platform_settings').select('value').eq('key', 'review_moderation_mode').maybeSingle()
+    setMode(data?.value === 'manual' ? 'manual' : 'auto')
+  }, [])
+
+  const load = useCallback(async () => {
+    let q = supabase
+      .from('reviews')
+      .select('id,rating,body,tags,status,photo_urls,moderation_reason,flagged_labels,created_at,verified,pro:pros(handle,display_name),review_responses(body)')
+      .order('created_at', { ascending: false })
+      .limit(200)
+    if (filter === 'queue') q = q.in('status', ['pending', 'flagged'])
+    else if (filter !== 'all') q = q.eq('status', filter)
+    const { data, error } = await q
+    if (error) setMsg({ type: 'error', text: error.message })
+    setRows(data || [])
+  }, [filter])
+
+  useEffect(() => {
+    loadMode()
+  }, [loadMode])
+  useEffect(() => {
+    load()
+  }, [load])
+
+  async function setPostingMode(next) {
+    setMode(next) // optimistic
+    await supabase.from('platform_settings').update({ value: next }).eq('key', 'review_moderation_mode')
+    loadMode()
+  }
+
+  async function act(id, status) {
+    setBusyId(id)
+    setMsg(null)
+    const patch = { status, moderated_at: new Date().toISOString() }
+    if (status === 'removed') patch.removed_by = adminId
+    const { error } = await supabase.from('reviews').update(patch).eq('id', id)
+    setBusyId(null)
+    if (error) {
+      setMsg({ type: 'error', text: error.message })
+      return
+    }
+    load()
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Posting mode */}
+      <div className="rounded-2xl border border-black/10 bg-black/5 p-4">
+        <div className="text-sm font-semibold">Review posting</div>
+        <p className="mt-0.5 text-xs text-black/55">
+          Auto publishes clean reviews instantly; flagged ones always wait here. Manual holds every review for approval.
+        </p>
+        <div className="mt-3 inline-flex rounded-full border border-black/10 p-0.5">
+          {['auto', 'manual'].map((m) => (
+            <button
+              key={m}
+              onClick={() => setPostingMode(m)}
+              className="rounded-full px-4 py-1.5 text-sm font-medium capitalize transition"
+              style={mode === m ? { backgroundColor: GOLD, color: '#000' } : { color: '#1f1714' }}
+            >
+              {m === 'auto' ? 'Auto-post' : 'Manual approve'}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-wrap gap-2 text-sm">
+        {REVIEW_FILTERS.map(([k, label]) => (
+          <button key={k} onClick={() => setFilter(k)} className={`rounded-full px-3 py-1 ${filter === k ? 'bg-black/15' : 'bg-black/5'}`}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-600' : 'text-emerald-600'}`} role="status">{msg.text}</p>}
+
+      {rows.length === 0 ? (
+        <p className="text-sm text-black/55">Nothing here.</p>
+      ) : (
+        rows.map((r) => (
+          <div key={r.id} className="rounded-2xl border border-black/10 bg-black/5 p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="text-sm font-medium">
+                  <span style={{ color: GOLD }}>{'★'.repeat(r.rating)}</span>{' '}
+                  <span className="text-black/50">@{r.pro?.handle}</span>
+                  {r.verified && <span className="ml-1 text-xs text-black/40">· verified visit</span>}
+                </div>
+                {r.body && <p className="mt-1 text-sm text-black/70">{r.body}</p>}
+              </div>
+              <span className="shrink-0 text-xs font-semibold capitalize" style={{ color: RSTATUS_COLOR[r.status] }}>{r.status}</span>
+            </div>
+
+            {r.photo_urls?.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {r.photo_urls.map((u, i) => (
+                  <img key={i} src={u} alt="" loading="lazy" className="h-16 w-16 rounded-lg object-cover" />
+                ))}
+              </div>
+            )}
+
+            {r.moderation_reason && <p className="mt-2 text-xs text-red-600">{r.moderation_reason}</p>}
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              {r.status !== 'approved' && (
+                <button onClick={() => act(r.id, 'approved')} disabled={busyId === r.id} className="rounded-lg px-3 py-1.5 text-sm font-semibold text-black disabled:opacity-50" style={{ backgroundColor: GOLD }}>
+                  Approve & publish
+                </button>
+              )}
+              {r.status === 'approved' && (
+                <button onClick={() => act(r.id, 'flagged')} disabled={busyId === r.id} className="rounded-lg border border-black/15 px-3 py-1.5 text-sm">
+                  Hold
+                </button>
+              )}
+              {r.status !== 'removed' && (
+                <button onClick={() => act(r.id, 'removed')} disabled={busyId === r.id} className="rounded-lg border border-black/15 px-3 py-1.5 text-sm text-red-600">
+                  Remove
+                </button>
+              )}
+              {r.status === 'removed' && (
+                <button onClick={() => act(r.id, 'approved')} disabled={busyId === r.id} className="rounded-lg border border-black/15 px-3 py-1.5 text-sm">
+                  Restore
+                </button>
+              )}
+            </div>
           </div>
         ))
       )}

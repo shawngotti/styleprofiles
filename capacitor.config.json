@@ -1,0 +1,8 @@
+{
+  "appId": "com.styleprofiles.app",
+  "appName": "StyleProfiles",
+  "webDir": "dist",
+  "backgroundColor": "#ffffff",
+  "ios": { "contentInset": "always" },
+  "server": { "androidScheme": "https" }
+}
