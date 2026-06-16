@@ -77,19 +77,29 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
       </button>
 
       {/* Banner */}
-      <div
-        className="h-28 rounded-2xl border border-white/10"
-        style={{ background: `linear-gradient(120deg, ${catColor}55, rgba(255,255,255,0.04))` }}
-      />
+      {pro.cover_url ? (
+        <div className="h-40 overflow-hidden rounded-2xl border border-white/10 sm:h-52">
+          <img src={pro.cover_url} alt="" className="h-full w-full object-cover" />
+        </div>
+      ) : (
+        <div
+          className="h-28 rounded-2xl border border-white/10"
+          style={{ background: `linear-gradient(120deg, ${catColor}55, rgba(255,255,255,0.04))` }}
+        />
+      )}
 
       {/* Header */}
       <div className="-mt-8 flex items-end gap-4 px-2">
-        <div
-          className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full text-xl font-semibold text-black ring-4"
-          style={{ backgroundColor: catColor, '--tw-ring-color': '#0b0b0d' }}
-        >
-          {initials(pro.display_name)}
-        </div>
+        {pro.avatar_url ? (
+          <img src={pro.avatar_url} alt="" className="h-20 w-20 shrink-0 rounded-full object-cover ring-4" style={{ '--tw-ring-color': '#0b0b0d' }} />
+        ) : (
+          <div
+            className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full text-xl font-semibold text-black ring-4"
+            style={{ backgroundColor: catColor, '--tw-ring-color': '#0b0b0d' }}
+          >
+            {initials(pro.display_name)}
+          </div>
+        )}
         <div className="pb-1">
           <div className="flex items-center gap-2 text-2xl font-semibold">
             {pro.display_name}
@@ -116,6 +126,17 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
         <span className="text-white/50">📍 {pro.city}</span>
       </div>
       {pro.bio && <p className="mt-3 max-w-xl px-2 text-sm leading-relaxed text-white/60">{pro.bio}</p>}
+
+      {pro.gallery_urls?.length > 0 && (
+        <div className="mt-4 px-2">
+          <div className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/40">Portfolio</div>
+          <div className="grid grid-cols-3 gap-2">
+            {pro.gallery_urls.map((u, i) => (
+              <img key={i} src={u} alt="" loading="lazy" className="aspect-square w-full rounded-xl object-cover" />
+            ))}
+          </div>
+        </div>
+      )}
 
       {!acceptingBookings && (
         <div className="mx-2 mt-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-300">

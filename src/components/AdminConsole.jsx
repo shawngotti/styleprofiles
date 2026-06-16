@@ -6,6 +6,7 @@ const TABS = [
   ['reports', 'Reports'],
   ['integrity', 'Vote Integrity'],
   ['attendees', 'Attendees'],
+  ['demo', 'Demo'],
   ['flags', 'Feature Flags'],
 ]
 
@@ -34,6 +35,7 @@ export default function AdminConsole() {
       {tab === 'reports' && <Reports />}
       {tab === 'integrity' && <Integrity />}
       {tab === 'attendees' && <ImportAttendees />}
+      {tab === 'demo' && <Demo />}
       {tab === 'flags' && <Flags />}
     </div>
   )
@@ -412,3 +414,97 @@ function ImportAttendees() {
 }
 
 const inputCls = 'mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-white/30'
+
+// Demo content control: seed/clear a believable dataset and show or hide it per
+// aspect. Demo rows are flagged is_demo and stay invisible to the public until
+// the matching toggle is on — so you can stage the full vision, then wipe it.
+const DEMO_TOGGLES = [
+  ['demo_pros_on', 'Demo pros & profiles'],
+  ['demo_awards_on', 'Demo Awards'],
+  ['demo_lineup_on', 'Demo The Lineup'],
+  ['demo_deals_on', 'Demo Deals'],
+  ['demo_shop_on', 'Demo Shop'],
+]
+
+function Demo() {
+  const [settings, setSettings] = useState([])
+  const [busy, setBusy] = useState(null)
+  const [msg, setMsg] = useState(null)
+
+  const load = useCallback(async () => {
+    const keys = [...DEMO_TOGGLES.map((t) => t[0]), 'marketplace_on', 'lineup_on']
+    const { data } = await supabase.from('platform_settings').select('key,value').in('key', keys)
+    setSettings(data || [])
+  }, [])
+  useEffect(() => {
+    load()
+  }, [load])
+
+  const on = (key) => settings.find((s) => s.key === key)?.value === true
+  async function toggle(key) {
+    await supabase.from('platform_settings').update({ value: !on(key) }).eq('key', key)
+    load()
+  }
+  async function run(action) {
+    setBusy(action)
+    setMsg(null)
+    const { data, error } = await supabase.functions.invoke('demo_content', { body: { action } })
+    setBusy(null)
+    if (error) {
+      let text = `Could not ${action}`
+      try {
+        const j = await error.context.json()
+        if (j?.error) text = j.error
+      } catch { /* keep generic */ }
+      setMsg({ type: 'error', text })
+      return
+    }
+    setMsg({ type: 'ok', text: action === 'seed' ? `Seeded ${data?.seeded?.pros ?? ''} demo pros + content.` : 'Demo content removed.' })
+  }
+
+  return (
+    <div className="space-y-5">
+      <p className="text-sm text-white/60">
+        Stage a full, believable preview to share the vision. Seed the dataset, then flip each aspect on to
+        reveal it publicly. Demo data is hidden from everyone until its toggle is on, and wipes cleanly.
+      </p>
+
+      <div className="flex flex-wrap gap-2">
+        <button onClick={() => run('seed')} disabled={!!busy} className="rounded-lg px-4 py-2 text-sm font-semibold text-black disabled:opacity-50" style={{ backgroundColor: GOLD }}>
+          {busy === 'seed' ? 'Seeding…' : 'Seed demo content'}
+        </button>
+        <button onClick={() => run('clear')} disabled={!!busy} className="rounded-lg border border-white/15 px-4 py-2 text-sm text-white/80 hover:bg-white/10 disabled:opacity-50">
+          {busy === 'clear' ? 'Removing…' : 'Remove all demo content'}
+        </button>
+      </div>
+      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{msg.text}</p>}
+
+      <div className="space-y-3">
+        <div className="text-xs font-semibold uppercase tracking-wide text-white/40">Show / hide each aspect</div>
+        {DEMO_TOGGLES.map(([key, label]) => (
+          <div key={key} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4">
+            <span className="text-sm font-medium">{label}</span>
+            <button
+              onClick={() => toggle(key)}
+              role="switch"
+              aria-checked={on(key)}
+              aria-label={`Toggle ${label}`}
+              className="relative h-6 w-11 rounded-full transition"
+              style={{ backgroundColor: on(key) ? GOLD : 'rgba(255,255,255,0.15)' }}
+            >
+              <span className="absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all" style={{ left: on(key) ? '22px' : '2px' }} />
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {(!on('marketplace_on') || !on('lineup_on')) && (
+        <p className="text-xs text-white/45">
+          Tip: to show the demo <strong>Shop</strong> turn on <code>marketplace_on</code>, and for{' '}
+          <strong>The Lineup</strong> + <strong>Cut of the Week</strong> turn on <code>lineup_on</code> (Feature Flags tab).
+          Demo Awards show under the existing Awards tab.
+        </p>
+      )}
+    </div>
+  )
+}

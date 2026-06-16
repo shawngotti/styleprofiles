@@ -48,9 +48,13 @@ Deno.serve(async (req) => {
   let clientSecret: string | null = null
   const { data: bk } = await svc.from('bookings').select('deposit_total').eq('id', bookingId).single()
   const depositTotal = bk?.deposit_total ?? 0
+  const { data: pro } = await svc.from('pros').select('stripe_account_id,charges_enabled,is_demo').eq('id', pro_id).single()
 
-  if (depositTotal > 0) {
-    const { data: pro } = await svc.from('pros').select('stripe_account_id,charges_enabled').eq('id', pro_id).single()
+  // Demo pros are browse-only: confirm the booking with NO real charge so a
+  // walkthrough on live Stripe never bills anyone.
+  if (pro?.is_demo) {
+    await svc.from('bookings').update({ status: 'confirmed' }).eq('id', bookingId)
+  } else if (depositTotal > 0) {
     const params: Record<string, string> = {
       amount: String(depositTotal),
       currency: 'usd',

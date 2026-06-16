@@ -36,7 +36,7 @@ export default function Discover({ onOpenPro }) {
         ? await supabase.rpc('pros_near', { _lat: coords.lat, _lng: coords.lng, _radius_mi: radiusMi })
         : await supabase
             .from('pros')
-            .select('id,handle,display_name,category,bio,city,verified,rating_avg,rating_count,price_from,charges_enabled,featured_until,champion_boost')
+            .select('id,handle,display_name,category,bio,city,verified,rating_avg,rating_count,price_from,charges_enabled,featured_until,champion_boost,avatar_url,cover_url,gallery_urls')
             .order('rating_avg', { ascending: false })
       if (!on) return
       if (res.error) {
@@ -141,15 +141,21 @@ export default function Discover({ onOpenPro }) {
                     onOpenPro(p, catColor[p.category] || GOLD)
                   }
                 }}
-                className={`rounded-2xl border border-white/10 bg-white/5 p-4 ${onOpenPro ? 'cursor-pointer hover:bg-white/[0.07]' : ''} transition`}
+                className={`overflow-hidden rounded-2xl border border-white/10 bg-white/5 ${onOpenPro ? 'cursor-pointer hover:bg-white/[0.07]' : ''} transition`}
               >
+                {p.cover_url && <img src={p.cover_url} alt="" loading="lazy" className="h-24 w-full object-cover" />}
+                <div className="p-4">
                 <div className="flex items-center gap-3">
-                  <div
-                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full font-semibold text-black"
-                    style={{ backgroundColor: catColor[p.category] || GOLD }}
-                  >
-                    {initials(p.display_name)}
-                  </div>
+                  {p.avatar_url ? (
+                    <img src={p.avatar_url} alt="" loading="lazy" className="h-12 w-12 shrink-0 rounded-full object-cover" />
+                  ) : (
+                    <div
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full font-semibold text-black"
+                      style={{ backgroundColor: catColor[p.category] || GOLD }}
+                    >
+                      {initials(p.display_name)}
+                    </div>
+                  )}
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5">
                       <span className="truncate font-semibold">{p.display_name}</span>
@@ -183,6 +189,7 @@ export default function Discover({ onOpenPro }) {
                     {p.distance_mi != null && <span className="text-white/70"> · {Math.round(p.distance_mi)} mi</span>}
                   </span>
                   <span className="text-white/80">from {centsToUsd(p.price_from)}</span>
+                </div>
                 </div>
               </div>
             ))}
