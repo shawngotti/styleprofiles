@@ -78,44 +78,44 @@ export default function ProMembershipTiers({ proId }) {
   }
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
-      <h3 className="text-sm font-semibold uppercase tracking-wide text-white/55">Membership tiers</h3>
+    <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
+      <h3 className="text-sm font-semibold uppercase tracking-wide text-black/55">Membership tiers</h3>
       {tiers.length > 0 ? (
         <div className="mt-3 space-y-2">
           {tiers.map((t) => (
-            <div key={t.id} className="flex items-center justify-between gap-3 rounded-lg border border-white/10 p-3 text-sm">
+            <div key={t.id} className="flex items-center justify-between gap-3 rounded-lg border border-black/10 p-3 text-sm">
               <div className="min-w-0">
                 <div className="font-medium">{t.name}</div>
-                <div className="truncate text-xs text-white/50">{t.includes}</div>
+                <div className="truncate text-xs text-black/50">{t.includes}</div>
               </div>
               <div className="flex items-center gap-3">
                 <div className="text-right">
                   <div>{centsToUsd(t.price)}/mo</div>
-                  <div className="text-xs text-white/50">{t.member_discount_pct}% off</div>
+                  <div className="text-xs text-black/50">{t.member_discount_pct}% off</div>
                 </div>
-                <button onClick={() => startEdit(t)} className="rounded-lg border border-white/15 px-2.5 py-1 text-xs hover:bg-white/10">Edit</button>
-                <button onClick={() => remove(t.id)} className="rounded-lg border border-white/15 px-2.5 py-1 text-xs text-red-300 hover:bg-white/10">Delete</button>
+                <button onClick={() => startEdit(t)} className="rounded-lg border border-black/15 px-2.5 py-1 text-xs hover:bg-black/10">Edit</button>
+                <button onClick={() => remove(t.id)} className="rounded-lg border border-black/15 px-2.5 py-1 text-xs text-red-600 hover:bg-black/10">Delete</button>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <p className="mt-2 text-sm text-white/55">No tiers yet — create one to offer memberships.</p>
+        <p className="mt-2 text-sm text-black/55">No tiers yet — create one to offer memberships.</p>
       )}
 
       <form onSubmit={save} className="mt-4 flex flex-wrap gap-2">
-        <input value={form.name} onChange={set('name')} placeholder="Tier name" className="min-w-[140px] flex-1 rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm outline-none focus:border-white/40" />
-        <input value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value.replace(/[^0-9.]/g, '') }))} placeholder="$/mo" inputMode="decimal" className="w-24 rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm outline-none focus:border-white/40" />
-        <input value={form.disc} onChange={(e) => setForm((f) => ({ ...f, disc: e.target.value.replace(/\D/g, '').slice(0, 3) }))} placeholder="% off" inputMode="numeric" className="w-20 rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm outline-none focus:border-white/40" />
-        <input value={form.includes} onChange={set('includes')} placeholder="Includes (e.g. 2 cuts / month)" className="min-w-[160px] flex-1 rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm outline-none focus:border-white/40" />
+        <input value={form.name} onChange={set('name')} placeholder="Tier name" className="min-w-[140px] flex-1 rounded-lg border border-black/15 bg-white px-3 py-2.5 text-sm outline-none focus:border-black/40" />
+        <input value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value.replace(/[^0-9.]/g, '') }))} placeholder="$/mo" inputMode="decimal" className="w-24 rounded-lg border border-black/15 bg-white px-3 py-2.5 text-sm outline-none focus:border-black/40" />
+        <input value={form.disc} onChange={(e) => setForm((f) => ({ ...f, disc: e.target.value.replace(/\D/g, '').slice(0, 3) }))} placeholder="% off" inputMode="numeric" className="w-20 rounded-lg border border-black/15 bg-white px-3 py-2.5 text-sm outline-none focus:border-black/40" />
+        <input value={form.includes} onChange={set('includes')} placeholder="Includes (e.g. 2 cuts / month)" className="min-w-[160px] flex-1 rounded-lg border border-black/15 bg-white px-3 py-2.5 text-sm outline-none focus:border-black/40" />
         <button type="submit" disabled={busy || !form.name.trim() || !form.price} className="rounded-lg px-4 py-2.5 text-sm font-semibold text-black disabled:opacity-50" style={{ backgroundColor: GOLD }}>
           {busy ? 'Saving…' : editingId ? 'Save changes' : 'Add tier'}
         </button>
         {editingId && (
-          <button type="button" onClick={reset} className="rounded-lg border border-white/15 px-4 py-2.5 text-sm text-white/70 hover:bg-white/10">Cancel</button>
+          <button type="button" onClick={reset} className="rounded-lg border border-black/15 px-4 py-2.5 text-sm text-black/70 hover:bg-black/10">Cancel</button>
         )}
       </form>
-      {err && <p className="mt-2 text-sm text-red-400" role="alert">{err}</p>}
+      {err && <p className="mt-2 text-sm text-red-600" role="alert">{err}</p>}
     </section>
   )
 }

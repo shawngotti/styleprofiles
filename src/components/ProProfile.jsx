@@ -11,7 +11,7 @@ function Stars({ value = 0 }) {
   return (
     <span style={{ color: GOLD }}>
       {'★'.repeat(full)}
-      <span className="text-white/20">{'★'.repeat(5 - full)}</span>
+      <span className="text-black/20">{'★'.repeat(5 - full)}</span>
     </span>
   )
 }
@@ -72,30 +72,30 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
 
   return (
     <div>
-      <button onClick={onBack} className="mb-4 text-sm text-white/60 hover:text-white">
+      <button onClick={onBack} className="mb-4 text-sm text-black/60 hover:text-gray-900">
         ← Back to Discover
       </button>
 
       {/* Banner */}
       {pro.cover_url ? (
-        <div className="h-40 overflow-hidden rounded-2xl border border-white/10 sm:h-52">
+        <div className="h-40 overflow-hidden rounded-2xl border border-black/10 sm:h-52">
           <img src={pro.cover_url} alt="" className="h-full w-full object-cover" />
         </div>
       ) : (
         <div
-          className="h-28 rounded-2xl border border-white/10"
-          style={{ background: `linear-gradient(120deg, ${catColor}55, rgba(255,255,255,0.04))` }}
+          className="h-28 rounded-2xl border border-black/10"
+          style={{ background: `linear-gradient(120deg, ${catColor}55, rgba(0,0,0,0.04))` }}
         />
       )}
 
       {/* Header */}
       <div className="-mt-8 flex items-end gap-4 px-2">
         {pro.avatar_url ? (
-          <img src={pro.avatar_url} alt="" className="h-20 w-20 shrink-0 rounded-full object-cover ring-4" style={{ '--tw-ring-color': '#0b0b0d' }} />
+          <img src={pro.avatar_url} alt="" className="h-20 w-20 shrink-0 rounded-full object-cover ring-4" style={{ '--tw-ring-color': '#ffffff' }} />
         ) : (
           <div
             className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full text-xl font-semibold text-black ring-4"
-            style={{ backgroundColor: catColor, '--tw-ring-color': '#0b0b0d' }}
+            style={{ backgroundColor: catColor, '--tw-ring-color': '#ffffff' }}
           >
             {initials(pro.display_name)}
           </div>
@@ -105,7 +105,7 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
             {pro.display_name}
             {pro.verified && <span style={{ color: GOLD }}>✓</span>}
           </div>
-          <div className="text-sm text-white/50">@{pro.handle}</div>
+          <div className="text-sm text-black/50">@{pro.handle}</div>
           {award && (
             <span className="mt-1 inline-block rounded-full px-2.5 py-0.5 text-xs font-medium" style={{ backgroundColor: `${GOLD}1f`, color: GOLD }}>
               🏆 {award.category} of the Month
@@ -116,20 +116,20 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
 
       {/* Meta */}
       <div className="mt-4 flex flex-wrap items-center gap-4 px-2 text-sm">
-        <span className="rounded-full px-2.5 py-0.5 text-xs" style={{ backgroundColor: 'rgba(255,255,255,0.08)', color: catColor }}>
+        <span className="rounded-full px-2.5 py-0.5 text-xs" style={{ backgroundColor: 'rgba(0,0,0,0.06)', color: catColor }}>
           {pro.category}
         </span>
         <span>
           <Stars value={pro.rating_avg} /> <b>{pro.rating_avg}</b>{' '}
-          <span className="text-white/55">({pro.rating_count} reviews)</span>
+          <span className="text-black/55">({pro.rating_count} reviews)</span>
         </span>
-        <span className="text-white/50">📍 {pro.city}</span>
+        <span className="text-black/50">📍 {pro.city}</span>
       </div>
-      {pro.bio && <p className="mt-3 max-w-xl px-2 text-sm leading-relaxed text-white/60">{pro.bio}</p>}
+      {pro.bio && <p className="mt-3 max-w-xl px-2 text-sm leading-relaxed text-black/60">{pro.bio}</p>}
 
       {pro.gallery_urls?.length > 0 && (
         <div className="mt-4 px-2">
-          <div className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/40">Portfolio</div>
+          <div className="mb-2 text-sm font-semibold uppercase tracking-wide text-black/40">Portfolio</div>
           <div className="grid grid-cols-3 gap-2">
             {pro.gallery_urls.map((u, i) => (
               <img key={i} src={u} alt="" loading="lazy" className="aspect-square w-full rounded-xl object-cover" />
@@ -139,7 +139,7 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
       )}
 
       {!acceptingBookings && (
-        <div className="mx-2 mt-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-300">
+        <div className="mx-2 mt-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-700">
           This pro is setting up payments and isn't accepting bookings yet.
         </div>
       )}
@@ -148,22 +148,22 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
         <MembershipCard pro={pro} />
       </div>
 
-      {loading && <p className="mt-6 px-2 text-sm text-white/50">Loading services…</p>}
-      {error && <p className="mt-6 px-2 text-sm text-red-400">Could not load: {error}</p>}
+      {loading && <p className="mt-6 px-2 text-sm text-black/50">Loading services…</p>}
+      {error && <p className="mt-6 px-2 text-sm text-red-600">Could not load: {error}</p>}
 
       {!loading && !error && (
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           {/* Services */}
           <section>
-            <h3 className="mb-2 px-2 text-sm font-semibold uppercase tracking-wide text-white/55">Services</h3>
-            <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+            <h3 className="mb-2 px-2 text-sm font-semibold uppercase tracking-wide text-black/55">Services</h3>
+            <div className="overflow-hidden rounded-2xl border border-black/10 bg-black/5">
               {mainServices.map((s, i) => (
-                <div key={s.id} className={`flex items-center justify-between gap-3 p-4 ${i ? 'border-t border-white/5' : ''}`}>
+                <div key={s.id} className={`flex items-center justify-between gap-3 p-4 ${i ? 'border-t border-black/5' : ''}`}>
                   <div className="min-w-0">
                     <div className="truncate font-medium">{s.name}</div>
-                    <div className="text-xs text-white/50">
+                    <div className="text-xs text-black/50">
                       {s.duration_min} min · {centsToUsd(s.price)}
-                      {s.deposit > 0 && <span className="text-white/55"> · {centsToUsd(s.deposit)} deposit</span>}
+                      {s.deposit > 0 && <span className="text-black/55"> · {centsToUsd(s.deposit)} deposit</span>}
                     </div>
                   </div>
                   <button
@@ -180,14 +180,14 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
 
             {addons.length > 0 && (
               <>
-                <h3 className="mb-2 mt-5 px-2 text-sm font-semibold uppercase tracking-wide text-white/55">
+                <h3 className="mb-2 mt-5 px-2 text-sm font-semibold uppercase tracking-wide text-black/55">
                   Frequently added
                 </h3>
-                <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                <div className="overflow-hidden rounded-2xl border border-black/10 bg-black/5">
                   {addons.map((s, i) => (
-                    <div key={s.id} className={`flex items-center justify-between gap-3 p-3 ${i ? 'border-t border-white/5' : ''}`}>
+                    <div key={s.id} className={`flex items-center justify-between gap-3 p-3 ${i ? 'border-t border-black/5' : ''}`}>
                       <span className="truncate text-sm">{s.name}</span>
-                      <span className="shrink-0 text-sm text-white/60">+{centsToUsd(s.price)}</span>
+                      <span className="shrink-0 text-sm text-black/60">+{centsToUsd(s.price)}</span>
                     </div>
                   ))}
                 </div>
@@ -198,22 +198,22 @@ export default function ProProfile({ pro, catColor = GOLD, onBack, onBooked }) {
 
           {/* Reviews */}
           <section>
-            <h3 className="mb-2 px-2 text-sm font-semibold uppercase tracking-wide text-white/55">Recent reviews</h3>
+            <h3 className="mb-2 px-2 text-sm font-semibold uppercase tracking-wide text-black/55">Recent reviews</h3>
             {reviews.length === 0 ? (
-              <p className="px-2 text-sm text-white/55">No written reviews yet.</p>
+              <p className="px-2 text-sm text-black/55">No written reviews yet.</p>
             ) : (
               <div className="space-y-3">
                 {reviews.map((r) => (
-                  <div key={r.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <div key={r.id} className="rounded-2xl border border-black/10 bg-black/5 p-4">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">{r.verified ? 'Verified client' : 'Client'}</span>
                       <Stars value={r.rating} />
                     </div>
-                    {r.body && <p className="mt-1.5 text-sm text-white/70">{r.body}</p>}
+                    {r.body && <p className="mt-1.5 text-sm text-black/70">{r.body}</p>}
                     {r.tags?.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         {r.tags.map((t) => (
-                          <span key={t} className="rounded-full bg-black/40 px-2 py-0.5 text-xs text-white/50">
+                          <span key={t} className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-black/50">
                             {t}
                           </span>
                         ))}

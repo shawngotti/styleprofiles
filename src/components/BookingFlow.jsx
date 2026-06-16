@@ -132,19 +132,19 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
       onClick={onClose}
     >
       <div
-        className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-2xl border border-white/10 bg-[#141417] p-5 sm:rounded-2xl"
+        className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-2xl border border-black/10 bg-white p-5 sm:rounded-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <div className="text-sm text-white/50">Book with</div>
+            <div className="text-sm text-black/50">Book with</div>
             <div className="font-semibold">{pro.display_name}</div>
           </div>
-          <button onClick={onClose} className="text-white/50 hover:text-white">✕</button>
+          <button onClick={onClose} className="text-black/50 hover:text-gray-900">✕</button>
         </div>
         <div className="mb-5 flex gap-1.5">
           {STEPS.map((s, i) => (
-            <div key={s} className="h-1 flex-1 rounded-full" style={{ backgroundColor: i <= step ? GOLD : 'rgba(255,255,255,0.12)' }} />
+            <div key={s} className="h-1 flex-1 rounded-full" style={{ backgroundColor: i <= step ? GOLD : 'rgba(0,0,0,0.10)' }} />
           ))}
         </div>
 
@@ -154,7 +154,7 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
         <>
         {stepName === 'People' && (
           <div>
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/55">Who's coming?</h3>
+            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-black/55">Who's coming?</h3>
             <div className="space-y-2">
               {people.map((p) => {
                 const checked = selectedPeople.has(p.id)
@@ -163,12 +163,12 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
                     key={p.id}
                     onClick={() => togglePerson(p.id)}
                     className="flex w-full items-center justify-between rounded-xl border p-3 text-left transition"
-                    style={{ borderColor: checked ? GOLD : 'rgba(255,255,255,0.12)', backgroundColor: checked ? 'rgba(244,169,60,0.08)' : 'transparent' }}
+                    style={{ borderColor: checked ? GOLD : 'rgba(0,0,0,0.10)', backgroundColor: checked ? 'rgba(244,169,60,0.08)' : 'transparent' }}
                   >
                     <span className="text-sm font-medium">{p.label}</span>
                     <span
                       className="flex h-5 w-5 items-center justify-center rounded-md border text-xs text-black"
-                      style={{ borderColor: checked ? GOLD : 'rgba(255,255,255,0.3)', backgroundColor: checked ? GOLD : 'transparent' }}
+                      style={{ borderColor: checked ? GOLD : 'rgba(0,0,0,0.22)', backgroundColor: checked ? GOLD : 'transparent' }}
                     >
                       {checked ? '✓' : ''}
                     </span>
@@ -183,7 +183,7 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
           <div className="space-y-5">
             {activePeople.map((p) => (
               <div key={p.id}>
-                {hasMembers && <h3 className="mb-2 text-sm font-semibold text-white/70">{p.label}</h3>}
+                {hasMembers && <h3 className="mb-2 text-sm font-semibold text-black/70">{p.label}</h3>}
                 <div className="space-y-2">
                   {main.map((s) => (
                     <ServiceRow key={s.id} s={s} checked={svcSel[p.id]?.has(s.id)} onToggle={() => toggleSvc(p.id, s.id)} />
@@ -200,24 +200,24 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
         {stepName === 'Date & Time' && (
           <div className="space-y-4">
             <label className="block">
-              <span className="text-sm text-white/60">Date</span>
+              <span className="text-sm text-black/60">Date</span>
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm outline-none focus:border-white/40"
+                className="mt-1 w-full rounded-lg border border-black/15 bg-white px-3 py-2.5 text-sm outline-none focus:border-black/40"
               />
             </label>
             <label className="block">
-              <span className="text-sm text-white/60">Start time</span>
+              <span className="text-sm text-black/60">Start time</span>
               <input
                 type="time"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm outline-none focus:border-white/40"
+                className="mt-1 w-full rounded-lg border border-black/15 bg-white px-3 py-2.5 text-sm outline-none focus:border-black/40"
               />
             </label>
-            <p className="text-xs text-white/55">
+            <p className="text-xs text-black/55">
               The pro confirms your slot. Total time: ~{totals.minutes} min. Back-to-back times are computed server-side.
             </p>
           </div>
@@ -225,24 +225,24 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
 
         {stepName === 'Confirm' && (
           <div>
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/55">Review</h3>
-            <div className="rounded-xl border border-white/10 bg-white/5 p-3 text-sm">
+            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-black/55">Review</h3>
+            <div className="rounded-xl border border-black/10 bg-black/5 p-3 text-sm">
               {activePeople.map((p) => {
                 const ids = [...(svcSel[p.id] || [])]
                 if (!ids.length) return null
                 return (
                   <div key={p.id} className="mb-1">
-                    {hasMembers && <div className="text-xs font-semibold text-white/50">{p.label}</div>}
+                    {hasMembers && <div className="text-xs font-semibold text-black/50">{p.label}</div>}
                     {ids.map((sid) => (
                       <div key={sid} className="flex justify-between py-0.5">
-                        <span className="text-white/70">{svcById[sid]?.name}</span>
+                        <span className="text-black/70">{svcById[sid]?.name}</span>
                         <span>{centsToUsd(svcById[sid]?.price)}</span>
                       </div>
                     ))}
                   </div>
                 )
               })}
-              <div className="mt-2 flex justify-between border-t border-white/10 pt-2 text-white/60">
+              <div className="mt-2 flex justify-between border-t border-black/10 pt-2 text-black/60">
                 <span>{new Date(`${date}T${time}`).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</span>
                 <span>{totals.minutes} min</span>
               </div>
@@ -255,17 +255,17 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
                 <span>{centsToUsd(totals.deposit)}</span>
               </div>
             </div>
-            <p className="mt-3 text-xs text-white/55">
+            <p className="mt-3 text-xs text-black/55">
               One combined deposit secures every slot and applies to your total. Cancellations within 24h forfeit the
               deposit. Card payment is added in Batch 8 — for now this creates a pending booking.
             </p>
-            {error && <p className="mt-2 text-sm text-red-400" role="alert">{error}</p>}
+            {error && <p className="mt-2 text-sm text-red-600" role="alert">{error}</p>}
           </div>
         )}
 
         <div className="mt-5 flex gap-2">
           {step > 0 && (
-            <button onClick={() => setStep(step - 1)} className="rounded-lg border border-white/15 px-4 py-2.5 text-sm hover:bg-white/10">
+            <button onClick={() => setStep(step - 1)} className="rounded-lg border border-black/15 px-4 py-2.5 text-sm hover:bg-black/10">
               Back
             </button>
           )}
@@ -301,7 +301,7 @@ function PaymentPanel({ clientSecret, amount, onPaid }) {
   return (
     <Elements
       stripe={stripePromise}
-      options={{ clientSecret, appearance: { theme: 'night', variables: { colorPrimary: GOLD, colorBackground: '#141417' } } }}
+      options={{ clientSecret, appearance: { theme: 'stripe', variables: { colorPrimary: GOLD, colorBackground: '#ffffff' } } }}
     >
       <PayForm amount={amount} onPaid={onPaid} />
     </Elements>
@@ -329,9 +329,9 @@ function PayForm({ amount, onPaid }) {
 
   return (
     <div>
-      <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/55">Payment</h3>
+      <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-black/55">Payment</h3>
       <PaymentElement options={{ layout: 'tabs' }} />
-      {err && <p className="mt-2 text-sm text-red-400" role="alert">{err}</p>}
+      {err && <p className="mt-2 text-sm text-red-600" role="alert">{err}</p>}
       <button
         onClick={pay}
         disabled={busy || !stripe}
@@ -340,7 +340,7 @@ function PayForm({ amount, onPaid }) {
       >
         {busy ? 'Processing…' : `Pay ${centsToUsd(amount)} deposit`}
       </button>
-      <p className="mt-2 text-center text-xs text-white/55">
+      <p className="mt-2 text-center text-xs text-black/55">
         Test mode — card 4242 4242 4242 4242, any future date & CVC.
       </p>
     </div>
@@ -352,11 +352,11 @@ function ServiceRow({ s, checked, onToggle, addon }) {
     <button
       onClick={onToggle}
       className="flex w-full items-center justify-between gap-3 rounded-xl border p-3 text-left transition"
-      style={{ borderColor: checked ? GOLD : 'rgba(255,255,255,0.12)', backgroundColor: checked ? 'rgba(244,169,60,0.08)' : 'transparent' }}
+      style={{ borderColor: checked ? GOLD : 'rgba(0,0,0,0.10)', backgroundColor: checked ? 'rgba(244,169,60,0.08)' : 'transparent' }}
     >
       <div className="min-w-0">
         <div className="truncate text-sm font-medium">{s.name}</div>
-        <div className="text-xs text-white/50">
+        <div className="text-xs text-black/50">
           {s.duration_min} min{s.deposit > 0 && <span> · {centsToUsd(s.deposit)} deposit</span>}
         </div>
       </div>
@@ -367,7 +367,7 @@ function ServiceRow({ s, checked, onToggle, addon }) {
         </span>
         <span
           className="flex h-5 w-5 items-center justify-center rounded-md border text-xs text-black"
-          style={{ borderColor: checked ? GOLD : 'rgba(255,255,255,0.3)', backgroundColor: checked ? GOLD : 'transparent' }}
+          style={{ borderColor: checked ? GOLD : 'rgba(0,0,0,0.22)', backgroundColor: checked ? GOLD : 'transparent' }}
         >
           {checked ? '✓' : ''}
         </span>

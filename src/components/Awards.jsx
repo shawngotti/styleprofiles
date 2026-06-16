@@ -68,8 +68,8 @@ export default function Awards() {
     load()
   }
 
-  if (cycle === undefined) return <p className="text-sm text-white/50">Loading awards…</p>
-  if (cycle === null) return <p className="text-sm text-white/55">No awards voting is open right now.</p>
+  if (cycle === undefined) return <p className="text-sm text-black/50">Loading awards…</p>
+  if (cycle === null) return <p className="text-sm text-black/55">No awards voting is open right now.</p>
 
   const period = new Date(cycle.period + 'T00:00:00').toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
   const groups = cats
@@ -92,15 +92,15 @@ export default function Awards() {
           <div className="grid gap-2 sm:grid-cols-2">
             {winners.map((w) => (
               <div key={w.category} className="flex items-center justify-between text-sm">
-                <span className="text-white/60">{catLabel[w.category] || w.category} of the Month</span>
+                <span className="text-black/60">{catLabel[w.category] || w.category} of the Month</span>
                 <span className="font-medium">{w.pro?.display_name}</span>
               </div>
             ))}
           </div>
         </section>
       )}
-      <p className="text-xs text-white/55">One vote per category. Closes {new Date(cycle.closes_at).toLocaleDateString()}.</p>
-      {msg && <p className="text-sm text-red-400" role="alert" aria-live="assertive">{msg.text}</p>}
+      <p className="text-xs text-black/55">One vote per category. Closes {new Date(cycle.closes_at).toLocaleDateString()}.</p>
+      {msg && <p className="text-sm text-red-600" role="alert" aria-live="assertive">{msg.text}</p>}
 
       {groups.map(({ cat, noms }) => {
         const votedFor = myVotes[cat.slug]
@@ -117,7 +117,7 @@ export default function Awards() {
                   <div
                     key={n.id}
                     className="flex items-center justify-between gap-3 rounded-2xl border p-4"
-                    style={{ borderColor: isPick ? GOLD : 'rgba(255,255,255,0.10)', backgroundColor: isPick ? `${GOLD}0d` : 'rgba(255,255,255,0.04)' }}
+                    style={{ borderColor: isPick ? GOLD : 'rgba(0,0,0,0.08)', backgroundColor: isPick ? `${GOLD}0d` : 'rgba(0,0,0,0.04)' }}
                   >
                     <div className="flex items-center gap-3">
                       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-semibold text-black" style={{ backgroundColor: cat.color }}>
@@ -125,7 +125,7 @@ export default function Awards() {
                       </div>
                       <div className="min-w-0">
                         <div className="truncate font-medium">{n.pro?.display_name}</div>
-                        <div className="truncate text-xs text-white/50">{n.look_label}</div>
+                        <div className="truncate text-xs text-black/50">{n.look_label}</div>
                       </div>
                     </div>
                     {isPick ? (

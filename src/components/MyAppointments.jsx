@@ -86,8 +86,8 @@ export default function MyAppointments({ onRebook }) {
     load()
   }
 
-  if (loading) return <p className="text-sm text-white/50">Loading your appointments…</p>
-  if (error) return <p className="text-sm text-red-400">{error}</p>
+  if (loading) return <p className="text-sm text-black/50">Loading your appointments…</p>
+  if (error) return <p className="text-sm text-red-600">{error}</p>
 
   const upcoming = bookings.filter((b) => ACTIVE.includes(b.status))
   const past = bookings.filter((b) => !ACTIVE.includes(b.status))
@@ -95,7 +95,7 @@ export default function MyAppointments({ onRebook }) {
   return (
     <div className="space-y-6">
       {msg && (
-        <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{msg.text}</p>
+        <p className={`text-sm ${msg.type === 'error' ? 'text-red-600' : 'text-emerald-600'}`} role="status" aria-live="polite">{msg.text}</p>
       )}
 
       <Group title="Upcoming" empty="No upcoming appointments — browse Discover to book.">
@@ -104,7 +104,7 @@ export default function MyAppointments({ onRebook }) {
             <button
               disabled={busyId === b.id}
               onClick={() => cancel(b.id)}
-              className="rounded-lg border border-white/15 px-3 py-1.5 text-sm hover:bg-white/10 disabled:opacity-50"
+              className="rounded-lg border border-black/15 px-3 py-1.5 text-sm hover:bg-black/10 disabled:opacity-50"
             >
               {busyId === b.id ? 'Cancelling…' : 'Cancel'}
             </button>
@@ -142,40 +142,40 @@ function Group({ title, empty, children }) {
   const isEmpty = !items || (Array.isArray(items) && items.length === 0)
   return (
     <section>
-      <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/55">{title}</h3>
-      {isEmpty ? <p className="text-sm text-white/55">{empty}</p> : <div className="space-y-3">{items}</div>}
+      <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-black/55">{title}</h3>
+      {isEmpty ? <p className="text-sm text-black/55">{empty}</p> : <div className="space-y-3">{items}</div>}
     </section>
   )
 }
 
 function BookingCard({ b, children }) {
-  const st = STATUS[b.status] || { label: b.status, color: '#fff' }
+  const st = STATUS[b.status] || { label: b.status, color: '#1f1714' }
   const services = (b.booking_line_items || [])
     .slice()
     .sort((a, c) => a.sort - c.sort)
     .map((l) => l.service_name)
     .join(', ')
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+    <div className="rounded-2xl border border-black/10 bg-black/5 p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="font-semibold">{b.pro?.display_name || 'Pro'}</div>
-          <div className="text-xs text-white/50">{whenLabel(b)}</div>
+          <div className="text-xs text-black/50">{whenLabel(b)}</div>
         </div>
         <span
           className="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium"
-          style={{ backgroundColor: 'rgba(255,255,255,0.08)', color: st.color }}
+          style={{ backgroundColor: 'rgba(0,0,0,0.06)', color: st.color }}
         >
           {st.label}
         </span>
       </div>
 
-      {services && <div className="mt-2 truncate text-sm text-white/70">{services}</div>}
+      {services && <div className="mt-2 truncate text-sm text-black/70">{services}</div>}
 
       <div className="mt-3 flex items-center justify-between">
-        <div className="text-sm text-white/60">
+        <div className="text-sm text-black/60">
           {centsToUsd(b.service_total)}
-          {b.deposit_total > 0 && <span className="text-white/55"> · {centsToUsd(b.deposit_total)} deposit</span>}
+          {b.deposit_total > 0 && <span className="text-black/55"> · {centsToUsd(b.deposit_total)} deposit</span>}
         </div>
         <div className="flex gap-2">{children}</div>
       </div>
@@ -197,7 +197,7 @@ function ReviewForm({ booking, onDone }) {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="self-center rounded-lg border border-white/15 px-3 py-1.5 text-sm hover:bg-white/10"
+        className="self-center rounded-lg border border-black/15 px-3 py-1.5 text-sm hover:bg-black/10"
       >
         Leave a review
       </button>
@@ -234,7 +234,7 @@ function ReviewForm({ booking, onDone }) {
             aria-label={`${n} star${n > 1 ? 's' : ''}`}
             onClick={() => setRating(n)}
             className="text-lg"
-            style={{ color: n <= rating ? GOLD : 'rgba(255,255,255,0.25)' }}
+            style={{ color: n <= rating ? GOLD : 'rgba(0,0,0,0.18)' }}
           >
             ★
           </button>
@@ -245,9 +245,9 @@ function ReviewForm({ booking, onDone }) {
         onChange={(e) => setBody(e.target.value)}
         placeholder="How was your visit? (optional)"
         rows={2}
-        className="mt-2 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-white/30"
+        className="mt-2 w-full rounded-lg border border-black/10 bg-black/5 px-3 py-2 text-sm outline-none focus:border-black/30"
       />
-      {err && <p className="mt-1 text-sm text-red-400" role="alert">{err}</p>}
+      {err && <p className="mt-1 text-sm text-red-600" role="alert">{err}</p>}
       <div className="mt-2 flex gap-2">
         <button
           onClick={submit}
@@ -257,7 +257,7 @@ function ReviewForm({ booking, onDone }) {
         >
           {busy ? 'Posting…' : 'Post review'}
         </button>
-        <button onClick={() => setOpen(false)} className="rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white/70">
+        <button onClick={() => setOpen(false)} className="rounded-lg border border-black/15 px-3 py-1.5 text-sm text-black/70">
           Cancel
         </button>
       </div>

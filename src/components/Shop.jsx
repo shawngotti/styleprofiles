@@ -65,13 +65,13 @@ export default function Shop() {
     setCheckout({ clientSecret: data.clientSecret, order_id: data.order_id, total: data.total })
   }
 
-  if (products === undefined) return <p className="text-sm text-white/50">Loading shop…</p>
+  if (products === undefined) return <p className="text-sm text-black/50">Loading shop…</p>
 
   if (checkout) {
     return (
       <Elements
         stripe={stripePromise}
-        options={{ clientSecret: checkout.clientSecret, appearance: { theme: 'night', variables: { colorPrimary: GOLD, colorBackground: '#141417' } } }}
+        options={{ clientSecret: checkout.clientSecret, appearance: { theme: 'stripe', variables: { colorPrimary: GOLD, colorBackground: '#ffffff' } } }}
       >
         <OrderPayment
           orderId={checkout.order_id}
@@ -92,30 +92,30 @@ export default function Shop() {
   return (
     <div className="space-y-5">
       <h2 className="text-lg font-semibold">Self-care shop</h2>
-      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{msg.text}</p>}
+      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-600' : 'text-emerald-600'}`} role="status" aria-live="polite">{msg.text}</p>}
 
       <div className="grid gap-3 sm:grid-cols-2">
         {products.map((p) => {
           const qty = cart[p.id] || 0
           const out = p.inventory_qty === 0
           return (
-            <div key={p.id} className="flex flex-col justify-between rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div key={p.id} className="flex flex-col justify-between rounded-2xl border border-black/10 bg-black/5 p-4">
               <div>
                 <div className="flex items-start justify-between gap-2">
                   <div className="font-medium">{p.name}</div>
                   <div className="shrink-0 font-semibold" style={{ color: GOLD }}>{money(p.price)}</div>
                 </div>
-                {p.brand && <div className="text-xs text-white/55">{p.brand}</div>}
-                {p.blurb && <p className="mt-1 text-sm text-white/60">{p.blurb}</p>}
+                {p.brand && <div className="text-xs text-black/55">{p.brand}</div>}
+                {p.blurb && <p className="mt-1 text-sm text-black/60">{p.blurb}</p>}
               </div>
               <div className="mt-3">
                 {out ? (
-                  <span className="text-xs text-white/55">Out of stock</span>
+                  <span className="text-xs text-black/55">Out of stock</span>
                 ) : qty > 0 ? (
                   <div className="flex items-center gap-3">
-                    <button onClick={() => setQty(p.id, qty - 1, p.inventory_qty)} className="h-7 w-7 rounded-lg bg-white/10">−</button>
+                    <button onClick={() => setQty(p.id, qty - 1, p.inventory_qty)} className="h-7 w-7 rounded-lg bg-black/10">−</button>
                     <span className="text-sm">{qty}</span>
-                    <button onClick={() => setQty(p.id, qty + 1, p.inventory_qty)} className="h-7 w-7 rounded-lg bg-white/10">+</button>
+                    <button onClick={() => setQty(p.id, qty + 1, p.inventory_qty)} className="h-7 w-7 rounded-lg bg-black/10">+</button>
                   </div>
                 ) : (
                   <button
@@ -130,13 +130,13 @@ export default function Shop() {
             </div>
           )
         })}
-        {products.length === 0 && <p className="text-sm text-white/55">No products yet.</p>}
+        {products.length === 0 && <p className="text-sm text-black/55">No products yet.</p>}
       </div>
 
       {items.length > 0 && (
-        <div className="sticky bottom-4 rounded-2xl border border-white/10 bg-black/70 p-4 backdrop-blur">
+        <div className="sticky bottom-4 rounded-2xl border border-black/10 bg-white p-4 backdrop-blur">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-white/70">
+            <span className="text-sm text-black/70">
               {items.reduce((n, x) => n + x.qty, 0)} item(s) · {money(subtotal)} + shipping
             </span>
             <button
@@ -180,12 +180,12 @@ function OrderPayment({ orderId, total, onDone, onCancel }) {
     <div className="space-y-4">
       <h2 className="text-lg font-semibold">Checkout · {money(total)}</h2>
       <PaymentElement options={{ layout: 'tabs' }} />
-      {err && <p className="text-sm text-red-400">{err}</p>}
+      {err && <p className="text-sm text-red-600">{err}</p>}
       <div className="flex gap-2">
         <button onClick={pay} disabled={busy || !stripe} className="rounded-lg px-4 py-2 text-sm font-semibold text-black disabled:opacity-60" style={{ backgroundColor: GOLD }}>
           {busy ? 'Processing…' : `Pay ${money(total)}`}
         </button>
-        <button onClick={onCancel} className="rounded-lg border border-white/15 px-4 py-2 text-sm text-white/70">Cancel</button>
+        <button onClick={onCancel} className="rounded-lg border border-black/15 px-4 py-2 text-sm text-black/70">Cancel</button>
       </div>
     </div>
   )

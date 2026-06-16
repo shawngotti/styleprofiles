@@ -59,7 +59,7 @@ export default function Deals({ onClaimed }) {
 
   if (pay) {
     return (
-      <Elements stripe={stripePromise} options={{ clientSecret: pay.clientSecret, appearance: { theme: 'night', variables: { colorPrimary: GOLD, colorBackground: '#141417' } } }}>
+      <Elements stripe={stripePromise} options={{ clientSecret: pay.clientSecret, appearance: { theme: 'stripe', variables: { colorPrimary: GOLD, colorBackground: '#ffffff' } } }}>
         <DepositPayment
           bookingId={pay.bookingId}
           onDone={() => {
@@ -77,30 +77,30 @@ export default function Deals({ onClaimed }) {
     )
   }
 
-  if (deals === undefined) return <p className="text-sm text-white/50">Loading deals…</p>
+  if (deals === undefined) return <p className="text-sm text-black/50">Loading deals…</p>
 
   return (
     <div className="space-y-4">
       <div>
         <h2 className="text-lg font-semibold">Flash deals</h2>
-        <p className="mt-1 text-sm text-white/60">Last-minute openings from pros near you. Claim secures the slot with a deposit.</p>
+        <p className="mt-1 text-sm text-black/60">Last-minute openings from pros near you. Claim secures the slot with a deposit.</p>
       </div>
-      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{msg.text}</p>}
+      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-600' : 'text-emerald-600'}`} role="status" aria-live="polite">{msg.text}</p>}
 
       {deals.length === 0 ? (
-        <p className="text-sm text-white/55">No flash deals running right now.</p>
+        <p className="text-sm text-black/55">No flash deals running right now.</p>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
           {deals.map((d) => {
             const full = d.service?.price ?? 0
             const discounted = Math.round(full * (1 - (d.discount_pct || 0) / 100))
             return (
-              <div key={d.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div key={d.id} className="rounded-2xl border border-black/10 bg-black/5 p-4">
                 <div className="flex items-center justify-between">
                   <span className="rounded-full px-2 py-0.5 text-xs font-medium" style={{ backgroundColor: `${GOLD}1a`, color: GOLD }}>
                     {TYPE_LABEL[d.promo_type] || 'Deal'}
                   </span>
-                  {d.expires_at && <span className="text-xs text-white/55">ends {new Date(d.expires_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span>}
+                  {d.expires_at && <span className="text-xs text-black/55">ends {new Date(d.expires_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span>}
                 </div>
                 <div className="mt-3 flex items-center gap-3">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-black" style={{ backgroundColor: GOLD }}>
@@ -108,7 +108,7 @@ export default function Deals({ onClaimed }) {
                   </div>
                   <div className="min-w-0">
                     <div className="truncate font-medium">{d.service?.name || 'Service'}</div>
-                    <div className="truncate text-xs text-white/50">{d.pro?.display_name} · {d.slot_at ? new Date(d.slot_at).toLocaleString() : d.slot_label}</div>
+                    <div className="truncate text-xs text-black/50">{d.pro?.display_name} · {d.slot_at ? new Date(d.slot_at).toLocaleString() : d.slot_label}</div>
                   </div>
                 </div>
                 <div className="mt-3 flex items-center justify-between">
@@ -116,7 +116,7 @@ export default function Deals({ onClaimed }) {
                     {d.discount_pct > 0 ? (
                       <>
                         <span className="font-semibold" style={{ color: GOLD }}>{centsToUsd(discounted)}</span>{' '}
-                        <span className="text-white/55 line-through">{centsToUsd(full)}</span>
+                        <span className="text-black/55 line-through">{centsToUsd(full)}</span>
                       </>
                     ) : (
                       <span className="font-semibold">{centsToUsd(full)}</span>
@@ -164,14 +164,14 @@ function DepositPayment({ bookingId, onDone, onCancel }) {
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-semibold">Secure your slot</h2>
-      <p className="text-sm text-white/60">A deposit holds your appointment. The pro confirms your slot.</p>
+      <p className="text-sm text-black/60">A deposit holds your appointment. The pro confirms your slot.</p>
       <PaymentElement options={{ layout: 'tabs' }} />
-      {err && <p className="text-sm text-red-400" role="alert">{err}</p>}
+      {err && <p className="text-sm text-red-600" role="alert">{err}</p>}
       <div className="flex gap-2">
         <button onClick={pay} disabled={busy || !stripe} className="rounded-lg px-4 py-2 text-sm font-semibold text-black disabled:opacity-60" style={{ backgroundColor: GOLD }}>
           {busy ? 'Processing…' : 'Pay deposit'}
         </button>
-        <button onClick={onCancel} className="rounded-lg border border-white/15 px-4 py-2 text-sm text-white/70">Cancel</button>
+        <button onClick={onCancel} className="rounded-lg border border-black/15 px-4 py-2 text-sm text-black/70">Cancel</button>
       </div>
     </div>
   )

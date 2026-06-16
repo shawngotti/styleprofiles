@@ -29,7 +29,7 @@ export default function EmailPrefToggle() {
 
   return (
     <div className="flex items-center justify-between">
-      <dt className="text-white/50">Email notifications</dt>
+      <dt className="text-black/50">Email notifications</dt>
       <dd>
         <button
           onClick={toggle}
@@ -37,7 +37,7 @@ export default function EmailPrefToggle() {
           aria-checked={on}
           aria-label="Toggle email notifications"
           className="relative h-5 w-9 rounded-full transition"
-          style={{ backgroundColor: on ? GOLD : 'rgba(255,255,255,0.15)' }}
+          style={{ backgroundColor: on ? GOLD : 'rgba(0,0,0,0.14)' }}
         >
           <span className="absolute top-0.5 h-4 w-4 rounded-full bg-white transition-all" style={{ left: on ? '18px' : '2px' }} />
         </button>

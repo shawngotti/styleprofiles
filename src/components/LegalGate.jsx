@@ -59,17 +59,17 @@ export default function LegalGate({ children }) {
   }
 
   if (state === 'loading') {
-    return <div className="flex min-h-screen items-center justify-center text-sm text-white/50">Loading…</div>
+    return <div className="flex min-h-screen items-center justify-center text-sm text-black/50">Loading…</div>
   }
   if (state === 'ok') return children
 
   return (
     <main className="mx-auto flex min-h-screen max-w-lg flex-col justify-center p-6">
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+      <div className="rounded-2xl border border-black/10 bg-black/5 p-6">
         <h1 className="text-lg font-semibold">
           Before you continue
         </h1>
-        <p className="mt-3 text-sm text-white/70">
+        <p className="mt-3 text-sm text-black/70">
           Please review and accept our updated Terms and Privacy Policy. They cover bookings and
           deposits, payments, StylePoints, how your photos and consent work, and the rules for Awards
           and The Lineup.
@@ -79,17 +79,17 @@ export default function LegalGate({ children }) {
             <a className="underline" style={{ color: GOLD }} href="https://github.com" target="_blank" rel="noreferrer">
               Terms of Service
             </a>{' '}
-            <span className="text-white/55">(v{versions.tos})</span>
+            <span className="text-black/55">(v{versions.tos})</span>
           </li>
           <li>
             <a className="underline" style={{ color: GOLD }} href="https://github.com" target="_blank" rel="noreferrer">
               Privacy Policy
             </a>{' '}
-            <span className="text-white/55">(v{versions.privacy})</span>
+            <span className="text-black/55">(v{versions.privacy})</span>
           </li>
         </ul>
         {error && (
-          <p className="mt-3 text-sm text-red-400" role="alert">
+          <p className="mt-3 text-sm text-red-600" role="alert">
             {error}
           </p>
         )}
@@ -101,7 +101,7 @@ export default function LegalGate({ children }) {
         >
           {busy ? 'Saving…' : 'I agree to the Terms & Privacy Policy'}
         </button>
-        <p className="mt-3 text-xs text-white/55">
+        <p className="mt-3 text-xs text-black/55">
           You can withdraw media consent at any time from Tag requests. Accepting is required to use
           StyleProfiles.
         </p>

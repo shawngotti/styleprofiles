@@ -108,9 +108,9 @@ export default function SubmitAwardEntry({ proId, category }) {
   if (cycle === undefined) return null
   if (cycle === null) {
     return (
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-white/55">Monthly Awards</h3>
-        <p className="mt-2 text-sm text-white/50">No awards cycle is accepting entries right now.</p>
+      <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
+        <h3 className="text-sm font-semibold uppercase tracking-wide text-black/55">Monthly Awards</h3>
+        <p className="mt-2 text-sm text-black/50">No awards cycle is accepting entries right now.</p>
       </section>
     )
   }
@@ -124,13 +124,13 @@ export default function SubmitAwardEntry({ proId, category }) {
         : null
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
+    <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-white/55">Awards · {period}</h3>
+        <h3 className="text-sm font-semibold uppercase tracking-wide text-black/55">Awards · {period}</h3>
         {statusBadge && (
           <span
             className="rounded-full px-2.5 py-0.5 text-xs font-medium"
-            style={{ backgroundColor: 'rgba(255,255,255,0.08)', color: statusBadge.color }}
+            style={{ backgroundColor: 'rgba(0,0,0,0.06)', color: statusBadge.color }}
           >
             {statusBadge.text}
           </span>
@@ -138,7 +138,7 @@ export default function SubmitAwardEntry({ proId, category }) {
       </div>
 
       {entry && !open ? (
-        <p className="mt-3 text-sm text-white/70">
+        <p className="mt-3 text-sm text-black/70">
           {entry.status === 'approved' ? '✓ ' : '⏳ '}
           <b>{entry.look_label}</b>{' '}
           {entry.status === 'pending'
@@ -146,7 +146,7 @@ export default function SubmitAwardEntry({ proId, category }) {
             : `is entered for ${category ? `${category} ` : ''}of the month.`}
         </p>
       ) : (
-        <p className="mt-3 text-sm text-white/70">
+        <p className="mt-3 text-sm text-black/70">
           Enter one completed look this month — one per category. Tagged-client looks publish once consent is granted.
         </p>
       )}
@@ -165,33 +165,33 @@ export default function SubmitAwardEntry({ proId, category }) {
       ) : (
         <div className="mt-4 space-y-3">
           <label className="block text-sm">
-            <span className="text-white/50">Look name</span>
+            <span className="text-black/50">Look name</span>
             <input
               value={look}
               onChange={(e) => setLook(e.target.value)}
               placeholder="e.g. Textured fade"
-              className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-white/30"
+              className="mt-1 w-full rounded-lg border border-black/10 bg-black/5 px-3 py-2 text-sm outline-none focus:border-black/30"
             />
           </label>
           <label className="block text-sm">
-            <span className="text-white/50">Photo of the look</span>
+            <span className="text-black/50">Photo of the look</span>
             <input
               ref={fileRef}
               type="file"
               accept="image/*"
               onChange={(e) => setFile(e.target.files?.[0] || null)}
-              className="mt-1 block w-full text-sm text-white/70 file:mr-3 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-sm file:text-white"
+              className="mt-1 block w-full text-sm text-black/70 file:mr-3 file:rounded-lg file:border-0 file:bg-black/10 file:px-3 file:py-1.5 file:text-sm file:text-gray-900"
             />
           </label>
           <label className="block text-sm">
-            <span className="text-white/50">Client / model tagging</span>
+            <span className="text-black/50">Client / model tagging</span>
             <select
               value={tag}
               onChange={(e) => setTag(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-white/30"
+              className="mt-1 w-full rounded-lg border border-black/10 bg-black/5 px-3 py-2 text-sm outline-none focus:border-black/30"
             >
               {TAG_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value} className="bg-neutral-900">
+                <option key={o.value} value={o.value} className="bg-white">
                   {o.label}
                 </option>
               ))}
@@ -199,12 +199,12 @@ export default function SubmitAwardEntry({ proId, category }) {
           </label>
           {tag !== 'none' && (
             <label className="block text-sm">
-              <span className="text-white/50">Client email (we'll request their consent)</span>
+              <span className="text-black/50">Client email (we'll request their consent)</span>
               <input
                 value={subjectEmail}
                 onChange={(e) => setSubjectEmail(e.target.value)}
                 placeholder="client@email.com"
-                className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-white/30"
+                className="mt-1 w-full rounded-lg border border-black/10 bg-black/5 px-3 py-2 text-sm outline-none focus:border-black/30"
               />
             </label>
           )}
@@ -222,7 +222,7 @@ export default function SubmitAwardEntry({ proId, category }) {
                 setOpen(false)
                 setMsg(null)
               }}
-              className="rounded-lg border border-white/15 px-4 py-2 text-sm text-white/70"
+              className="rounded-lg border border-black/15 px-4 py-2 text-sm text-black/70"
             >
               Cancel
             </button>
@@ -231,7 +231,7 @@ export default function SubmitAwardEntry({ proId, category }) {
       )}
 
       {msg && (
-        <p className={`mt-3 text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>{msg.text}</p>
+        <p className={`mt-3 text-sm ${msg.type === 'error' ? 'text-red-600' : 'text-emerald-600'}`}>{msg.text}</p>
       )}
     </section>
   )

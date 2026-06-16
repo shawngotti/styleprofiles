@@ -72,7 +72,7 @@ export default function AuthedHome() {
           Style<span style={{ color: GOLD }}>Profiles</span>
         </h1>
         <div className="flex items-center gap-3 text-sm">
-          <span className="hidden text-white/60 sm:inline">{user?.email}</span>
+          <span className="hidden text-black/60 sm:inline">{user?.email}</span>
           <NotificationsBell
             lineupOn={lineupOn}
             onNavigate={(screen) => {
@@ -90,7 +90,7 @@ export default function AuthedHome() {
           />
           <button
             onClick={signOut}
-            className="rounded-lg border border-white/15 px-3 py-1.5 hover:bg-white/10"
+            className="rounded-lg border border-black/15 px-3 py-1.5 hover:bg-black/10"
           >
             Sign out
           </button>
@@ -99,8 +99,8 @@ export default function AuthedHome() {
 
       <main id="main-content" className="mx-auto mt-10 max-w-3xl space-y-6">
         {/* Perspective switcher — only shows perspectives the user's roles allow */}
-        <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
-          <p className="text-xs uppercase tracking-wide text-white/55">Perspective</p>
+        <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
+          <p className="text-xs uppercase tracking-wide text-black/55">Perspective</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {available.map((p) => {
               const active = p.key === perspective
@@ -112,7 +112,7 @@ export default function AuthedHome() {
                   style={
                     active
                       ? { backgroundColor: GOLD, color: '#000' }
-                      : { backgroundColor: 'rgba(255,255,255,0.08)', color: '#fff' }
+                      : { backgroundColor: 'rgba(0,0,0,0.06)', color: '#1f1714' }
                   }
                 >
                   {p.label}
@@ -121,7 +121,7 @@ export default function AuthedHome() {
             })}
           </div>
           {available.length === 1 && (
-            <p className="mt-3 text-xs text-white/55">
+            <p className="mt-3 text-xs text-black/55">
               You have the <strong>client</strong> role only. Pro and Admin perspectives
               appear here once those roles are granted.
             </p>
@@ -162,7 +162,7 @@ export default function AuthedHome() {
                       style={
                         clientTab === key
                           ? { backgroundColor: GOLD, color: '#000' }
-                          : { backgroundColor: 'rgba(255,255,255,0.08)', color: '#fff' }
+                          : { backgroundColor: 'rgba(0,0,0,0.06)', color: '#1f1714' }
                       }
                     >
                       {label}
@@ -194,28 +194,28 @@ export default function AuthedHome() {
         {perspective === 'pro' && <ProDashboard />}
         {perspective === 'admin' && <AdminConsole />}
 
-        <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
-          <p className="text-xs uppercase tracking-wide text-white/55">Your account</p>
+        <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
+          <p className="text-xs uppercase tracking-wide text-black/55">Your account</p>
           <dl className="mt-3 space-y-2 text-sm">
             <div className="flex justify-between">
-              <dt className="text-white/50">User ID</dt>
+              <dt className="text-black/50">User ID</dt>
               <dd className="font-mono text-xs">{user?.id}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-white/50">Roles</dt>
+              <dt className="text-black/50">Roles</dt>
               <dd className="flex gap-1.5">
                 {roles.length ? (
                   roles.map((r) => (
                     <span
                       key={r}
-                      className="rounded-full bg-black/40 px-2.5 py-0.5 text-xs"
+                      className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs"
                       style={{ color: GOLD }}
                     >
                       {r}
                     </span>
                   ))
                 ) : (
-                  <span className="text-white/55">none</span>
+                  <span className="text-black/55">none</span>
                 )}
               </dd>
             </div>

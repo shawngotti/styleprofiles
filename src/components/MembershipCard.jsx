@@ -80,9 +80,9 @@ export default function MembershipCard({ pro }) {
           </span>
         )}
       </div>
-      {tier.includes && <p className="mt-1 text-sm text-white/60">{tier.includes}</p>}
+      {tier.includes && <p className="mt-1 text-sm text-black/60">{tier.includes}</p>}
       {tier.perks?.length > 0 && (
-        <ul className="mt-2 space-y-0.5 text-xs text-white/50">
+        <ul className="mt-2 space-y-0.5 text-xs text-black/50">
           {tier.perks.map((p) => (
             <li key={p}>• {p}</li>
           ))}
@@ -90,7 +90,7 @@ export default function MembershipCard({ pro }) {
       )}
 
       {isMember ? (
-        <p className="mt-3 text-xs text-emerald-400">
+        <p className="mt-3 text-xs text-emerald-600">
           Member pricing ({tier.member_discount_pct}% off) is applied automatically when you book.
         </p>
       ) : (
@@ -106,13 +106,13 @@ export default function MembershipCard({ pro }) {
         )
       )}
 
-      {msg && <p className="mt-2 text-sm text-red-400" role="alert">{msg.text}</p>}
+      {msg && <p className="mt-2 text-sm text-red-600" role="alert">{msg.text}</p>}
 
       {clientSecret && (
         <div className="mt-4">
           <Elements
             stripe={stripePromise}
-            options={{ clientSecret, appearance: { theme: 'night', variables: { colorPrimary: GOLD, colorBackground: '#141417' } } }}
+            options={{ clientSecret, appearance: { theme: 'stripe', variables: { colorPrimary: GOLD, colorBackground: '#ffffff' } } }}
           >
             <SubscriptionPay
               onPaid={() => {
@@ -150,7 +150,7 @@ function SubscriptionPay({ onPaid }) {
   return (
     <div>
       <PaymentElement options={{ layout: 'tabs' }} />
-      {err && <p className="mt-2 text-sm text-red-400" role="alert">{err}</p>}
+      {err && <p className="mt-2 text-sm text-red-600" role="alert">{err}</p>}
       <button
         onClick={pay}
         disabled={busy || !stripe}

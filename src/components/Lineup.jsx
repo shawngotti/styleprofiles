@@ -78,14 +78,14 @@ export default function Lineup({ onOpenPro }) {
     setMyVote(contestantId)
   }
 
-  if (comp === undefined) return <p className="text-sm text-white/50">Loading The Lineup…</p>
-  if (comp === null) return <p className="text-sm text-white/55">No competition is running right now.</p>
+  if (comp === undefined) return <p className="text-sm text-black/50">Loading The Lineup…</p>
+  if (comp === null) return <p className="text-sm text-black/55">No competition is running right now.</p>
 
   const champion = Object.values(byId).find((c) => c.status === 'champion')
 
   function Contestant({ id, isWinner }) {
     const c = id ? byId[id] : null
-    if (!c) return <span className="text-sm text-white/30">TBD</span>
+    if (!c) return <span className="text-sm text-black/30">TBD</span>
     const canVote = openWindow && !myVote && c.status !== 'eliminated'
     return (
       <div className="flex items-center justify-between gap-2">
@@ -94,11 +94,11 @@ export default function Lineup({ onOpenPro }) {
           className="flex min-w-0 items-center gap-2 text-left"
           title="View storefront / book"
         >
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-black" style={{ backgroundColor: isWinner ? GOLD : 'rgba(255,255,255,0.25)' }}>
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-black" style={{ backgroundColor: isWinner ? GOLD : 'rgba(0,0,0,0.18)' }}>
             {initials(c.pro?.display_name)}
           </span>
           <span className={`truncate text-sm ${isWinner ? 'font-semibold' : ''}`}>
-            <span className="text-white/55">#{c.seed} </span>
+            <span className="text-black/55">#{c.seed} </span>
             {c.pro?.display_name}
           </span>
           {c.status === 'champion' && <span title="Champion">👑</span>}
@@ -123,7 +123,7 @@ export default function Lineup({ onOpenPro }) {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">{comp.name}</h2>
-        <span className="rounded-full px-3 py-1 text-xs font-medium" style={{ backgroundColor: 'rgba(255,255,255,0.08)', color: GOLD }}>
+        <span className="rounded-full px-3 py-1 text-xs font-medium" style={{ backgroundColor: 'rgba(0,0,0,0.06)', color: GOLD }}>
           {comp.metro || comp.scope} · {comp.status}
         </span>
       </div>
@@ -138,19 +138,19 @@ export default function Lineup({ onOpenPro }) {
       )}
 
       {openWindow && (
-        <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
+        <section className="rounded-2xl border border-black/10 bg-black/5 p-4">
           <div className="flex items-center gap-2 text-sm">
             <span className="font-semibold" style={{ color: GOLD }}>
               {openWindow.vote_type === 'redemption' ? 'Redemption Wildcard' : openWindow.vote_type === 'fan_favorite' ? 'Fan Favorite' : 'Fan vote'} voting is open
             </span>
-            <span className="text-white/55">· closes {new Date(openWindow.closes_at).toLocaleDateString()}</span>
+            <span className="text-black/55">· closes {new Date(openWindow.closes_at).toLocaleDateString()}</span>
           </div>
-          <p className="mt-1 text-xs text-white/55">
+          <p className="mt-1 text-xs text-black/55">
             Fan votes decide only the wildcard &amp; fan favorite — never the bracket itself. One vote per window.
           </p>
         </section>
       )}
-      {msg && <p className="text-sm text-red-400" role="alert" aria-live="assertive">{msg.text}</p>}
+      {msg && <p className="text-sm text-red-600" role="alert" aria-live="assertive">{msg.text}</p>}
 
       <EventTickets competitionId={comp.id} />
 
@@ -159,23 +159,23 @@ export default function Lineup({ onOpenPro }) {
           const ms = matchups.filter((m) => m.round_id === r.id)
           return (
             <section key={r.id}>
-              <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/50">
+              <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-black/50">
                 {r.name} {r.status === 'complete' ? '· done' : r.status === 'live' ? '· live' : ''}
               </h3>
               <div className="grid gap-3 sm:grid-cols-2">
                 {ms.map((m) => (
-                  <div key={m.id} className="space-y-2 rounded-2xl border border-white/10 bg-white/5 p-3">
+                  <div key={m.id} className="space-y-2 rounded-2xl border border-black/10 bg-black/5 p-3">
                     <Contestant id={m.contestant_a} isWinner={m.winner_contestant_id === m.contestant_a} />
-                    <div className="border-t border-white/5" />
+                    <div className="border-t border-black/5" />
                     <Contestant id={m.contestant_b} isWinner={m.winner_contestant_id === m.contestant_b} />
                   </div>
                 ))}
-                {ms.length === 0 && <p className="text-sm text-white/30">Matchups not set yet.</p>}
+                {ms.length === 0 && <p className="text-sm text-black/30">Matchups not set yet.</p>}
               </div>
             </section>
           )
         })}
-        {rounds.length === 0 && <p className="text-sm text-white/55">The bracket hasn't been drawn yet.</p>}
+        {rounds.length === 0 && <p className="text-sm text-black/55">The bracket hasn't been drawn yet.</p>}
       </div>
     </div>
   )

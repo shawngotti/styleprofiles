@@ -74,7 +74,7 @@ export default function NotificationsBell({ lineupOn, onNavigate }) {
         onClick={openPanel}
         aria-label={`Notifications${unread ? `, ${unread} unread` : ''}`}
         aria-expanded={open}
-        className="relative rounded-lg border border-white/15 px-2.5 py-1.5 hover:bg-white/10"
+        className="relative rounded-lg border border-black/15 px-2.5 py-1.5 hover:bg-black/10"
       >
         🔔
         {unread > 0 && (
@@ -88,29 +88,29 @@ export default function NotificationsBell({ lineupOn, onNavigate }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 z-40 mt-2 w-80 max-w-[90vw] rounded-2xl border border-white/10 bg-neutral-900 p-2 shadow-xl">
+        <div className="absolute right-0 z-40 mt-2 w-80 max-w-[90vw] rounded-2xl border border-black/10 bg-white p-2 shadow-xl">
           <div className="flex items-center justify-between px-2 py-1.5">
             <span className="text-sm font-semibold">Notifications</span>
             {unread > 0 && (
-              <button onClick={markAll} className="text-xs text-white/50 hover:text-white/80">
+              <button onClick={markAll} className="text-xs text-black/50 hover:text-black/80">
                 Mark all read
               </button>
             )}
           </div>
           <div className="max-h-96 overflow-y-auto">
             {items.length === 0 ? (
-              <p className="px-2 py-6 text-center text-sm text-white/55">You're all caught up.</p>
+              <p className="px-2 py-6 text-center text-sm text-black/55">You're all caught up.</p>
             ) : (
               items.map((n) => (
                 <button
                   key={n.id}
                   onClick={() => clickItem(n)}
-                  className={`flex w-full items-start gap-2 rounded-lg px-2 py-2 text-left text-sm hover:bg-white/5 ${n.read ? 'opacity-60' : ''}`}
+                  className={`flex w-full items-start gap-2 rounded-lg px-2 py-2 text-left text-sm hover:bg-black/5 ${n.read ? 'opacity-60' : ''}`}
                 >
                   <span aria-hidden>{ICON[n.kind] || '🔔'}</span>
                   <span className="min-w-0 flex-1">
                     <span className="block">{n.body}</span>
-                    <span className="text-xs text-white/55">{new Date(n.created_at).toLocaleDateString()}</span>
+                    <span className="text-xs text-black/55">{new Date(n.created_at).toLocaleDateString()}</span>
                   </span>
                   {!n.read && <span className="mt-1 h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: GOLD }} />}
                 </button>

@@ -51,7 +51,7 @@ export default function Rewards() {
     load()
   }
 
-  if (loading) return <p className="text-sm text-white/50">Loading rewards…</p>
+  if (loading) return <p className="text-sm text-black/50">Loading rewards…</p>
 
   const balance = profile?.style_points ?? 0
   const tier = profile?.loyalty_tier ?? 'Bronze'
@@ -59,35 +59,35 @@ export default function Rewards() {
   return (
     <div className="space-y-6">
       {/* Balance / tier */}
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
-        <p className="text-xs uppercase tracking-wide text-white/55">StylePoints</p>
+      <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
+        <p className="text-xs uppercase tracking-wide text-black/55">StylePoints</p>
         <div className="mt-1 flex items-end justify-between">
           <div className="text-3xl font-semibold" style={{ color: GOLD }}>
-            {balance.toLocaleString()} <span className="text-base font-normal text-white/50">pts</span>
+            {balance.toLocaleString()} <span className="text-base font-normal text-black/50">pts</span>
           </div>
           <span
             className="rounded-full px-3 py-1 text-sm font-medium"
-            style={{ backgroundColor: 'rgba(255,255,255,0.08)', color: TIER_COLOR[tier] || '#fff' }}
+            style={{ backgroundColor: 'rgba(0,0,0,0.06)', color: TIER_COLOR[tier] || '#1f1714' }}
           >
             {tier}
           </span>
         </div>
-        <p className="mt-2 text-xs text-white/55">Earn 1 point per $1 on completed visits.</p>
+        <p className="mt-2 text-xs text-black/55">Earn 1 point per $1 on completed visits.</p>
       </section>
 
-      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{msg.text}</p>}
+      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-600' : 'text-emerald-600'}`} role="status" aria-live="polite">{msg.text}</p>}
 
       {/* Rewards */}
       <section>
-        <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/55">Rewards</h3>
+        <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-black/55">Rewards</h3>
         <div className="grid gap-3 sm:grid-cols-2">
           {rewards.map((r) => {
             const affordable = balance >= r.cost_points
             return (
-              <div key={r.id} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div key={r.id} className="flex items-center justify-between rounded-2xl border border-black/10 bg-black/5 p-4">
                 <div>
                   <div className="font-medium">{r.name}</div>
-                  <div className="text-xs text-white/50">{r.cost_points.toLocaleString()} pts</div>
+                  <div className="text-xs text-black/50">{r.cost_points.toLocaleString()} pts</div>
                 </div>
                 <button
                   onClick={() => redeem(r.id)}
@@ -106,18 +106,18 @@ export default function Rewards() {
 
       {/* Activity */}
       <section>
-        <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/55">Recent activity</h3>
+        <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-black/55">Recent activity</h3>
         {txns.length === 0 ? (
-          <p className="text-sm text-white/55">No points activity yet — book and complete a visit to earn.</p>
+          <p className="text-sm text-black/55">No points activity yet — book and complete a visit to earn.</p>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+          <div className="overflow-hidden rounded-2xl border border-black/10 bg-black/5">
             {txns.map((t, i) => (
-              <div key={t.id} className={`flex items-center justify-between p-3 text-sm ${i ? 'border-t border-white/5' : ''}`}>
+              <div key={t.id} className={`flex items-center justify-between p-3 text-sm ${i ? 'border-t border-black/5' : ''}`}>
                 <div>
                   <div>{t.reason}</div>
-                  <div className="text-xs text-white/55">{new Date(t.created_at).toLocaleDateString()}</div>
+                  <div className="text-xs text-black/55">{new Date(t.created_at).toLocaleDateString()}</div>
                 </div>
-                <span className={t.delta >= 0 ? 'text-emerald-400' : 'text-white/60'}>
+                <span className={t.delta >= 0 ? 'text-emerald-600' : 'text-black/60'}>
                   {t.delta >= 0 ? '+' : ''}
                   {t.delta} pts
                 </span>

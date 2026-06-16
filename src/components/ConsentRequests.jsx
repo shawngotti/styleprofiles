@@ -44,7 +44,7 @@ export default function ConsentRequests() {
     load()
   }
 
-  if (rows === undefined) return <p className="text-sm text-white/50">Loading tag requests…</p>
+  if (rows === undefined) return <p className="text-sm text-black/50">Loading tag requests…</p>
 
   const pending = rows.filter((r) => r.status === 'pending')
   const resolved = rows.filter((r) => r.status !== 'pending')
@@ -54,33 +54,33 @@ export default function ConsentRequests() {
     <div className="space-y-6">
       <div>
         <h2 className="text-lg font-semibold">Tag requests</h2>
-        <p className="mt-1 text-sm text-white/60">
+        <p className="mt-1 text-sm text-black/60">
           Pros want to feature you in their work. You decide how — nothing goes public without your consent.
         </p>
       </div>
-      {msg && <p className="text-sm text-red-400" role="alert">{msg.text}</p>}
+      {msg && <p className="text-sm text-red-600" role="alert">{msg.text}</p>}
 
       <section>
-        <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/55">Pending</h3>
+        <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-black/55">Pending</h3>
         {pending.length === 0 ? (
-          <p className="text-sm text-white/55">No pending requests.</p>
+          <p className="text-sm text-black/55">No pending requests.</p>
         ) : (
           <div className="space-y-3">
             {pending.map((r) => (
-              <div key={r.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div key={r.id} className="rounded-2xl border border-black/10 bg-black/5 p-4">
                 <div className="text-sm">
                   <span className="font-medium">{r.pro?.display_name}</span>{' '}
-                  <span className="text-white/50">wants to feature {r.look_label ? `“${r.look_label}”` : 'a look'}</span>
+                  <span className="text-black/50">wants to feature {r.look_label ? `“${r.look_label}”` : 'a look'}</span>
                   {r.for_contest && <span className="ml-2 rounded-full px-2 py-0.5 text-xs" style={{ backgroundColor: `${GOLD}22`, color: GOLD }}>competition</span>}
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button onClick={() => resolve(r.id, 'public')} disabled={busy === r.id} className="rounded-lg px-3 py-1.5 text-sm font-semibold text-black disabled:opacity-50" style={{ backgroundColor: GOLD }}>
                     Approve · public credit
                   </button>
-                  <button onClick={() => resolve(r.id, 'anonymous')} disabled={busy === r.id} className="rounded-lg border border-white/15 px-3 py-1.5 text-sm hover:bg-white/10 disabled:opacity-50">
+                  <button onClick={() => resolve(r.id, 'anonymous')} disabled={busy === r.id} className="rounded-lg border border-black/15 px-3 py-1.5 text-sm hover:bg-black/10 disabled:opacity-50">
                     Approve · anonymous
                   </button>
-                  <button onClick={() => resolve(r.id, 'declined')} disabled={busy === r.id} className="rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white/70 hover:bg-white/10 disabled:opacity-50">
+                  <button onClick={() => resolve(r.id, 'declined')} disabled={busy === r.id} className="rounded-lg border border-black/15 px-3 py-1.5 text-sm text-black/70 hover:bg-black/10 disabled:opacity-50">
                     Decline
                   </button>
                 </div>
@@ -92,14 +92,14 @@ export default function ConsentRequests() {
 
       {resolved.length > 0 && (
         <section>
-          <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-white/55">History</h3>
+          <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-black/55">History</h3>
           <div className="space-y-2">
             {resolved.map((r) => (
-              <div key={r.id} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm">
-                <span className="text-white/70">
+              <div key={r.id} className="flex items-center justify-between rounded-xl border border-black/10 bg-black/[0.03] px-4 py-2.5 text-sm">
+                <span className="text-black/70">
                   {r.pro?.display_name} · {r.look_label || 'a look'}
                 </span>
-                <span className="text-xs text-white/50">{STATUS_LABEL[r.status] || r.status}</span>
+                <span className="text-xs text-black/50">{STATUS_LABEL[r.status] || r.status}</span>
               </div>
             ))}
           </div>

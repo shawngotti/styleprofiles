@@ -13,7 +13,7 @@ const EXPIRES = [
   ['3', 'In 3 hours'],
   ['6', 'Today (6h)'],
 ]
-const STATUS_COLOR = { open: GOLD, claimed: '#34D399', expired: 'rgba(255,255,255,0.4)' }
+const STATUS_COLOR = { open: GOLD, claimed: '#34D399', expired: 'rgba(0,0,0,0.32)' }
 
 // Pro-side Fill My Chair: post a time-sensitive discounted opening and watch it
 // get claimed. Posting notifies past clients (server trigger); claiming creates a
@@ -73,55 +73,55 @@ export default function FillMyChair({ proId }) {
   }
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
-      <h3 className="text-sm font-semibold uppercase tracking-wide text-white/55">Fill my chair</h3>
-      <p className="mt-1 text-sm text-white/60">Turn a cancellation or slow day into a booked slot — post a flash deal and blast it to your clients.</p>
+    <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
+      <h3 className="text-sm font-semibold uppercase tracking-wide text-black/55">Fill my chair</h3>
+      <p className="mt-1 text-sm text-black/60">Turn a cancellation or slow day into a booked slot — post a flash deal and blast it to your clients.</p>
 
       {services.length === 0 ? (
-        <p className="mt-3 text-sm text-white/55">Add a service to your storefront first.</p>
+        <p className="mt-3 text-sm text-black/55">Add a service to your storefront first.</p>
       ) : (
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <label className="block text-sm">
-            <span className="text-white/50">Service</span>
+            <span className="text-black/50">Service</span>
             <select value={form.service_id} onChange={set('service_id')} className={inputCls}>
               {services.map((s) => (
-                <option key={s.id} value={s.id} className="bg-neutral-900">{s.name} · {centsToUsd(s.price)}</option>
+                <option key={s.id} value={s.id} className="bg-white">{s.name} · {centsToUsd(s.price)}</option>
               ))}
             </select>
           </label>
           <label className="block text-sm">
-            <span className="text-white/50">Slot date &amp; time</span>
+            <span className="text-black/50">Slot date &amp; time</span>
             <input type="datetime-local" value={form.slot_at} onChange={set('slot_at')} className={inputCls} />
           </label>
           <label className="block text-sm">
-            <span className="text-white/50">Deal type</span>
+            <span className="text-black/50">Deal type</span>
             <select value={form.promo_type} onChange={set('promo_type')} className={inputCls}>
-              {TYPES.map(([v, l]) => <option key={v} value={v} className="bg-neutral-900">{l}</option>)}
+              {TYPES.map(([v, l]) => <option key={v} value={v} className="bg-white">{l}</option>)}
             </select>
           </label>
           <label className="block text-sm">
-            <span className="text-white/50">Discount</span>
+            <span className="text-black/50">Discount</span>
             <select value={form.discount_pct} onChange={set('discount_pct')} className={inputCls}>
-              {['0', '10', '15', '20', '25'].map((d) => <option key={d} value={d} className="bg-neutral-900">{d === '0' ? 'None' : `${d}% off`}</option>)}
+              {['0', '10', '15', '20', '25'].map((d) => <option key={d} value={d} className="bg-white">{d === '0' ? 'None' : `${d}% off`}</option>)}
             </select>
           </label>
           <label className="block text-sm">
-            <span className="text-white/50">Notify</span>
+            <span className="text-black/50">Notify</span>
             <select value={form.audience} onChange={set('audience')} className={inputCls}>
-              <option value="waitlist" className="bg-neutral-900">Waitlist</option>
-              <option value="loyalty" className="bg-neutral-900">Loyalty members</option>
-              <option value="followers" className="bg-neutral-900">All followers</option>
+              <option value="waitlist" className="bg-white">Waitlist</option>
+              <option value="loyalty" className="bg-white">Loyalty members</option>
+              <option value="followers" className="bg-white">All followers</option>
             </select>
           </label>
           <label className="block text-sm">
-            <span className="text-white/50">Expires</span>
+            <span className="text-black/50">Expires</span>
             <select value={form.expires} onChange={set('expires')} className={inputCls}>
-              {EXPIRES.map(([v, l]) => <option key={v} value={v} className="bg-neutral-900">{l}</option>)}
+              {EXPIRES.map(([v, l]) => <option key={v} value={v} className="bg-white">{l}</option>)}
             </select>
           </label>
         </div>
       )}
-      {msg && <p className={`mt-3 text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{msg.text}</p>}
+      {msg && <p className={`mt-3 text-sm ${msg.type === 'error' ? 'text-red-600' : 'text-emerald-600'}`} role="status" aria-live="polite">{msg.text}</p>}
       {services.length > 0 && (
         <button onClick={post} disabled={busy} className="mt-4 rounded-lg px-4 py-2 text-sm font-semibold text-black disabled:opacity-60" style={{ backgroundColor: GOLD }}>
           {busy ? 'Posting…' : 'Blast this deal'}
@@ -130,14 +130,14 @@ export default function FillMyChair({ proId }) {
 
       {promos.length > 0 && (
         <div className="mt-5">
-          <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/55">Your deals</h4>
+          <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-black/55">Your deals</h4>
           <div className="space-y-2">
             {promos.map((p) => (
-              <div key={p.id} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm">
+              <div key={p.id} className="flex items-center justify-between rounded-xl border border-black/10 bg-black/[0.03] px-4 py-2.5 text-sm">
                 <div>
                   <span className="font-medium">{p.service?.name || 'Service'}</span>
                   {p.discount_pct > 0 && <span className="ml-2" style={{ color: '#34D399' }}>{p.discount_pct}% off</span>}
-                  <div className="text-xs text-white/55">
+                  <div className="text-xs text-black/55">
                     {p.slot_at ? new Date(p.slot_at).toLocaleString() : p.slot_label} · {p.notified_count} notified
                   </div>
                 </div>
@@ -153,4 +153,4 @@ export default function FillMyChair({ proId }) {
   )
 }
 
-const inputCls = 'mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-white/30'
+const inputCls = 'mt-1 w-full rounded-lg border border-black/10 bg-black/5 px-3 py-2 text-sm outline-none focus:border-black/30'

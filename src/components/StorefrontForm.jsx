@@ -106,8 +106,8 @@ export default function StorefrontForm({ pro, onSaved }) {
   }
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
-      <h3 className="text-sm font-semibold uppercase tracking-wide text-white/55">
+    <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
+      <h3 className="text-sm font-semibold uppercase tracking-wide text-black/55">
         {editing ? 'Edit storefront' : 'Create your storefront'}
       </h3>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -119,9 +119,9 @@ export default function StorefrontForm({ pro, onSaved }) {
         </Field>
         <Field label="Category">
           <select value={form.category} onChange={set('category')} className={inputCls}>
-            <option value="" className="bg-neutral-900">Choose…</option>
+            <option value="" className="bg-white">Choose…</option>
             {cats.map((c) => (
-              <option key={c.slug} value={c.slug} className="bg-neutral-900">{c.label}</option>
+              <option key={c.slug} value={c.slug} className="bg-white">{c.label}</option>
             ))}
           </select>
         </Field>
@@ -134,7 +134,7 @@ export default function StorefrontForm({ pro, onSaved }) {
         <Field label="Travel">
           <select value={form.travel_mode} onChange={set('travel_mode')} className={inputCls}>
             {TRAVEL.map((t) => (
-              <option key={t.value} value={t.value} className="bg-neutral-900">{t.label}</option>
+              <option key={t.value} value={t.value} className="bg-white">{t.label}</option>
             ))}
           </select>
         </Field>
@@ -147,29 +147,29 @@ export default function StorefrontForm({ pro, onSaved }) {
 
       {/* Photos */}
       <div className="mt-5 space-y-3">
-        <div className="text-sm text-white/50">Photos</div>
+        <div className="text-sm text-black/50">Photos</div>
         <div className="flex flex-wrap items-end gap-4">
           <label className="cursor-pointer text-center">
             {form.avatar_url ? (
               <img src={form.avatar_url} alt="" className="h-16 w-16 rounded-full object-cover" />
             ) : (
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10 text-xs text-white/50">＋</div>
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-black/10 text-xs text-black/50">＋</div>
             )}
-            <div className="mt-1 text-xs text-white/50">{uploading === 'avatar' ? 'Uploading…' : 'Avatar'}</div>
+            <div className="mt-1 text-xs text-black/50">{uploading === 'avatar' ? 'Uploading…' : 'Avatar'}</div>
             <input type="file" accept="image/*" className="hidden" onChange={(e) => onPick('avatar', e)} />
           </label>
           <label className="cursor-pointer text-center">
             {form.cover_url ? (
               <img src={form.cover_url} alt="" className="h-16 w-28 rounded-lg object-cover" />
             ) : (
-              <div className="flex h-16 w-28 items-center justify-center rounded-lg bg-white/10 text-xs text-white/50">＋</div>
+              <div className="flex h-16 w-28 items-center justify-center rounded-lg bg-black/10 text-xs text-black/50">＋</div>
             )}
-            <div className="mt-1 text-xs text-white/50">{uploading === 'cover' ? 'Uploading…' : 'Cover'}</div>
+            <div className="mt-1 text-xs text-black/50">{uploading === 'cover' ? 'Uploading…' : 'Cover'}</div>
             <input type="file" accept="image/*" className="hidden" onChange={(e) => onPick('cover', e)} />
           </label>
         </div>
         <div>
-          <div className="flex items-center gap-2 text-sm text-white/50">
+          <div className="flex items-center gap-2 text-sm text-black/50">
             Portfolio
             <label className="cursor-pointer text-xs underline" style={{ color: GOLD }}>
               {uploading === 'gallery' ? 'uploading…' : '+ add photos'}
@@ -185,7 +185,7 @@ export default function StorefrontForm({ pro, onSaved }) {
                     type="button"
                     aria-label="Remove photo"
                     onClick={() => setForm((s) => ({ ...s, gallery_urls: s.gallery_urls.filter((_, j) => j !== i) }))}
-                    className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/80 text-xs"
+                    className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-xs text-white"
                   >
                     ×
                   </button>
@@ -196,7 +196,7 @@ export default function StorefrontForm({ pro, onSaved }) {
         </div>
       </div>
 
-      {msg && <p className="mt-3 text-sm text-red-400" role="alert">{msg.text}</p>}
+      {msg && <p className="mt-3 text-sm text-red-600" role="alert">{msg.text}</p>}
       <button onClick={save} disabled={busy} className="mt-4 rounded-lg px-4 py-2 text-sm font-semibold text-black disabled:opacity-60" style={{ backgroundColor: GOLD }}>
         {busy ? 'Saving…' : editing ? 'Save changes' : 'Create storefront'}
       </button>
@@ -204,12 +204,12 @@ export default function StorefrontForm({ pro, onSaved }) {
   )
 }
 
-const inputCls = 'mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-white/30'
+const inputCls = 'mt-1 w-full rounded-lg border border-black/10 bg-black/5 px-3 py-2 text-sm outline-none focus:border-black/30'
 
 function Field({ label, hint, children }) {
   return (
     <label className="block text-sm">
-      <span className="text-white/50">{label}{hint && <span className="text-white/30"> · {hint}</span>}</span>
+      <span className="text-black/50">{label}{hint && <span className="text-black/30"> · {hint}</span>}</span>
       {children}
     </label>
   )

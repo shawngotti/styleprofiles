@@ -63,14 +63,14 @@ export default function ProDashboard() {
     window.location.href = data.url // redirect to Stripe-hosted onboarding
   }
 
-  if (loading) return <p className="text-sm text-white/50">Loading…</p>
+  if (loading) return <p className="text-sm text-black/50">Loading…</p>
 
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Pro dashboard</h2>
         {pro && !editing && (
-          <button onClick={() => setEditing(true)} className="rounded-lg border border-white/15 px-3 py-1.5 text-sm hover:bg-white/10">
+          <button onClick={() => setEditing(true)} className="rounded-lg border border-black/15 px-3 py-1.5 text-sm hover:bg-black/10">
             Edit storefront
           </button>
         )}
@@ -87,13 +87,13 @@ export default function ProDashboard() {
           }}
         />
       ) : (
-        <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
+        <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-white/55">Payouts</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-black/55">Payouts</h3>
             <span
               className="rounded-full px-2.5 py-0.5 text-xs font-medium"
               style={{
-                backgroundColor: 'rgba(255,255,255,0.08)',
+                backgroundColor: 'rgba(0,0,0,0.06)',
                 color: pro.charges_enabled ? '#34D399' : GOLD,
               }}
             >
@@ -102,12 +102,12 @@ export default function ProDashboard() {
           </div>
 
           {pro.charges_enabled ? (
-            <p className="mt-3 text-sm text-white/70">
+            <p className="mt-3 text-sm text-black/70">
               ✓ You're accepting bookings. Deposits and payouts route to your connected Stripe account.
             </p>
           ) : (
             <>
-              <p className="mt-3 text-sm text-white/70">
+              <p className="mt-3 text-sm text-black/70">
                 Set up payouts with Stripe to start accepting bookings. Until then, clients see your storefront but
                 can't book.
               </p>
@@ -122,7 +122,7 @@ export default function ProDashboard() {
             </>
           )}
 
-          {msg && <p className={`mt-3 text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{msg.text}</p>}
+          {msg && <p className={`mt-3 text-sm ${msg.type === 'error' ? 'text-red-600' : 'text-emerald-600'}`} role="status" aria-live="polite">{msg.text}</p>}
         </section>
       )}
 

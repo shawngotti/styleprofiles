@@ -87,8 +87,8 @@ export default function CutOfTheWeek() {
     load()
   }
 
-  if (challenge === undefined) return <p className="text-sm text-white/50">Loading Cut of the Week…</p>
-  if (challenge === null) return <p className="text-sm text-white/55">No Cut of the Week is open right now.</p>
+  if (challenge === undefined) return <p className="text-sm text-black/50">Loading Cut of the Week…</p>
+  if (challenge === null) return <p className="text-sm text-black/55">No Cut of the Week is open right now.</p>
 
   return (
     <div className="space-y-5">
@@ -98,21 +98,21 @@ export default function CutOfTheWeek() {
           Voting open
         </span>
       </div>
-      {brief?.description && <p className="text-sm text-white/60">{brief.description}</p>}
-      <p className="text-xs text-white/55">One vote this week · closes {new Date(challenge.closes_at).toLocaleDateString()}.</p>
+      {brief?.description && <p className="text-sm text-black/60">{brief.description}</p>}
+      <p className="text-xs text-black/55">One vote this week · closes {new Date(challenge.closes_at).toLocaleDateString()}.</p>
 
       {myPro && <SubmitPanel proId={myPro.id} onDone={load} />}
-      {msg && <p className="text-sm text-red-400" role="alert" aria-live="assertive">{msg.text}</p>}
+      {msg && <p className="text-sm text-red-600" role="alert" aria-live="assertive">{msg.text}</p>}
 
       <div className="grid gap-3 sm:grid-cols-2">
         {board.map((e, i) => {
           const isPick = myVote === e.entry_id
           return (
-            <div key={e.entry_id} className="overflow-hidden rounded-2xl border" style={{ borderColor: isPick ? GOLD : 'rgba(255,255,255,0.10)' }}>
+            <div key={e.entry_id} className="overflow-hidden rounded-2xl border" style={{ borderColor: isPick ? GOLD : 'rgba(0,0,0,0.08)' }}>
               {urls[e.entry_id] ? (
                 <img src={urls[e.entry_id]} alt={e.display_name} className="h-44 w-full object-cover" />
               ) : (
-                <div className="flex h-44 w-full items-center justify-center bg-white/5 text-2xl font-semibold text-white/30">
+                <div className="flex h-44 w-full items-center justify-center bg-black/5 text-2xl font-semibold text-black/30">
                   {initials(e.display_name)}
                 </div>
               )}
@@ -121,7 +121,7 @@ export default function CutOfTheWeek() {
                   <div className="truncate text-sm font-medium">
                     {i === 0 && Number(e.votes) > 0 ? '🥇 ' : ''}{e.display_name}
                   </div>
-                  <div className="text-xs text-white/55">{Number(e.votes)} vote{Number(e.votes) === 1 ? '' : 's'}</div>
+                  <div className="text-xs text-black/55">{Number(e.votes)} vote{Number(e.votes) === 1 ? '' : 's'}</div>
                 </div>
                 {isPick ? (
                   <span className="shrink-0 text-sm font-medium" style={{ color: GOLD }}>✓ Your pick</span>
@@ -139,7 +139,7 @@ export default function CutOfTheWeek() {
             </div>
           )
         })}
-        {board.length === 0 && <p className="text-sm text-white/55">No entries yet — be the first.</p>}
+        {board.length === 0 && <p className="text-sm text-black/55">No entries yet — be the first.</p>}
       </div>
     </div>
   )
@@ -198,10 +198,10 @@ function SubmitPanel({ proId, onDone }) {
   }
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
+    <section className="rounded-2xl border border-black/10 bg-black/5 p-4">
       {!open ? (
         <div className="flex items-center justify-between">
-          <span className="text-sm text-white/60">Enter your best look for this week.</span>
+          <span className="text-sm text-black/60">Enter your best look for this week.</span>
           <button onClick={() => setOpen(true)} className="rounded-lg px-3 py-1.5 text-sm font-semibold text-black" style={{ backgroundColor: GOLD }}>
             Enter Cut of the Week
           </button>
@@ -209,34 +209,34 @@ function SubmitPanel({ proId, onDone }) {
       ) : (
         <div className="space-y-3">
           <label className="block text-sm">
-            <span className="text-white/50">After photo (required)</span>
-            <input ref={afterRef} type="file" accept="image/*" onChange={(e) => setAfter(e.target.files?.[0] || null)} className="mt-1 block w-full text-sm text-white/70 file:mr-3 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-sm file:text-white" />
+            <span className="text-black/50">After photo (required)</span>
+            <input ref={afterRef} type="file" accept="image/*" onChange={(e) => setAfter(e.target.files?.[0] || null)} className="mt-1 block w-full text-sm text-black/70 file:mr-3 file:rounded-lg file:border-0 file:bg-black/10 file:px-3 file:py-1.5 file:text-sm file:text-gray-900" />
           </label>
           <label className="block text-sm">
-            <span className="text-white/50">Before photo (optional)</span>
-            <input ref={beforeRef} type="file" accept="image/*" onChange={(e) => setBefore(e.target.files?.[0] || null)} className="mt-1 block w-full text-sm text-white/70 file:mr-3 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-sm file:text-white" />
+            <span className="text-black/50">Before photo (optional)</span>
+            <input ref={beforeRef} type="file" accept="image/*" onChange={(e) => setBefore(e.target.files?.[0] || null)} className="mt-1 block w-full text-sm text-black/70 file:mr-3 file:rounded-lg file:border-0 file:bg-black/10 file:px-3 file:py-1.5 file:text-sm file:text-gray-900" />
           </label>
           <label className="block text-sm">
-            <span className="text-white/50">Client / model tagging</span>
-            <select value={tag} onChange={(e) => setTag(e.target.value)} className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-white/30">
-              {TAG_OPTIONS.map((o) => <option key={o.value} value={o.value} className="bg-neutral-900">{o.label}</option>)}
+            <span className="text-black/50">Client / model tagging</span>
+            <select value={tag} onChange={(e) => setTag(e.target.value)} className="mt-1 w-full rounded-lg border border-black/10 bg-black/5 px-3 py-2 text-sm outline-none focus:border-black/30">
+              {TAG_OPTIONS.map((o) => <option key={o.value} value={o.value} className="bg-white">{o.label}</option>)}
             </select>
           </label>
           {tag !== 'none' && (
             <label className="block text-sm">
-              <span className="text-white/50">Client email (we'll request their consent)</span>
-              <input value={subjectEmail} onChange={(e) => setSubjectEmail(e.target.value)} placeholder="client@email.com" className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-white/30" />
+              <span className="text-black/50">Client email (we'll request their consent)</span>
+              <input value={subjectEmail} onChange={(e) => setSubjectEmail(e.target.value)} placeholder="client@email.com" className="mt-1 w-full rounded-lg border border-black/10 bg-black/5 px-3 py-2 text-sm outline-none focus:border-black/30" />
             </label>
           )}
           <div className="flex gap-2">
             <button onClick={submit} disabled={busy} className="rounded-lg px-4 py-2 text-sm font-semibold text-black disabled:opacity-60" style={{ backgroundColor: GOLD }}>
               {busy ? 'Submitting…' : 'Submit entry'}
             </button>
-            <button onClick={() => { setOpen(false); setMsg(null) }} className="rounded-lg border border-white/15 px-4 py-2 text-sm text-white/70">Cancel</button>
+            <button onClick={() => { setOpen(false); setMsg(null) }} className="rounded-lg border border-black/15 px-4 py-2 text-sm text-black/70">Cancel</button>
           </div>
         </div>
       )}
-      {msg && <p className={`mt-2 text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{msg.text}</p>}
+      {msg && <p className={`mt-2 text-sm ${msg.type === 'error' ? 'text-red-600' : 'text-emerald-600'}`} role="status" aria-live="polite">{msg.text}</p>}
     </section>
   )
 }

@@ -86,31 +86,31 @@ export default function Discover({ onOpenPro }) {
       <div className="mb-3 flex flex-wrap items-center gap-2">
         {coords ? (
           <>
-            <span className="text-sm text-white/60">📍 Near you</span>
+            <span className="text-sm text-black/60">📍 Near you</span>
             {RADII.map((r) => (
               <button
                 key={r}
                 onClick={() => setRadiusMi(r)}
                 className="rounded-full px-2.5 py-1 text-xs font-medium transition"
-                style={radiusMi === r ? { backgroundColor: GOLD, color: '#000' } : { backgroundColor: 'rgba(255,255,255,0.08)', color: '#fff' }}
+                style={radiusMi === r ? { backgroundColor: GOLD, color: '#000' } : { backgroundColor: 'rgba(0,0,0,0.06)', color: '#1f1714' }}
               >
                 {r} mi
               </button>
             ))}
-            <button onClick={() => setCoords(null)} className="text-xs text-white/50 underline hover:text-white">
+            <button onClick={() => setCoords(null)} className="text-xs text-black/50 underline hover:text-gray-900">
               Clear
             </button>
           </>
         ) : (
           <button
             onClick={useMyLocation}
-            className="rounded-full border border-white/15 px-3 py-1.5 text-sm hover:bg-white/10"
+            className="rounded-full border border-black/15 px-3 py-1.5 text-sm hover:bg-black/10"
           >
             📍 Near me
           </button>
         )}
       </div>
-      {geoMsg && <p className="mb-2 text-xs text-amber-400" role="status" aria-live="polite">{geoMsg}</p>}
+      {geoMsg && <p className="mb-2 text-xs text-amber-600" role="status" aria-live="polite">{geoMsg}</p>}
 
       {/* Category filter */}
       <div className="flex flex-wrap gap-2">
@@ -121,9 +121,9 @@ export default function Discover({ onOpenPro }) {
       </div>
 
       {loading ? (
-        <p className="mt-5 text-sm text-white/50">Loading pros…</p>
+        <p className="mt-5 text-sm text-black/50">Loading pros…</p>
       ) : error ? (
-        <p className="mt-5 text-sm text-red-400">Could not load pros: {error}</p>
+        <p className="mt-5 text-sm text-red-600">Could not load pros: {error}</p>
       ) : (
         <>
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -141,7 +141,7 @@ export default function Discover({ onOpenPro }) {
                     onOpenPro(p, catColor[p.category] || GOLD)
                   }
                 }}
-                className={`overflow-hidden rounded-2xl border border-white/10 bg-white/5 ${onOpenPro ? 'cursor-pointer hover:bg-white/[0.07]' : ''} transition`}
+                className={`overflow-hidden rounded-2xl border border-black/10 bg-black/5 ${onOpenPro ? 'cursor-pointer hover:bg-black/[0.07]' : ''} transition`}
               >
                 {p.cover_url && <img src={p.cover_url} alt="" loading="lazy" className="h-24 w-full object-cover" />}
                 <div className="p-4">
@@ -170,32 +170,32 @@ export default function Discover({ onOpenPro }) {
                         </span>
                       )}
                     </div>
-                    <div className="truncate text-xs text-white/50">@{p.handle}</div>
+                    <div className="truncate text-xs text-black/50">@{p.handle}</div>
                   </div>
                 </div>
 
                 <div className="mt-3 flex items-center justify-between text-sm">
-                  <span className="rounded-full px-2 py-0.5 text-xs" style={{ backgroundColor: 'rgba(255,255,255,0.08)', color: catColor[p.category] || '#fff' }}>
+                  <span className="rounded-full px-2 py-0.5 text-xs" style={{ backgroundColor: 'rgba(0,0,0,0.06)', color: catColor[p.category] || '#1f1714' }}>
                     {catLabel[p.category] || p.category}
                   </span>
-                  <span className="text-white/70">
-                    ★ {p.rating_avg} <span className="text-white/55">({p.rating_count})</span>
+                  <span className="text-black/70">
+                    ★ {p.rating_avg} <span className="text-black/55">({p.rating_count})</span>
                   </span>
                 </div>
 
-                <div className="mt-2 flex items-center justify-between text-xs text-white/50">
+                <div className="mt-2 flex items-center justify-between text-xs text-black/50">
                   <span className="truncate">
                     {p.city}
-                    {p.distance_mi != null && <span className="text-white/70"> · {Math.round(p.distance_mi)} mi</span>}
+                    {p.distance_mi != null && <span className="text-black/70"> · {Math.round(p.distance_mi)} mi</span>}
                   </span>
-                  <span className="text-white/80">from {centsToUsd(p.price_from)}</span>
+                  <span className="text-black/80">from {centsToUsd(p.price_from)}</span>
                 </div>
                 </div>
               </div>
             ))}
           </div>
 
-          <p className="mt-4 text-center text-xs text-white/30">
+          <p className="mt-4 text-center text-xs text-black/30">
             {shown.length} pro{shown.length === 1 ? '' : 's'}
             {coords ? ` within ${radiusMi} mi` : ''} · live from Supabase
           </p>
@@ -210,7 +210,7 @@ function Chip({ active, label, color, onClick }) {
     <button
       onClick={onClick}
       className="rounded-full px-3 py-1.5 text-sm font-medium transition"
-      style={active ? { backgroundColor: color || GOLD, color: '#000' } : { backgroundColor: 'rgba(255,255,255,0.08)', color: '#fff' }}
+      style={active ? { backgroundColor: color || GOLD, color: '#000' } : { backgroundColor: 'rgba(0,0,0,0.06)', color: '#1f1714' }}
     >
       {label}
     </button>

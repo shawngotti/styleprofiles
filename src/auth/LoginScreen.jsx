@@ -44,30 +44,30 @@ export default function LoginScreen({ initialMode = 'signin', onBack }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
-      <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-white/5 p-8">
+      <div className="w-full max-w-sm rounded-2xl border border-black/10 bg-black/5 p-8">
         {onBack && (
-          <button onClick={onBack} className="mb-4 text-sm text-white/50 hover:text-white/80">
+          <button onClick={onBack} className="mb-4 text-sm text-black/50 hover:text-black/80">
             ← Back
           </button>
         )}
         <h1 className="text-center text-3xl font-semibold">
           Style<span style={{ color: GOLD }}>Profiles</span>
         </h1>
-        <p className="mt-1 text-center text-sm text-white/60">
+        <p className="mt-1 text-center text-sm text-black/60">
           {mode === 'signin' ? 'Welcome back' : 'Create your account'}
         </p>
 
         <button
           onClick={handleGoogle}
-          className="mt-6 w-full rounded-lg border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-medium hover:bg-white/15 transition"
+          className="mt-6 w-full rounded-lg border border-black/15 bg-black/10 px-4 py-2.5 text-sm font-medium hover:bg-black/15 transition"
         >
           Continue with Google
         </button>
 
-        <div className="my-5 flex items-center gap-3 text-xs text-white/55">
-          <div className="h-px flex-1 bg-white/10" />
+        <div className="my-5 flex items-center gap-3 text-xs text-black/55">
+          <div className="h-px flex-1 bg-black/10" />
           or
-          <div className="h-px flex-1 bg-white/10" />
+          <div className="h-px flex-1 bg-black/10" />
         </div>
 
         <form onSubmit={handleEmail} className="space-y-3">
@@ -77,7 +77,7 @@ export default function LoginScreen({ initialMode = 'signin', onBack }) {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm outline-none focus:border-white/40"
+            className="w-full rounded-lg border border-black/15 bg-white px-3 py-2.5 text-sm outline-none focus:border-black/40"
           />
           <input
             type="password"
@@ -86,7 +86,7 @@ export default function LoginScreen({ initialMode = 'signin', onBack }) {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm outline-none focus:border-white/40"
+            className="w-full rounded-lg border border-black/15 bg-white px-3 py-2.5 text-sm outline-none focus:border-black/40"
           />
           <button
             type="submit"
@@ -101,14 +101,14 @@ export default function LoginScreen({ initialMode = 'signin', onBack }) {
         {msg && (
           <p
             className={`mt-4 text-center text-xs ${
-              msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'
+              msg.type === 'error' ? 'text-red-600' : 'text-emerald-600'
             }`}
           >
             {msg.text}
           </p>
         )}
 
-        <p className="mt-6 text-center text-xs text-white/50">
+        <p className="mt-6 text-center text-xs text-black/50">
           {mode === 'signin' ? "Don't have an account?" : 'Already have an account?'}{' '}
           <button
             onClick={() => {

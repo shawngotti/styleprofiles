@@ -26,7 +26,7 @@ export default function AdminConsole() {
             aria-selected={tab === k}
             onClick={() => setTab(k)}
             className="rounded-full px-4 py-1.5 text-sm font-medium"
-            style={tab === k ? { backgroundColor: GOLD, color: '#000' } : { backgroundColor: 'rgba(255,255,255,0.08)' }}
+            style={tab === k ? { backgroundColor: GOLD, color: '#000' } : { backgroundColor: 'rgba(0,0,0,0.06)' }}
           >
             {label}
           </button>
@@ -64,32 +64,32 @@ function Reports() {
     <div className="space-y-3">
       <div className="flex gap-2 text-sm">
         {['open', 'resolved', 'dismissed', 'all'].map((s) => (
-          <button key={s} onClick={() => setFilter(s)} className={`rounded-full px-3 py-1 ${filter === s ? 'bg-white/15' : 'bg-white/5'}`}>
+          <button key={s} onClick={() => setFilter(s)} className={`rounded-full px-3 py-1 ${filter === s ? 'bg-black/15' : 'bg-black/5'}`}>
             {s}
           </button>
         ))}
       </div>
       {rows.length === 0 ? (
-        <p className="text-sm text-white/55">No reports.</p>
+        <p className="text-sm text-black/55">No reports.</p>
       ) : (
         rows.map((r) => (
-          <div key={r.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div key={r.id} className="rounded-2xl border border-black/10 bg-black/5 p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="text-sm font-medium">
-                  {r.kind} {r.subject_handle && <span className="text-white/50">· {r.subject_handle}</span>}
+                  {r.kind} {r.subject_handle && <span className="text-black/50">· {r.subject_handle}</span>}
                 </div>
-                <div className="mt-0.5 text-sm text-white/60">{r.reason}</div>
+                <div className="mt-0.5 text-sm text-black/60">{r.reason}</div>
               </div>
               <span className="shrink-0 text-xs font-semibold" style={{ color: sevColor[r.severity] }}>{r.severity}</span>
             </div>
             {r.status === 'open' ? (
               <div className="mt-3 flex gap-2">
                 <button onClick={() => resolve(r.id, 'resolved')} className="rounded-lg px-3 py-1.5 text-sm font-semibold text-black" style={{ backgroundColor: GOLD }}>Resolve</button>
-                <button onClick={() => resolve(r.id, 'dismissed')} className="rounded-lg border border-white/15 px-3 py-1.5 text-sm">Dismiss</button>
+                <button onClick={() => resolve(r.id, 'dismissed')} className="rounded-lg border border-black/15 px-3 py-1.5 text-sm">Dismiss</button>
               </div>
             ) : (
-              <div className="mt-2 text-xs text-white/55">{r.status}</div>
+              <div className="mt-2 text-xs text-black/55">{r.status}</div>
             )}
           </div>
         ))
@@ -126,25 +126,25 @@ function Integrity() {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-white/60">Anomalous voting flagged for review. Voiding a flag marks the suspect votes for exclusion.</p>
+        <p className="text-sm text-black/60">Anomalous voting flagged for review. Voiding a flag marks the suspect votes for exclusion.</p>
         <button onClick={scan} disabled={busy} className="shrink-0 rounded-lg px-3 py-1.5 text-sm font-semibold text-black disabled:opacity-60" style={{ backgroundColor: GOLD }}>
           {busy ? 'Scanning…' : 'Run anomaly scan'}
         </button>
       </div>
-      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>{msg.text}</p>}
+      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-600' : 'text-emerald-600'}`}>{msg.text}</p>}
       {flags.length === 0 ? (
-        <p className="text-sm text-white/55">No vote flags.</p>
+        <p className="text-sm text-black/55">No vote flags.</p>
       ) : (
         flags.map((f) => (
-          <div key={f.id} className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 p-3">
+          <div key={f.id} className="flex items-center justify-between gap-3 rounded-2xl border border-black/10 bg-black/5 p-3">
             <div className="min-w-0">
               <div className="text-sm">{f.note}</div>
-              <div className="text-xs text-white/55">{f.context} · {f.vote_count} votes · {f.status}</div>
+              <div className="text-xs text-black/55">{f.context} · {f.vote_count} votes · {f.status}</div>
             </div>
             {f.status === 'open' && (
               <div className="flex shrink-0 gap-2">
-                <button onClick={() => setStatus(f.id, 'voided')} className="rounded-lg border border-white/15 px-2.5 py-1 text-xs">Void</button>
-                <button onClick={() => setStatus(f.id, 'cleared')} className="rounded-lg border border-white/15 px-2.5 py-1 text-xs">Clear</button>
+                <button onClick={() => setStatus(f.id, 'voided')} className="rounded-lg border border-black/15 px-2.5 py-1 text-xs">Void</button>
+                <button onClick={() => setStatus(f.id, 'cleared')} className="rounded-lg border border-black/15 px-2.5 py-1 text-xs">Clear</button>
               </div>
             )}
           </div>
@@ -173,11 +173,11 @@ function Flags() {
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-white/60">Flags gate the API + data, not just the UI. Flipping a feature on makes its endpoints and data reachable.</p>
+      <p className="text-sm text-black/60">Flags gate the API + data, not just the UI. Flipping a feature on makes its endpoints and data reachable.</p>
       {TOGGLES.map((key) => {
         const on = valueOf(key)
         return (
-          <div key={key} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div key={key} className="flex items-center justify-between rounded-2xl border border-black/10 bg-black/5 p-4">
             <span className="text-sm font-medium">{key}</span>
             <button
               onClick={() => toggle(key, on)}
@@ -185,7 +185,7 @@ function Flags() {
               aria-checked={on}
               aria-label={`Toggle ${key}`}
               className="relative h-6 w-11 rounded-full transition"
-              style={{ backgroundColor: on ? GOLD : 'rgba(255,255,255,0.15)' }}
+              style={{ backgroundColor: on ? GOLD : 'rgba(0,0,0,0.14)' }}
             >
               <span className="absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all" style={{ left: on ? '22px' : '2px' }} />
             </button>
@@ -322,41 +322,41 @@ function ImportAttendees() {
   const matched = parsed.filter((r) => r.email).length
 
   if (events.length === 0) {
-    return <p className="text-sm text-white/55">No events yet. Create an event before importing attendees.</p>
+    return <p className="text-sm text-black/55">No events yet. Create an event before importing attendees.</p>
   }
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-white/60">
+      <p className="text-sm text-black/60">
         Import attendees sold off-platform (Posh, Eventbrite export, or a manual list) into the unified ledger.
         Re-importing the same rows is safe — they upsert on order/ticket id.
       </p>
 
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block text-sm">
-          <span className="text-white/50">Event</span>
+          <span className="text-black/50">Event</span>
           <select value={eventId} onChange={(e) => setEventId(e.target.value)} className={inputCls}>
             {events.map((ev) => (
-              <option key={ev.id} value={ev.id} className="bg-neutral-900">
+              <option key={ev.id} value={ev.id} className="bg-white">
                 {ev.title || 'Event'}{ev.event_date ? ` · ${new Date(ev.event_date).toLocaleDateString()}` : ''}
               </option>
             ))}
           </select>
         </label>
         <label className="block text-sm">
-          <span className="text-white/50">Source</span>
+          <span className="text-black/50">Source</span>
           <select value={source} onChange={(e) => setSource(e.target.value)} className={inputCls}>
-            <option value="posh_vip" className="bg-neutral-900">Posh.Vip</option>
-            <option value="eventbrite" className="bg-neutral-900">Eventbrite (export)</option>
-            <option value="manual" className="bg-neutral-900">Manual list</option>
+            <option value="posh_vip" className="bg-white">Posh.Vip</option>
+            <option value="eventbrite" className="bg-white">Eventbrite (export)</option>
+            <option value="manual" className="bg-white">Manual list</option>
           </select>
         </label>
       </div>
 
       <div>
         <div className="flex items-center justify-between">
-          <span className="text-sm text-white/50">CSV</span>
-          <label className="cursor-pointer text-xs text-white/50 hover:text-white/80">
+          <span className="text-sm text-black/50">CSV</span>
+          <label className="cursor-pointer text-xs text-black/50 hover:text-black/80">
             Upload .csv
             <input
               type="file"
@@ -376,30 +376,30 @@ function ImportAttendees() {
           placeholder={'order_id,email,name,ticket_type,qty,amount\nA1001,fan@example.com,Jordan Fan,GA,2,50.00'}
           className={`${inputCls} font-mono text-xs`}
         />
-        <p className="mt-1 text-xs text-white/55">
+        <p className="mt-1 text-xs text-black/55">
           Recognized columns: order_id/ticket_id, email, name, ticket_type, qty, amount (USD). Header row required.
         </p>
       </div>
 
-      {parseErr && <p className="text-sm text-red-400" role="alert">{parseErr}</p>}
+      {parseErr && <p className="text-sm text-red-600" role="alert">{parseErr}</p>}
       {parsed.length > 0 && (
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-sm">
-          <div className="text-white/70">
+        <div className="rounded-2xl border border-black/10 bg-black/5 p-3 text-sm">
+          <div className="text-black/70">
             {parsed.length} row(s) parsed · {matched} with an email (matched to accounts on import)
           </div>
-          <div className="mt-2 max-h-40 overflow-auto text-xs text-white/50">
+          <div className="mt-2 max-h-40 overflow-auto text-xs text-black/50">
             {parsed.slice(0, 5).map((r, i) => (
               <div key={i} className="truncate">
                 {r.external_ref || '—'} · {r.email || 'no email'} · {r.name || ''} · {r.ticket_type || ''} · x{r.qty}
                 {r.amount != null ? ` · $${(r.amount / 100).toFixed(2)}` : ''}
               </div>
             ))}
-            {parsed.length > 5 && <div className="text-white/30">…and {parsed.length - 5} more</div>}
+            {parsed.length > 5 && <div className="text-black/30">…and {parsed.length - 5} more</div>}
           </div>
         </div>
       )}
 
-      {result && <p className={`text-sm ${result.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{result.text}</p>}
+      {result && <p className={`text-sm ${result.type === 'error' ? 'text-red-600' : 'text-emerald-600'}`} role="status" aria-live="polite">{result.text}</p>}
 
       <button
         onClick={doImport}
@@ -413,7 +413,7 @@ function ImportAttendees() {
   )
 }
 
-const inputCls = 'mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-white/30'
+const inputCls = 'mt-1 w-full rounded-lg border border-black/10 bg-black/5 px-3 py-2 text-sm outline-none focus:border-black/30'
 
 // Demo content control: seed/clear a believable dataset and show or hide it per
 // aspect. Demo rows are flagged is_demo and stay invisible to the public until
@@ -464,7 +464,7 @@ function Demo() {
 
   return (
     <div className="space-y-5">
-      <p className="text-sm text-white/60">
+      <p className="text-sm text-black/60">
         Stage a full, believable preview to share the vision. Seed the dataset, then flip each aspect on to
         reveal it publicly. Demo data is hidden from everyone until its toggle is on, and wipes cleanly.
       </p>
@@ -473,16 +473,16 @@ function Demo() {
         <button onClick={() => run('seed')} disabled={!!busy} className="rounded-lg px-4 py-2 text-sm font-semibold text-black disabled:opacity-50" style={{ backgroundColor: GOLD }}>
           {busy === 'seed' ? 'Seeding…' : 'Seed demo content'}
         </button>
-        <button onClick={() => run('clear')} disabled={!!busy} className="rounded-lg border border-white/15 px-4 py-2 text-sm text-white/80 hover:bg-white/10 disabled:opacity-50">
+        <button onClick={() => run('clear')} disabled={!!busy} className="rounded-lg border border-black/15 px-4 py-2 text-sm text-black/80 hover:bg-black/10 disabled:opacity-50">
           {busy === 'clear' ? 'Removing…' : 'Remove all demo content'}
         </button>
       </div>
-      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{msg.text}</p>}
+      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-600' : 'text-emerald-600'}`} role="status" aria-live="polite">{msg.text}</p>}
 
       <div className="space-y-3">
-        <div className="text-xs font-semibold uppercase tracking-wide text-white/40">Show / hide each aspect</div>
+        <div className="text-xs font-semibold uppercase tracking-wide text-black/40">Show / hide each aspect</div>
         {DEMO_TOGGLES.map(([key, label]) => (
-          <div key={key} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div key={key} className="flex items-center justify-between rounded-2xl border border-black/10 bg-black/5 p-4">
             <span className="text-sm font-medium">{label}</span>
             <button
               onClick={() => toggle(key)}
@@ -490,7 +490,7 @@ function Demo() {
               aria-checked={on(key)}
               aria-label={`Toggle ${label}`}
               className="relative h-6 w-11 rounded-full transition"
-              style={{ backgroundColor: on(key) ? GOLD : 'rgba(255,255,255,0.15)' }}
+              style={{ backgroundColor: on(key) ? GOLD : 'rgba(0,0,0,0.14)' }}
             >
               <span className="absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all" style={{ left: on(key) ? '22px' : '2px' }} />
             </button>
@@ -499,7 +499,7 @@ function Demo() {
       </div>
 
       {(!on('marketplace_on') || !on('lineup_on')) && (
-        <p className="text-xs text-white/45">
+        <p className="text-xs text-black/45">
           Tip: to show the demo <strong>Shop</strong> turn on <code>marketplace_on</code>, and for{' '}
           <strong>The Lineup</strong> + <strong>Cut of the Week</strong> turn on <code>lineup_on</code> (Feature Flags tab).
           Demo Awards show under the existing Awards tab.

@@ -62,7 +62,7 @@ export default function EventTickets({ competitionId }) {
 
   if (checkout) {
     return (
-      <Elements stripe={stripePromise} options={{ clientSecret: checkout.clientSecret, appearance: { theme: 'night', variables: { colorPrimary: GOLD, colorBackground: '#141417' } } }}>
+      <Elements stripe={stripePromise} options={{ clientSecret: checkout.clientSecret, appearance: { theme: 'stripe', variables: { colorPrimary: GOLD, colorBackground: '#ffffff' } } }}>
         <TicketPayment
           attendeeId={checkout.attendee_id}
           total={checkout.total}
@@ -81,20 +81,20 @@ export default function EventTickets({ competitionId }) {
 
   return (
     <section className="space-y-3">
-      <h3 className="text-sm font-semibold uppercase tracking-wide text-white/50">Live events</h3>
-      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`} role="status" aria-live="polite">{msg.text}</p>}
+      <h3 className="text-sm font-semibold uppercase tracking-wide text-black/50">Live events</h3>
+      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-600' : 'text-emerald-600'}`} role="status" aria-live="polite">{msg.text}</p>}
       <div className="grid gap-3 sm:grid-cols-2">
         {events.map((ev) => {
           const going = mine.has(ev.id)
           const inApp = ev.ticketing_provider === 'stripe' && ev.ticket_price
           return (
-            <div key={ev.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div key={ev.id} className="rounded-2xl border border-black/10 bg-black/5 p-4">
               <div className="font-medium">{ev.title || 'Event'}</div>
-              <div className="mt-1 text-xs text-white/50">
+              <div className="mt-1 text-xs text-black/50">
                 {ev.venue}{ev.event_date ? ` · ${new Date(ev.event_date).toLocaleDateString()}` : ''}
               </div>
               <div className="mt-3 flex items-center justify-between">
-                {inApp ? <span className="text-sm font-semibold" style={{ color: GOLD }}>{money(ev.ticket_price)}</span> : <span className="text-xs text-white/55">Tickets via {ev.ticketing_provider}</span>}
+                {inApp ? <span className="text-sm font-semibold" style={{ color: GOLD }}>{money(ev.ticket_price)}</span> : <span className="text-xs text-black/55">Tickets via {ev.ticketing_provider}</span>}
                 {going ? (
                   <span className="text-sm font-medium" style={{ color: '#34D399' }}>✓ You're going</span>
                 ) : inApp ? (
@@ -136,12 +136,12 @@ function TicketPayment({ attendeeId, total, title, onDone, onCancel }) {
     <div className="space-y-4">
       <h2 className="text-lg font-semibold">{title} · {money(total)}</h2>
       <PaymentElement options={{ layout: 'tabs' }} />
-      {err && <p className="text-sm text-red-400">{err}</p>}
+      {err && <p className="text-sm text-red-600">{err}</p>}
       <div className="flex gap-2">
         <button onClick={pay} disabled={busy || !stripe} className="rounded-lg px-4 py-2 text-sm font-semibold text-black disabled:opacity-60" style={{ backgroundColor: GOLD }}>
           {busy ? 'Processing…' : `Pay ${money(total)}`}
         </button>
-        <button onClick={onCancel} className="rounded-lg border border-white/15 px-4 py-2 text-sm text-white/70">Cancel</button>
+        <button onClick={onCancel} className="rounded-lg border border-black/15 px-4 py-2 text-sm text-black/70">Cancel</button>
       </div>
     </div>
   )
