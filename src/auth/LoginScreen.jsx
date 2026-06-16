@@ -4,8 +4,8 @@ import { track } from '../lib/analytics.js'
 
 const GOLD = '#F4A93C'
 
-export default function LoginScreen() {
-  const [mode, setMode] = useState('signin') // 'signin' | 'signup'
+export default function LoginScreen({ initialMode = 'signin', onBack }) {
+  const [mode, setMode] = useState(initialMode) // 'signin' | 'signup'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
@@ -45,6 +45,11 @@ export default function LoginScreen() {
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-white/5 p-8">
+        {onBack && (
+          <button onClick={onBack} className="mb-4 text-sm text-white/50 hover:text-white/80">
+            ← Back
+          </button>
+        )}
         <h1 className="text-center text-3xl font-semibold">
           Style<span style={{ color: GOLD }}>Profiles</span>
         </h1>
