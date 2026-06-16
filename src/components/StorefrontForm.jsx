@@ -24,9 +24,43 @@ export default function StorefrontForm({ pro, onSaved }) {
     city: pro?.city || '',
     price_from: pro?.price_from != null ? String(Math.round(pro.price_from / 100)) : '',
     travel_mode: pro?.travel_mode || 'shop',
+    avatar_url: pro?.avatar_url || '',
+    cover_url: pro?.cover_url || '',
+    gallery_urls: pro?.gallery_urls || [],
   })
   const [busy, setBusy] = useState(false)
+  const [uploading, setUploading] = useState(null)
   const [msg, setMsg] = useState(null)
+
+  // Upload to the public pro-media bucket (own folder = profile id) and return URL.
+  async function upload(file, prefix) {
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
+    const path = `${user.id}/${prefix}-${Date.now()}.${ext}`
+    const { error } = await supabase.storage.from('pro-media').upload(path, file, { upsert: true, contentType: file.type || undefined })
+    if (error) throw new Error(error.message)
+    return supabase.storage.from('pro-media').getPublicUrl(path).data.publicUrl
+  }
+  async function onPick(prefix, e) {
+    const files = [...(e.target.files || [])]
+    if (!files.length) return
+    setUploading(prefix)
+    setMsg(null)
+    try {
+      if (prefix === 'gallery') {
+        const urls = []
+        for (const f of files.slice(0, 6)) urls.push(await upload(f, 'gallery'))
+        setForm((s) => ({ ...s, gallery_urls: [...s.gallery_urls, ...urls].slice(0, 12) }))
+      } else {
+        const url = await upload(files[0], prefix)
+        setForm((s) => ({ ...s, [`${prefix}_url`]: url }))
+      }
+    } catch (e2) {
+      setMsg({ type: 'error', text: `Upload failed: ${e2.message}` })
+    } finally {
+      setUploading(null)
+      e.target.value = ''
+    }
+  }
 
   useEffect(() => {
     supabase
@@ -56,6 +90,9 @@ export default function StorefrontForm({ pro, onSaved }) {
       city: form.city.trim() || null,
       price_from: form.price_from ? Math.round(Number(form.price_from) * 100) : null,
       travel_mode: form.travel_mode,
+      avatar_url: form.avatar_url || null,
+      cover_url: form.cover_url || null,
+      gallery_urls: form.gallery_urls,
     }
     const res = editing
       ? await supabase.from('pros').update(row).eq('id', pro.id)
@@ -107,6 +144,58 @@ export default function StorefrontForm({ pro, onSaved }) {
           </Field>
         </div>
       </div>
+
+      {/* Photos */}
+      <div className="mt-5 space-y-3">
+        <div className="text-sm text-white/50">Photos</div>
+        <div className="flex flex-wrap items-end gap-4">
+          <label className="cursor-pointer text-center">
+            {form.avatar_url ? (
+              <img src={form.avatar_url} alt="" className="h-16 w-16 rounded-full object-cover" />
+            ) : (
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10 text-xs text-white/50">＋</div>
+            )}
+            <div className="mt-1 text-xs text-white/50">{uploading === 'avatar' ? 'Uploading…' : 'Avatar'}</div>
+            <input type="file" accept="image/*" className="hidden" onChange={(e) => onPick('avatar', e)} />
+          </label>
+          <label className="cursor-pointer text-center">
+            {form.cover_url ? (
+              <img src={form.cover_url} alt="" className="h-16 w-28 rounded-lg object-cover" />
+            ) : (
+              <div className="flex h-16 w-28 items-center justify-center rounded-lg bg-white/10 text-xs text-white/50">＋</div>
+            )}
+            <div className="mt-1 text-xs text-white/50">{uploading === 'cover' ? 'Uploading…' : 'Cover'}</div>
+            <input type="file" accept="image/*" className="hidden" onChange={(e) => onPick('cover', e)} />
+          </label>
+        </div>
+        <div>
+          <div className="flex items-center gap-2 text-sm text-white/50">
+            Portfolio
+            <label className="cursor-pointer text-xs underline" style={{ color: GOLD }}>
+              {uploading === 'gallery' ? 'uploading…' : '+ add photos'}
+              <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => onPick('gallery', e)} />
+            </label>
+          </div>
+          {form.gallery_urls.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {form.gallery_urls.map((u, i) => (
+                <div key={i} className="relative">
+                  <img src={u} alt="" className="h-16 w-16 rounded-lg object-cover" />
+                  <button
+                    type="button"
+                    aria-label="Remove photo"
+                    onClick={() => setForm((s) => ({ ...s, gallery_urls: s.gallery_urls.filter((_, j) => j !== i) }))}
+                    className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/80 text-xs"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
       {msg && <p className="mt-3 text-sm text-red-400" role="alert">{msg.text}</p>}
       <button onClick={save} disabled={busy} className="mt-4 rounded-lg px-4 py-2 text-sm font-semibold text-black disabled:opacity-60" style={{ backgroundColor: GOLD }}>
         {busy ? 'Saving…' : editing ? 'Save changes' : 'Create storefront'}

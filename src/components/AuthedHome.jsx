@@ -15,6 +15,7 @@ import NotificationsBell from './NotificationsBell.jsx'
 import AdminConsole from './AdminConsole.jsx'
 import Deals from './Deals.jsx'
 import EmailPrefToggle from './EmailPrefToggle.jsx'
+import LandingPage from './LandingPage.jsx'
 import { useSettings } from '../lib/useSettings.js'
 import { track } from '../lib/analytics.js'
 
@@ -39,6 +40,23 @@ export default function AuthedHome() {
   const [perspective, setPerspective] = useState('client')
   const [selectedPro, setSelectedPro] = useState(null) // { pro, color }
   const [clientTab, setClientTab] = useState('discover') // 'discover' | 'appointments'
+  const [previewLanding, setPreviewLanding] = useState(false)
+
+  // Preview the public marketing landing without signing out.
+  if (previewLanding) {
+    return (
+      <div className="relative">
+        <button
+          onClick={() => setPreviewLanding(false)}
+          className="fixed left-4 top-4 z-50 rounded-full px-4 py-2 text-sm font-semibold text-black shadow-lg"
+          style={{ backgroundColor: GOLD }}
+        >
+          ← Back to app
+        </button>
+        <LandingPage onGetStarted={() => setPreviewLanding(false)} onSignIn={() => setPreviewLanding(false)} />
+      </div>
+    )
+  }
 
   // Central place a pro storefront opens — instrument the conversion funnel
   // (e.g. contestant profile -> book) from one spot.
@@ -203,6 +221,9 @@ export default function AuthedHome() {
             </div>
             <EmailPrefToggle />
           </dl>
+          <button onClick={() => setPreviewLanding(true)} className="mt-4 text-sm underline" style={{ color: GOLD }}>
+            Preview the landing page →
+          </button>
         </section>
       </main>
     </div>
