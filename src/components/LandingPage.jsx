@@ -62,8 +62,8 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             <button onClick={onGetStarted} className="rounded-full px-7 py-3.5 text-base font-semibold text-black shadow-md transition hover:brightness-95" style={{ backgroundColor: GOLD }}>
               Start free now
             </button>
-            {/* TODO(offer): replace with the real trial/intro terms */}
-            <span className="text-sm text-black/45">Free to try · no card required</span>
+            {/* Offer mirrors Booksy's prototype offers — set your real terms/price before launch. */}
+            <span className="text-sm text-black/45">14-day free trial · no credit card required</span>
           </div>
         </div>
 
@@ -174,12 +174,19 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
       {/* Final CTA */}
       <section className="px-5 pb-20">
         <div className="mx-auto max-w-4xl rounded-[2.5rem] border border-black/[0.06] bg-[#F7F7F8] px-6 py-14 text-center sm:px-12">
-          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Start free. Grow from your first booking.</h2>
-          <p className="mx-auto mt-3 max-w-lg text-black/55">Set up your storefront in minutes, connect payouts, and take your first booking today.</p>
+          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Try StyleProfiles free for 14 days</h2>
+          <p className="mx-auto mt-3 max-w-lg text-black/55">
+            No credit card to start. Set up your storefront, connect payouts, and take your first booking — then
+            just $29.99/mo.
+          </p>
           <button onClick={onGetStarted} className="mt-7 rounded-full px-8 py-3.5 text-base font-semibold text-black shadow-md transition hover:brightness-95" style={{ backgroundColor: GOLD }}>
-            Create your storefront
+            Start free now
           </button>
-          <p className="mt-3 text-sm text-black/45">
+          {/* Offer numbers mirror Booksy — confirm your real price/promo before launch. */}
+          <p className="mt-4 text-sm text-black/55">
+            Use code <strong style={{ color: INK }}>TRY50</strong> for 50% off your first month · cancel anytime
+          </p>
+          <p className="mt-2 text-sm text-black/45">
             Already with us? <button onClick={onSignIn} className="font-semibold underline" style={{ color: '#9A6512' }}>Sign in</button>
           </p>
         </div>
