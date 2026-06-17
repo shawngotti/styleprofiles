@@ -9,7 +9,7 @@ const SPAM = /(https?:\/\/|www\.|\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b|\b[\w.+-]+@[\
 export async function screenContent(
   text: string | null,
   photoUrls: string[] = [],
-): Promise<{ flagged: boolean; labels: string[]; screenError: boolean }> {
+): Promise<{ flagged: boolean; labels: string[]; screenError: boolean; errorMsg?: string }> {
   const labels = new Set<string>()
   if (text && SPAM.test(text)) labels.add('spam')
 
@@ -20,7 +20,7 @@ export async function screenContent(
   for (const u of photoUrls.slice(0, 6)) input.push({ type: 'image_url', image_url: { url: u } })
 
   if (input.length === 0) return { flagged: labels.size > 0, labels: [...labels], screenError: false }
-  if (!key) return { flagged: labels.size > 0, labels: [...labels], screenError: true }
+  if (!key) return { flagged: labels.size > 0, labels: [...labels], screenError: true, errorMsg: 'no key in env' }
 
   try {
     const res = await fetch('https://api.openai.com/v1/moderations', {
@@ -29,14 +29,14 @@ export async function screenContent(
       body: JSON.stringify({ model: 'omni-moderation-latest', input }),
     })
     const data = await res.json()
-    if (!res.ok) throw new Error(data?.error?.message || 'moderation request failed')
+    if (!res.ok) throw new Error(data?.error?.message || `moderation HTTP ${res.status}`)
     for (const r of data.results || []) {
       if (r.flagged) {
         for (const [cat, on] of Object.entries(r.categories || {})) if (on) labels.add(cat)
       }
     }
     return { flagged: labels.size > 0, labels: [...labels], screenError: false }
-  } catch (_e) {
-    return { flagged: labels.size > 0, labels: [...labels], screenError: true }
+  } catch (e) {
+    return { flagged: labels.size > 0, labels: [...labels], screenError: true, errorMsg: String((e as Error)?.message || e) }
   }
 }
