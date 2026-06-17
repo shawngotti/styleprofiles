@@ -32,7 +32,7 @@ const PERSPECTIVES = [
 
 export default function AuthedHome() {
   const { user, roles, signOut } = useAuth()
-  const { marketplaceOn, lineupOn } = useSettings()
+  const { lineupOn, shopVisible, lineupVisible, shopDemoOnly, lineupDemoOnly } = useSettings()
 
   const available = useMemo(
     () => PERSPECTIVES.filter((p) => roles.includes(p.role)),
@@ -194,8 +194,8 @@ export default function AuthedHome() {
                     ['awards', 'Awards'],
                     ['tags', 'Tag requests'],
                     ['household', 'Household'],
-                    ...(lineupOn ? [['lineup', 'The Lineup'], ['cotw', 'Cut of the Week']] : []),
-                    ...(marketplaceOn ? [['shop', 'Shop']] : []),
+                    ...(lineupVisible ? [['lineup', 'The Lineup'], ...(lineupOn ? [['cotw', 'Cut of the Week']] : [])] : []),
+                    ...(shopVisible ? [['shop', 'Shop']] : []),
                   ].map(([key, label]) => (
                     <button
                       key={key}
@@ -224,11 +224,11 @@ export default function AuthedHome() {
                 )}
                 {clientTab === 'tags' && <ConsentRequests />}
                 {clientTab === 'household' && <HouseholdManager />}
-                {clientTab === 'lineup' && lineupOn && (
-                  <Lineup onOpenPro={(pro, color) => openPro(pro, color, 'lineup')} />
+                {clientTab === 'lineup' && lineupVisible && (
+                  <Lineup demo={lineupDemoOnly} onOpenPro={(pro, color) => openPro(pro, color, 'lineup')} />
                 )}
                 {clientTab === 'cotw' && lineupOn && <CutOfTheWeek />}
-                {clientTab === 'shop' && marketplaceOn && <Shop />}
+                {clientTab === 'shop' && shopVisible && <Shop demo={shopDemoOnly} />}
               </>
             )}
           </section>

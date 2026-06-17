@@ -11,7 +11,7 @@ const PRO_FIELDS = 'id,handle,display_name,category,bio,city,verified,rating_avg
 // are judge/admin-decided; the only thing fans do here is the Redemption/Fan
 // Favorite vote when a window is open (via the cast_fan_vote integrity function).
 // Whole screen is gated on lineup_on upstream (tab is hidden when dark).
-export default function Lineup({ onOpenPro }) {
+export default function Lineup({ demo = false, onOpenPro }) {
   const [comp, setComp] = useState(undefined) // undefined=loading, null=none
   const [rounds, setRounds] = useState([])
   const [matchups, setMatchups] = useState([])
@@ -86,7 +86,7 @@ export default function Lineup({ onOpenPro }) {
   function Contestant({ id, isWinner }) {
     const c = id ? byId[id] : null
     if (!c) return <span className="text-sm text-black/30">TBD</span>
-    const canVote = openWindow && !myVote && c.status !== 'eliminated'
+    const canVote = openWindow && !myVote && c.status !== 'eliminated' && !demo
     return (
       <div className="flex items-center justify-between gap-2">
         <button
@@ -121,6 +121,11 @@ export default function Lineup({ onOpenPro }) {
 
   return (
     <div className="space-y-5">
+      {demo && (
+        <div className="rounded-xl border border-black/10 bg-black/5 px-3 py-2 text-sm text-black/60">
+          👀 <strong>Demo preview</strong> — a sample bracket to show The Lineup. Voting is disabled until the season launches.
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">{comp.name}</h2>
         <span className="rounded-full px-3 py-1 text-xs font-medium" style={{ backgroundColor: 'rgba(0,0,0,0.06)', color: GOLD }}>

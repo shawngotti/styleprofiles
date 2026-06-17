@@ -21,10 +21,22 @@ export function useSettings() {
     }
   }, [])
 
+  const marketplaceOn = !!flags?.marketplace_on
+  const lineupOn = !!flags?.lineup_on
+  const demoShopOn = !!flags?.demo_shop_on
+  const demoLineupOn = !!flags?.demo_lineup_on
   return {
     loading: flags === null,
-    marketplaceOn: !!flags?.marketplace_on,
-    lineupOn: !!flags?.lineup_on,
+    marketplaceOn,
+    lineupOn,
     awardsOn: flags?.awards_on !== false, // default-on
+    demoShopOn,
+    demoLineupOn,
+    // Effective visibility: a feature shows if it's launched OR demo'd. When only
+    // the demo flag is on, the feature runs browse-only (real endpoints are off).
+    shopVisible: marketplaceOn || demoShopOn,
+    lineupVisible: lineupOn || demoLineupOn,
+    shopDemoOnly: demoShopOn && !marketplaceOn,
+    lineupDemoOnly: demoLineupOn && !lineupOn,
   }
 }

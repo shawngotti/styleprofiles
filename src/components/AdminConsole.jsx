@@ -922,13 +922,10 @@ function Demo() {
         ))}
       </div>
 
-      {(!on('marketplace_on') || !on('lineup_on')) && (
-        <p className="text-xs text-black/45">
-          Tip: to show the demo <strong>Shop</strong> turn on <code>marketplace_on</code>, and for{' '}
-          <strong>The Lineup</strong> + <strong>Cut of the Week</strong> turn on <code>lineup_on</code> (Feature Flags tab).
-          Demo Awards show under the existing Awards tab.
-        </p>
-      )}
+      <p className="text-xs text-black/45">
+        Each toggle reveals its own demo content — no need to launch the real feature. The demo <strong>Shop</strong> and{' '}
+        <strong>The Lineup</strong> run <strong>browse-only</strong> (no real checkout or voting). Demo Awards show under the Awards tab.
+      </p>
     </div>
   )
 }

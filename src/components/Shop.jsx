@@ -11,7 +11,7 @@ const GOLD = '#F4A93C'
 // so this only renders meaningfully when the shop is open. Checkout is fully
 // server-authoritative: create_order prices the cart and returns a platform
 // PaymentIntent; confirm_order settles it.
-export default function Shop() {
+export default function Shop({ demo = false }) {
   const [products, setProducts] = useState(undefined)
   const [cart, setCart] = useState({}) // product_id -> qty
   const [checkout, setCheckout] = useState(null) // { clientSecret, order_id, total }
@@ -92,6 +92,11 @@ export default function Shop() {
   return (
     <div className="space-y-5">
       <h2 className="text-lg font-semibold">Self-care shop</h2>
+      {demo && (
+        <div className="rounded-xl border border-black/10 bg-black/5 px-3 py-2 text-sm text-black/60">
+          👀 <strong>Demo preview</strong> — sample products to show the marketplace. Checkout is disabled until the shop launches.
+        </div>
+      )}
       {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-600' : 'text-emerald-600'}`} role="status" aria-live="polite">{msg.text}</p>}
 
       <div className="grid gap-3 sm:grid-cols-2">
@@ -141,11 +146,12 @@ export default function Shop() {
             </span>
             <button
               onClick={startCheckout}
-              disabled={busy}
+              disabled={busy || demo}
+              title={demo ? 'Checkout is disabled in the demo preview' : undefined}
               className="rounded-lg px-4 py-2 text-sm font-semibold text-black disabled:opacity-60"
               style={{ backgroundColor: GOLD }}
             >
-              {busy ? 'Starting…' : 'Checkout'}
+              {demo ? 'Checkout (demo)' : busy ? 'Starting…' : 'Checkout'}
             </button>
           </div>
         </div>
