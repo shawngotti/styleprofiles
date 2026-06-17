@@ -10,6 +10,7 @@ const TABS = [
   ['integrity', 'Vote Integrity'],
   ['attendees', 'Attendees'],
   ['demo', 'Demo'],
+  ['home', 'Home'],
   ['flags', 'Feature Flags'],
 ]
 
@@ -42,6 +43,7 @@ export default function AdminConsole({ onOpenPro }) {
       {tab === 'integrity' && <Integrity />}
       {tab === 'attendees' && <ImportAttendees />}
       {tab === 'demo' && <Demo />}
+      {tab === 'home' && <HomeHero />}
       {tab === 'flags' && <Flags />}
     </div>
   )
@@ -574,6 +576,108 @@ function Integrity() {
           </div>
         ))
       )}
+    </div>
+  )
+}
+
+// Home search-hero media: set the background video (and poster) by pasting a
+// hosted MP4 link OR uploading to the home-media bucket. Stored in
+// platform_settings; the home reads it via useSettings.
+function HomeHero() {
+  const [video, setVideo] = useState('')
+  const [poster, setPoster] = useState('')
+  const [uploading, setUploading] = useState(null)
+  const [busy, setBusy] = useState(false)
+  const [msg, setMsg] = useState(null)
+
+  useEffect(() => {
+    supabase
+      .from('platform_settings')
+      .select('key,value')
+      .in('key', ['home_hero_video_url', 'home_hero_poster_url'])
+      .then(({ data }) => {
+        const m = Object.fromEntries((data || []).map((r) => [r.key, r.value]))
+        setVideo(m.home_hero_video_url || '')
+        setPoster(m.home_hero_poster_url || '')
+      })
+  }, [])
+
+  async function upload(file, kind) {
+    setUploading(kind)
+    setMsg(null)
+    try {
+      const ext = (file.name.split('.').pop() || (kind === 'video' ? 'mp4' : 'jpg')).toLowerCase()
+      const path = `hero-${kind}-${Date.now()}.${ext}`
+      const { error } = await supabase.storage.from('home-media').upload(path, file, { upsert: true, contentType: file.type || undefined })
+      if (error) throw new Error(error.message)
+      const url = supabase.storage.from('home-media').getPublicUrl(path).data.publicUrl
+      kind === 'video' ? setVideo(url) : setPoster(url)
+    } catch (e) {
+      setMsg({ type: 'error', text: `Upload failed: ${e.message}` })
+    } finally {
+      setUploading(null)
+    }
+  }
+
+  async function save() {
+    setBusy(true)
+    setMsg(null)
+    const r1 = await supabase.from('platform_settings').update({ value: video || '' }).eq('key', 'home_hero_video_url')
+    const r2 = await supabase.from('platform_settings').update({ value: poster || '' }).eq('key', 'home_hero_poster_url')
+    setBusy(false)
+    const err = r1.error || r2.error
+    setMsg(err ? { type: 'error', text: err.message } : { type: 'ok', text: 'Saved. Reload the home to see it.' })
+  }
+
+  return (
+    <div className="space-y-5">
+      <p className="text-sm text-black/60">
+        Set the background video for the signed-in home search hero. Paste a hosted <code>.mp4</code> link or upload a
+        short clip (muted, looping). A poster image shows before the video loads and for visitors with reduced-motion
+        on. Leave both blank to use the built-in gradient.
+      </p>
+
+      {/* Live preview */}
+      <div className="relative h-40 overflow-hidden rounded-2xl" style={{ background: 'linear-gradient(125deg,#181410,#3a2a12,#F4A93C)' }}>
+        {video ? (
+          <video src={video} poster={poster || undefined} autoPlay muted loop playsInline className="h-full w-full object-cover" />
+        ) : poster ? (
+          <img src={poster} alt="" className="h-full w-full object-cover" />
+        ) : null}
+        <div className="absolute inset-0 flex items-end p-4" style={{ background: 'rgba(0,0,0,0.4)' }}>
+          <span className="text-xl font-bold text-white">Find your next look</span>
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <div className="text-sm font-medium">Background video</div>
+          <input value={video} onChange={(e) => setVideo(e.target.value)} placeholder="https://…/clip.mp4" className={inputCls} />
+          <label className="mt-2 inline-block cursor-pointer text-xs underline" style={{ color: GOLD }}>
+            {uploading === 'video' ? 'uploading…' : 'or upload a clip'}
+            <input type="file" accept="video/mp4,video/*" className="hidden" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0], 'video')} />
+          </label>
+        </div>
+        <div>
+          <div className="text-sm font-medium">Poster image</div>
+          <input value={poster} onChange={(e) => setPoster(e.target.value)} placeholder="https://…/poster.jpg" className={inputCls} />
+          <label className="mt-2 inline-block cursor-pointer text-xs underline" style={{ color: GOLD }}>
+            {uploading === 'poster' ? 'uploading…' : 'or upload an image'}
+            <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0], 'poster')} />
+          </label>
+        </div>
+      </div>
+
+      {msg && <p className={`text-sm ${msg.type === 'error' ? 'text-red-600' : 'text-emerald-600'}`} role="status" aria-live="polite">{msg.text}</p>}
+
+      <div className="flex gap-2">
+        <button onClick={save} disabled={busy || !!uploading} className="rounded-lg px-4 py-2 text-sm font-semibold text-black disabled:opacity-50" style={{ backgroundColor: GOLD }}>
+          {busy ? 'Saving…' : 'Save hero'}
+        </button>
+        <button onClick={() => { setVideo(''); setPoster('') }} className="rounded-lg border border-black/15 px-4 py-2 text-sm text-black/70">
+          Clear
+        </button>
+      </div>
     </div>
   )
 }

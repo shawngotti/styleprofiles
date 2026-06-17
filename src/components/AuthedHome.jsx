@@ -17,6 +17,7 @@ import Deals from './Deals.jsx'
 import EmailPrefToggle from './EmailPrefToggle.jsx'
 import ProfileViewsToggle from './ProfileViewsToggle.jsx'
 import LandingPage from './LandingPage.jsx'
+import LineupBand from './LineupBand.jsx'
 import { useSettings } from '../lib/useSettings.js'
 import { track } from '../lib/analytics.js'
 
@@ -32,7 +33,7 @@ const PERSPECTIVES = [
 
 export default function AuthedHome() {
   const { user, roles, signOut } = useAuth()
-  const { lineupOn, shopVisible, lineupVisible, shopDemoOnly, lineupDemoOnly } = useSettings()
+  const { lineupOn, shopVisible, lineupVisible, shopDemoOnly, lineupDemoOnly, heroVideoUrl, heroPosterUrl } = useSettings()
 
   const available = useMemo(
     () => PERSPECTIVES.filter((p) => roles.includes(p.role)),
@@ -212,7 +213,14 @@ export default function AuthedHome() {
                   ))}
                 </div>
                 {clientTab === 'discover' && (
-                  <Discover onOpenPro={(pro, color) => openPro(pro, color, 'discover')} />
+                  <>
+                    <Discover
+                      onOpenPro={(pro, color) => openPro(pro, color, 'discover')}
+                      heroVideoUrl={heroVideoUrl}
+                      heroPosterUrl={heroPosterUrl}
+                    />
+                    {lineupVisible && <LineupBand demo={lineupDemoOnly} onOpen={() => setClientTab('lineup')} />}
+                  </>
                 )}
                 {clientTab === 'appointments' && (
                   <MyAppointments onRebook={(pro) => setSelectedPro({ pro, color: GOLD })} />

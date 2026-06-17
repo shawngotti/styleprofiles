@@ -14,7 +14,8 @@ export function useSettings() {
       .select('key,value')
       .then(({ data }) => {
         if (!active) return
-        setFlags(Object.fromEntries((data || []).map((r) => [r.key, r.value === true])))
+        // Keep raw values (booleans stay booleans, URL strings stay strings).
+        setFlags(Object.fromEntries((data || []).map((r) => [r.key, r.value])))
       })
     return () => {
       active = false
@@ -32,6 +33,8 @@ export function useSettings() {
     awardsOn: flags?.awards_on !== false, // default-on
     demoShopOn,
     demoLineupOn,
+    heroVideoUrl: flags?.home_hero_video_url || '',
+    heroPosterUrl: flags?.home_hero_poster_url || '',
     // Effective visibility: a feature shows if it's launched OR demo'd. When only
     // the demo flag is on, the feature runs browse-only (real endpoints are off).
     shopVisible: marketplaceOn || demoShopOn,

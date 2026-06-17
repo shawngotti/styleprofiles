@@ -1,16 +1,19 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import { centsToUsd, initials } from '../lib/format.js'
+import SearchHero from './SearchHero.jsx'
 
 const GOLD = '#F4A93C'
 const RADII = [25, 50, 100]
 
-// Discover: live pro storefronts. Default sorts by rating; "Near me" uses
-// browser geolocation + the pros_near RPC to sort by distance within a radius.
-export default function Discover({ onOpenPro }) {
+// Discover: live pro storefronts, fronted by a video search hero. Default sorts
+// by rating; "Near me" uses browser geolocation + the pros_near RPC to sort by
+// distance within a radius. Free-text search filters by name/service/city.
+export default function Discover({ onOpenPro, heroVideoUrl, heroPosterUrl }) {
   const [cats, setCats] = useState([])
   const [pros, setPros] = useState([])
   const [active, setActive] = useState('all')
+  const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [coords, setCoords] = useState(null) // { lat, lng } when "near me" is on
@@ -58,7 +61,12 @@ export default function Discover({ onOpenPro }) {
   // boost nudges the rating-sorted ranking. In "near me" mode distance order is
   // preserved (stable sort) — featured is only a top lift.
   const isFeatured = (p) => p.featured_until && new Date(p.featured_until) > new Date()
-  const filtered = active === 'all' ? pros : pros.filter((p) => p.category === active)
+  const q = query.trim().toLowerCase()
+  const filtered = pros.filter((p) => {
+    if (active !== 'all' && p.category !== active) return false
+    if (q && !`${p.display_name} ${p.handle} ${p.category} ${catLabel[p.category] || ''} ${p.city || ''}`.toLowerCase().includes(q)) return false
+    return true
+  })
   const shown = [...filtered].sort((a, b) => {
     const fa = isFeatured(a) ? 1 : 0
     const fb = isFeatured(b) ? 1 : 0
@@ -82,38 +90,39 @@ export default function Discover({ onOpenPro }) {
 
   return (
     <div>
-      {/* Location bar */}
-      <div className="mb-3 flex flex-wrap items-center gap-2">
-        {coords ? (
-          <>
-            <span className="text-sm text-black/60">📍 Near you</span>
-            {RADII.map((r) => (
-              <button
-                key={r}
-                onClick={() => setRadiusMi(r)}
-                className="rounded-full px-2.5 py-1 text-xs font-medium transition"
-                style={radiusMi === r ? { backgroundColor: GOLD, color: '#000' } : { backgroundColor: 'rgba(0,0,0,0.06)', color: '#1f1714' }}
-              >
-                {r} mi
-              </button>
-            ))}
-            <button onClick={() => setCoords(null)} className="text-xs text-black/50 underline hover:text-gray-900">
-              Clear
+      <SearchHero
+        videoUrl={heroVideoUrl}
+        posterUrl={heroPosterUrl}
+        query={query}
+        onQuery={setQuery}
+        nearMeActive={!!coords}
+        onNearMe={useMyLocation}
+        onClearNearMe={() => setCoords(null)}
+      />
+
+      {/* Radius selector — only while "near me" is active */}
+      {coords && (
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          <span className="text-sm text-black/60">Within</span>
+          {RADII.map((r) => (
+            <button
+              key={r}
+              onClick={() => setRadiusMi(r)}
+              className="rounded-full px-2.5 py-1 text-xs font-medium transition"
+              style={radiusMi === r ? { backgroundColor: GOLD, color: '#000' } : { backgroundColor: 'rgba(0,0,0,0.06)', color: '#1f1714' }}
+            >
+              {r} mi
             </button>
-          </>
-        ) : (
-          <button
-            onClick={useMyLocation}
-            className="rounded-full border border-black/15 px-3 py-1.5 text-sm hover:bg-black/10"
-          >
-            📍 Near me
-          </button>
-        )}
-      </div>
+          ))}
+        </div>
+      )}
       {geoMsg && <p className="mb-2 text-xs text-amber-600" role="status" aria-live="polite">{geoMsg}</p>}
 
       {/* Category filter */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-base font-semibold text-gray-900">Top pros near you</h2>
+      </div>
+      <div className="mt-2 flex flex-wrap gap-2">
         <Chip active={active === 'all'} label="All" onClick={() => setActive('all')} />
         {cats.map((c) => (
           <Chip key={c.slug} active={active === c.slug} color={c.color} label={c.label} onClick={() => setActive(c.slug)} />
@@ -141,9 +150,9 @@ export default function Discover({ onOpenPro }) {
                     onOpenPro(p, catColor[p.category] || GOLD)
                   }
                 }}
-                className={`overflow-hidden rounded-2xl border border-black/10 bg-black/5 ${onOpenPro ? 'cursor-pointer hover:bg-black/[0.07]' : ''} transition`}
+                className={`overflow-hidden rounded-2xl border border-black/[0.06] bg-white shadow-sm transition ${onOpenPro ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow-md' : ''}`}
               >
-                {p.cover_url && <img src={p.cover_url} alt="" loading="lazy" className="h-24 w-full object-cover" />}
+                {p.cover_url && <img src={p.cover_url} alt="" loading="lazy" className="h-28 w-full object-cover" />}
                 <div className="p-4">
                 <div className="flex items-center gap-3">
                   {p.avatar_url ? (
