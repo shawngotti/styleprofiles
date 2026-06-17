@@ -32,12 +32,12 @@ Memberships are recurring subscriptions on the professional's Stripe account. Yo
 ## 8. Media, model releases & likeness (important)
 - Professionals may request to feature a client/model in portfolio, Awards, or The Lineup media. **Nothing depicting you is published without your resolved consent** via the Tag & Consent flow (public, anonymous, or declined).
 - By granting consent you license StyleProfiles and the professional to display that media within the platform for the stated purpose. You may set consent to private/anonymous or decline.
-- Media may include close-up imagery of hair, skin, and faces. We do **not** intend to collect biometric identifiers; `[counsel: confirm BIPA/CCPA-style biometric-adjacent disclosures and any state-specific notices]`.
+- Media may include close-up imagery of hair, skin, and faces. We do **not** use facial recognition and do **not** collect, derive, or store biometric identifiers or biometric information as defined under laws such as the Illinois Biometric Information Privacy Act (BIPA). See the Privacy Policy for how uploaded media is handled, including automated content screening.
 
 ## 9. Awards & The Lineup (competitions)
 - Monthly Awards and The Lineup are skill/popularity competitions, **not games of chance**. 
 - **Voting integrity:** one vote per window; votes are subject to fraud checks and may be voided. Fan votes affect only designated outcomes (Redemption Wildcard, Fan Favorite) and never the judged bracket.
-- Prizes (if any) are disbursed via Stripe Connect to the eligible winner's verified account. Winners are responsible for their own taxes; 
+- Prizes (if any) are disbursed via Stripe Connect to the eligible winner's verified account. Winners are responsible for their own taxes. We may require a Form W-9 or other tax documentation before disbursing a prize, and we may withhold or report amounts where required by law.
 
 ## 10. Event tickets
 Tickets sold in-app are final sale except as stated refund policy. Tickets may also be sold via third parties (e.g. Eventbrite); those sales are governed by the third party's terms, and we aggregate attendee records for entry/check-in only.
@@ -46,10 +46,13 @@ Tickets sold in-app are final sale except as stated refund policy. Tickets may a
 No harassment, fraud, vote manipulation, scraping, or uploading media you lack rights to. We may suspend accounts and void competition results for violations.
 
 ## 12. Disclaimers & liability
-Services are provided "as is." 
+The platform is provided **"as is"** and **"as available,"** without warranties of any kind, express or implied, including merchantability, fitness for a particular purpose, and non-infringement. StyleProfiles is a marketplace and is **not** the provider of beauty or grooming services; we do not guarantee the quality, safety, or legality of services offered by professionals. To the maximum extent permitted by law, StyleProfiles and its affiliates will not be liable for indirect, incidental, special, consequential, exemplary, or punitive damages, or for lost profits, revenue, or data, arising from your use of the platform. To the maximum extent permitted by law, our total liability for any claim relating to the platform will not exceed the greater of (a) the total amounts you paid to StyleProfiles in the 12 months before the claim, or (b) US $100. Some jurisdictions do not allow certain limitations, so portions of the above may not apply to you. You agree to indemnify and hold StyleProfiles harmless from claims arising out of your content, your use of the platform, or your violation of these Terms.
 
 ## 13. Changes & termination
-We may modify these Terms (new version + re-acceptance) or terminate accounts per policy. 
+We may modify these Terms by publishing a new version and requiring re-acceptance. We may suspend or terminate accounts for violations of these Terms or as needed to protect users, the platform, or to comply with law. You may stop using the platform and close your account at any time. Provisions that by their nature should survive termination — including payment obligations, disclaimers, liability limits, indemnity, and governing law — will survive.
 
-## 14. Contact
-`[sgotti06@gmail.com / Style Profiles / Louisville, KY]`
+## 14. Governing law
+These Terms are governed by the laws of the Commonwealth of Kentucky, without regard to its conflict-of-laws rules, and any dispute not otherwise resolved will be brought in the state or federal courts located in Kentucky, unless applicable law provides otherwise.
+
+## 15. Contact
+Style Profiles — Louisville, KY — sgotti06@gmail.com

@@ -76,13 +76,13 @@ export default function LegalGate({ children }) {
         </p>
         <ul className="mt-4 space-y-1.5 text-sm">
           <li>
-            <a className="underline" style={{ color: GOLD }} href="https://github.com" target="_blank" rel="noreferrer">
+            <a className="underline" style={{ color: GOLD }} href="/legal/terms.html" target="_blank" rel="noreferrer">
               Terms of Service
             </a>{' '}
             <span className="text-black/55">(v{versions.tos})</span>
           </li>
           <li>
-            <a className="underline" style={{ color: GOLD }} href="https://github.com" target="_blank" rel="noreferrer">
+            <a className="underline" style={{ color: GOLD }} href="/legal/privacy.html" target="_blank" rel="noreferrer">
               Privacy Policy
             </a>{' '}
             <span className="text-black/55">(v{versions.privacy})</span>

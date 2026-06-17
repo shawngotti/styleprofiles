@@ -196,9 +196,11 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
       <footer className="border-t border-black/[0.06]">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 py-8 text-sm text-black/45 sm:flex-row">
           <div className="font-bold text-black/70">Style<span style={{ color: GOLD }}>Profiles</span></div>
-          <div className="flex items-center gap-5">
+          <div className="flex flex-wrap items-center gap-5">
             <button onClick={onGetStarted} className="hover:text-black/80">For pros</button>
             <button onClick={onGetStarted} className="hover:text-black/80">Book an appointment</button>
+            <a href="/legal/terms.html" target="_blank" rel="noreferrer" className="hover:text-black/80">Terms</a>
+            <a href="/legal/privacy.html" target="_blank" rel="noreferrer" className="hover:text-black/80">Privacy</a>
             <span>© StyleProfiles</span>
           </div>
         </div>
