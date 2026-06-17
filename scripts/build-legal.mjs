@@ -1,6 +1,9 @@
 // Renders the canonical legal markdown (docs/legal/*.md) into styled, standalone
 // HTML in public/legal/ so the app can link to readable Terms/Privacy pages.
-// Runs as part of `npm run build`. Source of truth stays the .md files.
+// Run LOCALLY via `npm run gen:legal` after editing docs/legal/*.md, then commit
+// the generated public/legal/*.html. (Not part of `npm run build` — scripts/ and
+// docs/ are excluded from the Vercel upload via .vercelignore, so the committed
+// HTML in public/ is what ships.)
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
