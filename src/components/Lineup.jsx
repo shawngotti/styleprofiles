@@ -6,6 +6,16 @@ import { track } from '../lib/analytics.js'
 
 const GOLD = '#0FB9A6'
 const PRO_FIELDS = 'id,handle,display_name,category,bio,city,verified,rating_avg,rating_count,price_from,charges_enabled'
+const SPONSORS = ['WAHL', 'ANDIS', 'BABYLISSPRO', 'RED BULL', 'HENNESSY']
+
+function countdown(closesAt) {
+  if (!closesAt) return null
+  const ms = new Date(closesAt) - new Date()
+  if (ms <= 0) return null
+  const d = Math.floor(ms / 86400000)
+  const h = Math.floor((ms % 86400000) / 3600000)
+  return d > 0 ? `${d}d ${h}h` : `${h}h`
+}
 
 // The Lineup — public, read-only season bracket (top-of-funnel). Bracket outcomes
 // are judge/admin-decided; the only thing fans do here is the Redemption/Fan
@@ -119,29 +129,61 @@ export default function Lineup({ demo = false, onOpenPro }) {
     )
   }
 
+  const stage = comp.status === 'complete' ? 'Champion crowned' : comp.status === 'qualifying' ? 'Qualifying round' : 'Live now'
+  const contestantCount = Object.keys(byId).length
+  const cd = countdown(openWindow?.closes_at)
+
   return (
-    <div className="space-y-5">
+    <div>
+      {/* Cinematic hero — full bleed */}
+      <section className="relative overflow-hidden" style={{ width: '100vw', marginLeft: 'calc(50% - 50vw)', backgroundColor: '#100d0a' }}>
+        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full" style={{ background: 'rgba(15,185,166,0.12)' }} />
+        <div className="pointer-events-none absolute -left-20 bottom-0 h-56 w-56 rounded-full" style={{ background: 'rgba(179,37,31,0.14)' }} />
+        <div className="relative mx-auto max-w-5xl px-4 py-9 sm:px-6">
+          <div className="mb-2 flex items-center gap-2">
+            <span className="rounded px-2 py-1 text-[10px] font-semibold tracking-[0.14em] text-white" style={{ backgroundColor: '#b3251f' }}>THE LINEUP</span>
+            {comp.status === 'live' && (
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-medium" style={{ color: '#ff6b66' }}>
+                <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: '#ff4d47' }} /> LIVE NOW
+              </span>
+            )}
+            {demo && <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-white/70">Demo preview</span>}
+          </div>
+
+          <h1 className="text-4xl font-extrabold uppercase leading-[0.98] tracking-tight text-white sm:text-5xl">{comp.name}</h1>
+          <p className="mt-2 text-sm" style={{ color: '#c9bfae' }}>
+            {(comp.metro || comp.scope) ?? ''} · {stage}{contestantCount ? ` · ${contestantCount} contestants` : ''}
+          </p>
+
+          {champion ? (
+            <button onClick={() => champion.pro && onOpenPro?.(champion.pro, GOLD)} className="mt-5 flex items-center gap-3 text-left">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full text-base font-semibold" style={{ backgroundColor: '#22341f', color: GOLD }}>
+                {initials(champion.pro?.display_name)}
+              </span>
+              <span>
+                <span className="flex items-center gap-1.5 text-base font-semibold text-white">👑 {champion.pro?.display_name}</span>
+                <span className="text-xs" style={{ color: '#c9bfae' }}>Champion · @{champion.pro?.handle}</span>
+              </span>
+            </button>
+          ) : cd ? (
+            <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-sm text-white">
+              <span aria-hidden>⏱</span> Fan vote closes in {cd}
+            </div>
+          ) : null}
+
+          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-white/10 pt-4 text-[11px] tracking-[0.08em]" style={{ color: 'rgba(255,255,255,0.45)' }}>
+            {SPONSORS.map((s) => <span key={s}>{s}</span>)}
+          </div>
+        </div>
+      </section>
+
       {demo && (
-        <div className="rounded-xl border border-black/[0.06] bg-white shadow-sm px-3 py-2 text-sm text-black/60">
+        <div className="mt-6 rounded-xl border border-black/[0.06] bg-white px-3 py-2 text-sm text-black/60 shadow-sm">
           👀 <strong>Demo preview</strong> — a sample bracket to show The Lineup. Voting is disabled until the season launches.
         </div>
       )}
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">{comp.name}</h2>
-        <span className="rounded-full px-3 py-1 text-xs font-medium" style={{ backgroundColor: 'rgba(0,0,0,0.06)', color: GOLD }}>
-          {comp.metro || comp.scope} · {comp.status}
-        </span>
-      </div>
 
-      {champion && (
-        <section className="rounded-2xl border p-4" style={{ borderColor: `${GOLD}55`, backgroundColor: `${GOLD}0d` }}>
-          <h3 className="mb-1 text-sm font-semibold uppercase tracking-wide" style={{ color: GOLD }}>👑 Champion</h3>
-          <button onClick={() => champion.pro && onOpenPro?.(champion.pro, GOLD)} className="font-medium">
-            {champion.pro?.display_name}
-          </button>
-        </section>
-      )}
-
+      <div className="mt-6 space-y-5">
       {openWindow && (
         <section className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-4">
           <div className="flex items-center gap-2 text-sm">
@@ -181,6 +223,7 @@ export default function Lineup({ demo = false, onOpenPro }) {
           )
         })}
         {rounds.length === 0 && <p className="text-sm text-black/55">The bracket hasn't been drawn yet.</p>}
+      </div>
       </div>
     </div>
   )

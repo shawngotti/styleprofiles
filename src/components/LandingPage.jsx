@@ -1,8 +1,12 @@
+import { useEffect, useState } from 'react'
+import { supabase } from '../lib/supabaseClient.js'
+
 // Bright, image-forward marketing landing page (Booksy-style): pure white,
 // modern, photo-rich. Public front door for logged-out visitors; CTAs hand off
 // to the auth screen. Stock photos are Unsplash (free license) for the prototype
 // — swap for owned/properly-licensed assets before a wide launch.
 const GOLD = '#0FB9A6'
+const isVideo = (u) => /\.(mp4|webm|mov|m4v)(\?|$)/i.test(u || '')
 const PINK = '#FF6FA5'
 const INK = '#15110e'
 
@@ -32,6 +36,18 @@ function Feature({ color, emoji, title, body }) {
 }
 
 export default function LandingPage({ onGetStarted, onSignIn }) {
+  const [media, setMedia] = useState({ url: '', poster: '' })
+  useEffect(() => {
+    supabase
+      .from('platform_settings')
+      .select('key,value')
+      .in('key', ['landing_media_url', 'landing_media_poster_url'])
+      .then(({ data }) => {
+        const m = Object.fromEntries((data || []).map((r) => [r.key, r.value]))
+        setMedia({ url: m.landing_media_url || '', poster: m.landing_media_poster_url || '' })
+      })
+  }, [])
+
   return (
     <div className="min-h-screen bg-white" style={{ color: INK }}>
       {/* Nav */}
@@ -70,7 +86,11 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         {/* Hero image with floating proof cards */}
         <div className="relative">
           <div className="overflow-hidden rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.18)]">
-            <img src={HERO} alt="A barber giving a client a fresh fade" className="aspect-[4/5] w-full object-cover sm:aspect-[5/5]" />
+            {media.url && isVideo(media.url) ? (
+              <video src={media.url} poster={media.poster || undefined} autoPlay muted loop playsInline className="aspect-[4/5] w-full object-cover sm:aspect-[5/5]" />
+            ) : (
+              <img src={media.url || HERO} alt="A barber giving a client a fresh fade" className="aspect-[4/5] w-full object-cover sm:aspect-[5/5]" />
+            )}
           </div>
           <div className="absolute -left-3 top-8 rounded-2xl border border-black/5 bg-white/95 px-4 py-3 shadow-xl backdrop-blur sm:-left-6">
             <div className="text-[10px] font-bold uppercase tracking-wide text-black/40">New booking</div>
