@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Making The Cut | National Barber Championship</title>
+<style>
+:root {
+  --black:#050505;
+  --deep:#09090b;
+  --panel:#111116;
+  --panel2:#18181d;
+  --red:#e50914;
+  --red2:#ff2a1f;
+  --gold:#d7a84f;
+  --gold2:#ffe09b;
+  --white:#f8f8f8;
+  --muted:#babac0;
+  --line:rgba(255,255,255,.14);
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  margin:0;
+  background:
+    radial-gradient(circle at 82% 0%, rgba(229,9,20,.20), transparent 34%),
+    radial-gradient(circle at 18% 10%, rgba(215,168,79,.10), transparent 24%),
+    #050505;
+  color:var(--white);
+  font-family:Impact,Haettenschweiler,'Arial Narrow Bold',Arial,sans-serif;
+  overflow-x:hidden;
+}
+body::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-1;
+  background:
+    linear-gradient(rgba(255,255,255,.024) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.024) 1px, transparent 1px);
+  background-size:46px 46px;
+}
+nav {
+  position:sticky;
+  top:0;
+  z-index:50;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 5vw;
+  background:rgba(5,5,5,.88);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.logo {
+  font-size:30px;
+  line-height:.86;
+  text-transform:uppercase;
+  letter-spacing:.01em;
+}
+.logo span { color:var(--red2); }
+.links a {
+  color:#fff;
+  text-decoration:none;
+  margin-left:24px;
+  font-family:Arial,sans-serif;
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.13em;
+}
+.links a:hover { color:var(--red2); }
+button {
+  border:0;
+  padding:14px 20px;
+  background:linear-gradient(135deg,var(--red),#8f050b);
+  color:white;
+  font-family:Arial,sans-serif;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  cursor:pointer;
+  box-shadow:0 12px 34px rgba(229,9,20,.34);
+  transition:.2s ease;
+}
+button:hover { transform:translateY(-2px); filter:saturate(1.12); }
+button.secondary {
+  background:rgba(0,0,0,.50);
+  border:1px solid var(--line);
+  box-shadow:none;
+}
+button.gold {
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  color:#120900;
+  box-shadow:0 12px 34px rgba(215,168,79,.25);
+}
+.hero {
+  position:relative;
+  min-height:96vh;
+  display:flex;
+  align-items:flex-end;
+  border-bottom:1px solid var(--line);
+  overflow:hidden;
+}
+.hero img.hero-bg {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  z-index:0;
+  filter:contrast(1.03) saturate(1.07);
+}
+.hero::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:
+    linear-gradient(90deg,rgba(0,0,0,.94) 0%, rgba(0,0,0,.70) 40%, rgba(0,0,0,.14) 100%),
+    linear-gradient(0deg,#050505 0%, rgba(5,5,5,.24) 28%, transparent 62%);
+}
+.hero-content {
+  position:relative;
+  z-index:2;
+  max-width:810px;
+  padding:84px 5vw 74px;
+}
+.kicker {
+  color:var(--red2);
+  font-family:Arial,sans-serif;
+  font-size:13px;
+  font-weight:900;
+  letter-spacing:.24em;
+  text-transform:uppercase;
+}
+h1 {
+  margin:16px 0 18px;
+  font-size:clamp(64px,10.4vw,164px);
+  line-height:.72;
+  letter-spacing:-.04em;
+  text-transform:uppercase;
+  text-shadow:0 10px 38px rgba(229,9,20,.42);
+}
+h1 em {
+  font-style:normal;
+  color:var(--gold2);
+}
+.sub {
+  max-width:720px;
+  font-family:Arial,sans-serif;
+  color:#efeff2;
+  font-size:19px;
+  line-height:1.56;
+  letter-spacing:0;
+}
+.cta-row {
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  margin-top:28px;
+}
+.stat-strip {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  background:#09090a;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.stat {
+  padding:24px 20px;
+  text-align:center;
+  border-right:1px solid var(--line);
+}
+.stat:last-child { border-right:0; }
+.stat strong {
+  display:block;
+  color:var(--red2);
+  font-size:40px;
+  line-height:1;
+}
+.stat span {
+  font-family:Arial,sans-serif;
+  font-size:12px;
+  font-weight:900;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.13em;
+}
+section {
+  padding:84px 5vw;
+  border-bottom:1px solid var(--line);
+}
+.section-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:24px;
+  margin-bottom:30px;
+}
+.eyebrow {
+  color:var(--red2);
+  font-family:Arial,sans-serif;
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  margin-bottom:10px;
+}
+h2 {
+  margin:0;
+  font-size:clamp(40px,5.8vw,84px);
+  line-height:.82;
+  letter-spacing:-.025em;
+  text-transform:uppercase;
+}
+h3 {
+  margin:0 0 14px;
+  font-size:34px;
+  line-height:.92;
+  text-transform:uppercase;
+}
+p, li, .small {
+  font-family:Arial,sans-serif;
+  color:#d2d2d8;
+  line-height:1.58;
+  letter-spacing:0;
+}
+.small { font-size:14px; }
+.asset-frame {
+  background:#060607;
+  border:1px solid var(--line);
+  box-shadow:0 26px 80px rgba(0,0,0,.55);
+  overflow:hidden;
+}
+.asset-frame img {
+  display:block;
+  width:100%;
+  height:auto;
+}
+.two-col {
+  display:grid;
+  grid-template-columns:1.08fr .92fr;
+  gap:24px;
+  align-items:start;
+}
+.panel {
+  background:linear-gradient(145deg,rgba(21,21,25,.96),rgba(7,7,8,.96));
+  border:1px solid var(--line);
+  padding:28px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 18px 60px rgba(0,0,0,.34);
+}
+.panel::before {
+  content:"";
+  position:absolute;
+  inset:0 auto auto 0;
+  height:4px;
+  width:100%;
+  background:linear-gradient(90deg,var(--red),var(--gold));
+}
+.bracket-layout {
+  display:grid;
+  grid-template-columns:1.45fr .55fr;
+  gap:24px;
+  align-items:start;
+}
+.road-panel {
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+.match-pill {
+  display:inline-block;
+  padding:10px 12px;
+  margin:6px 4px 0 0;
+  background:#101014;
+  border:1px solid var(--line);
+  font-family:Arial,sans-serif;
+  font-size:13px;
+  cursor:pointer;
+  transition:.18s ease;
+}
+.match-pill:hover, .match-pill.active {
+  background:var(--red);
+  transform:translateY(-2px);
+}
+.profile-layout {
+  display:grid;
+  grid-template-columns:.9fr 1.1fr;
+  gap:24px;
+  align-items:start;
+}
+.profile-cards {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+}
+.profile-card {
+  border:1px solid var(--line);
+  background:linear-gradient(145deg,#121216,#070708);
+  padding:20px;
+  cursor:pointer;
+  transition:.2s ease;
+}
+.profile-card:hover {
+  transform:translateY(-4px);
+  box-shadow:0 18px 55px rgba(229,9,20,.18);
+}
+.profile-card strong {
+  display:block;
+  color:white;
+  font-size:24px;
+  line-height:1;
+  margin-bottom:8px;
+}
+.meter {
+  height:8px;
+  background:#222;
+  overflow:hidden;
+  margin-top:12px;
+}
+.meter span {
+  display:block;
+  height:100%;
+  background:linear-gradient(90deg,var(--red),var(--gold));
+}
+.poster-section {
+  position:relative;
+  min-height:640px;
+  display:flex;
+  align-items:center;
+  border-bottom:1px solid var(--line);
+  overflow:hidden;
+}
+.poster-section img {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+}
+.poster-section::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,rgba(0,0,0,.95) 0%, rgba(0,0,0,.72) 42%, rgba(0,0,0,.08) 100%);
+}
+.poster-copy {
+  position:relative;
+  z-index:2;
+  padding:84px 5vw;
+  max-width:780px;
+}
+.poster-copy h2 {
+  font-size:clamp(54px,7.6vw,124px);
+}
+.score-layout {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+  align-items:start;
+}
+.sponsor-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+.sponsor-card {
+  background:linear-gradient(145deg,#121216,#070708);
+  border:1px solid var(--line);
+  padding:26px;
+  min-height:210px;
+}
+.sponsor-card h3 {
+  color:var(--gold2);
+}
+footer {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  padding:50px 5vw;
+  background:#030304;
+}
+.modal {
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.78);
+  padding:20px;
+}
+.modal.open { display:flex; }
+.modal-box {
+  width:min(560px,100%);
+  background:#111116;
+  border:1px solid var(--red);
+  padding:30px;
+  position:relative;
+  box-shadow:0 30px 90px rgba(0,0,0,.75);
+}
+.close {
+  position:absolute;
+  right:12px;
+  top:12px;
+  background:transparent;
+  border:1px solid var(--line);
+  box-shadow:none;
+  padding:8px;
+}
+input, select, textarea {
+  width:100%;
+  padding:13px;
+  margin:8px 0 14px;
+  background:#050505;
+  color:white;
+  border:1px solid var(--line);
+}
+.toast {
+  display:none;
+  position:fixed;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%);
+  z-index:120;
+  background:var(--gold2);
+  color:#111;
+  padding:12px 18px;
+  font-family:Arial,sans-serif;
+  font-weight:900;
+}
+.toast.show { display:block; }
+@media(max-width:980px) {
+  .two-col,.bracket-layout,.profile-layout,.score-layout {
+    grid-template-columns:1fr;
+  }
+  .sponsor-grid {
+    grid-template-columns:1fr 1fr;
+  }
+  .links { display:none; }
+  .stat-strip { grid-template-columns:1fr 1fr; }
+}
+@media(max-width:560px) {
+  h1 { font-size:62px; }
+  .profile-cards,.sponsor-grid,.stat-strip {
+    grid-template-columns:1fr;
+  }
+  .hero { min-height:88vh; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">MAKING <span>THE CUT</span></div>
+  <div class="links">
+    <a href="#format">Format</a>
+    <a href="#bracket">Bracket</a>
+    <a href="#redemption">Redemption</a>
+    <a href="#judges">Judges</a>
+    <a href="#contestants">Contestants</a>
+    <a href="#sponsors">Sponsors</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <img class="hero-bg" src="assets/making_the_cut_barber_championship_showdown.png" alt="Making The Cut National Barber Championship hero">
+  <div class="hero-content">
+    <div class="kicker">The National Barber Championship</div>
+    <h1>Making<br><em>The Cut</em></h1>
+    <p class="sub">A high-stakes, March Madness-style barbering competition where elite barbers recreate precision cuts under pressure — then fight through redemption and challenge a master judge.</p>
+    <div class="cta-row">
+      <button onclick="watchTrailer()">Watch Trailer</button>
+      <button class="secondary" onclick="openModal('casting')">Join Casting</button>
+      <button class="gold" onclick="openModal('sponsor')">Sponsor The Show</button>
+    </div>
+  </div>
+</header>
+
+<div class="stat-strip">
+  <div class="stat"><strong>16</strong><span>Elite Barbers</span></div>
+  <div class="stat"><strong>10</strong><span>Episodes</span></div>
+  <div class="stat"><strong>1</strong><span>National Champion</span></div>
+  <div class="stat"><strong>3</strong><span>Master Judges</span></div>
+</div>
+
+<section id="format">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Show Format Asset Integrated</div>
+      <h2>Recreate. Compete. Redeem.</h2>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="asset-frame"><img src="assets/the_format_breakdown_battle_to_win.png" alt="The Format"></div>
+    <div class="panel">
+      <h3>Simple Rules. Maximum Pressure.</h3>
+      <p>Every round begins with a haircut reference photo. Barbers must reproduce the look with technical precision, speed, creativity, and client presentation.</p>
+      <p>Winners advance. Losers enter a 30-minute Redemption Challenge for a shot to return.</p>
+      <button onclick="openModal('casting')">Apply To Compete</button>
+    </div>
+  </div>
+</section>
+
+<section id="bracket">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Tournament Bracket + Road Asset Integrated</div>
+      <h2>Road To The Championship</h2>
+    </div>
+    <button class="secondary" onclick="simulateWinner()">Simulate Winner</button>
+  </div>
+  <div class="bracket-layout">
+    <div class="asset-frame"><img src="assets/the_tournament_bracket_showdown.png" alt="Tournament bracket"></div>
+    <div class="road-panel">
+      <div class="asset-frame"><img src="assets/the_road_to_the_championship_schedule.png" alt="Road to championship"></div>
+      <div class="panel">
+        <h3>Clickable Bracket Preview</h3>
+        <p id="winnerBox">Select a matchup stage or simulate a winner.</p>
+        <span class="match-pill">Round of 16</span>
+        <span class="match-pill">Elite 8</span>
+        <span class="match-pill">Final Four</span>
+        <span class="match-pill">Championship</span>
+        <span class="match-pill">Beat The Master</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="redemption">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Redemption Asset Integrated</div>
+      <h2>The Second Chance Cut</h2>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="asset-frame"><img src="assets/making_the_cut_redemption_challenge.png" alt="Redemption Challenge"></div>
+    <div class="panel">
+      <h3>30 Minutes. No Reference. All Skill.</h3>
+      <p>The losers of each challenge enter a freestyle cut round where they create their best cut in 30 minutes for a chance to stay alive.</p>
+      <button class="secondary" onclick="vote()">Vote Fan Favorite</button>
+    </div>
+  </div>
+</section>
+
+<section id="judges">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Judging Panel Asset Integrated</div>
+      <h2>The Master Panel</h2>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="panel">
+      <h3>Three Judges. Three Lanes.</h3>
+      <p>The judging panel evaluates technical accuracy, style, creativity, finish, speed, client experience, and professional presentation.</p>
+      <button onclick="openModal('sponsor')">Sponsor The Judges Panel</button>
+    </div>
+    <div class="asset-frame"><img src="assets/judging_panel_making_the_cut.png" alt="Judging Panel"></div>
+  </div>
+</section>
+
+<section id="contestants">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Contestant Profile Asset Integrated</div>
+      <h2>Stats Build Stars</h2>
+    </div>
+  </div>
+  <div class="profile-layout">
+    <div class="asset-frame"><img src="assets/contestant_profile_derrick_precise_jackson.png" alt="Contestant Profile"></div>
+    <div class="profile-cards">
+      <div class="profile-card" onclick="selectProfile('Derrick “Precise” Jackson')">
+        <strong>Derrick “Precise” Jackson</strong>
+        <p class="small">Chicago, IL • Burst fades • 98% fade accuracy</p>
+        <div class="meter"><span style="width:98%"></span></div>
+      </div>
+      <div class="profile-card" onclick="selectProfile('Malik “Blade” Carter')">
+        <strong>Malik “Blade” Carter</strong>
+        <p class="small">Atlanta, GA • Razor parts • Speed cuts</p>
+        <div class="meter"><span style="width:91%"></span></div>
+      </div>
+      <div class="profile-card" onclick="selectProfile('Tone “The Sculptor” Ellis')">
+        <strong>Tone “The Sculptor” Ellis</strong>
+        <p class="small">Brooklyn, NY • Portrait work • Freestyle art</p>
+        <div class="meter"><span style="width:94%"></span></div>
+      </div>
+      <div class="profile-card" onclick="selectProfile('Jay “Cleanline” Morris')">
+        <strong>Jay “Cleanline” Morris</strong>
+        <p class="small">Houston, TX • Classic cuts • Symmetry</p>
+        <div class="meter"><span style="width:89%"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="poster-section">
+  <img src="assets/the_cut_champion_vs_master.png" alt="Champion vs The Master">
+  <div class="poster-copy">
+    <div class="eyebrow">Ultimate Showdown Asset Integrated</div>
+    <h2>Champion vs The Master</h2>
+    <p class="sub">After the champion is crowned, they choose one of three celebrity master barbers for the ultimate showdown.</p>
+    <button class="gold" onclick="openModal('sponsor')">Sponsor The Finale</button>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Scoring + Snapshot Assets Integrated</div>
+      <h2>How Winners Are Made</h2>
+    </div>
+  </div>
+  <div class="score-layout">
+    <div class="asset-frame"><img src="assets/scoring_breakdown_infographic.png" alt="Scoring breakdown"></div>
+    <div class="asset-frame"><img src="assets/season_1_snapshot_promo_chart.png" alt="Season 1 snapshot"></div>
+  </div>
+</section>
+
+<section id="sponsors">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Sponsors</div>
+      <h2>Partnerships That Cut Deep</h2>
+    </div>
+    <button class="gold" onclick="openModal('sponsor')">Request Sponsor Deck</button>
+  </div>
+  <div class="sponsor-grid">
+    <div class="sponsor-card"><h3>Official Tool Sponsor</h3><p>Clippers, trimmers, stations, blades, and product placement across every challenge.</p></div>
+    <div class="sponsor-card"><h3>Grooming Partner</h3><p>Pomades, aftercare, shampoos, beard care, and finishing products integrated into judging.</p></div>
+    <div class="sponsor-card"><h3>Live Event Partner</h3><p>Regional qualifiers, championship viewing events, and brand activations.</p></div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo">MAKING <span>THE CUT</span></div>
+  <p class="small">Built for competition. Designed for culture. Ready for the world.</p>
+  <button onclick="openModal('casting')">Get Involved</button>
+</footer>
+
+<div class="modal" id="castingModal">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal()">X</button>
+    <h2>Join Casting</h2>
+    <p>Submit interest for Season One contestant consideration.</p>
+    <input placeholder="Full Name">
+    <input placeholder="City / State">
+    <input placeholder="Instagram or Portfolio Link">
+    <select>
+      <option>Specialty</option>
+      <option>Fades</option>
+      <option>Designs</option>
+      <option>Classic Cuts</option>
+      <option>Speed Cuts</option>
+    </select>
+    <button onclick="submitForm()">Submit Interest</button>
+  </div>
+</div>
+
+<div class="modal" id="sponsorModal">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal()">X</button>
+    <h2>Sponsor Inquiry</h2>
+    <p>Explore partnership opportunities across broadcast, digital, live events, and product integration.</p>
+    <input placeholder="Company Name">
+    <input placeholder="Contact Email">
+    <select>
+      <option>Partnership Category</option>
+      <option>Presenting Sponsor</option>
+      <option>Official Tool Sponsor</option>
+      <option>Grooming Sponsor</option>
+      <option>Live Event Sponsor</option>
+    </select>
+    <textarea placeholder="Tell us what you want to explore"></textarea>
+    <button class="gold" onclick="submitForm()">Request Sponsor Deck</button>
+  </div>
+</div>
+
+<div class="modal" id="trailerModal">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal()">X</button>
+    <h2>Trailer Preview</h2>
+    <p>This prototype would open a cinematic trailer reel here.</p>
+    <div class="asset-frame"><img src="assets/making_the_cut_redemption_challenge.png" alt="Trailer preview still"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+document.querySelectorAll('.match-pill').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.match-pill').forEach(x => x.classList.remove('active'));
+    item.classList.add('active');
+    showToast('Selected: ' + item.textContent);
+  });
+});
+
+function openModal(type) {
+  const id = type === 'sponsor' ? 'sponsorModal' : type === 'trailer' ? 'trailerModal' : 'castingModal';
+  document.getElementById(id).classList.add('open');
+}
+function closeModal() {
+  document.querySelectorAll('.modal').forEach(m => m.classList.remove('open'));
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+function submitForm() {
+  closeModal();
+  showToast('Prototype submission received.');
+}
+function watchTrailer() {
+  openModal('trailer');
+}
+function vote() {
+  showToast('Fan Favorite vote counted in prototype.');
+}
+function selectProfile(name) {
+  showToast(name + ' profile selected.');
+}
+function simulateWinner() {
+  const names = ['Derrick “Precise” Jackson', 'Malik “Blade” Carter', 'Tone “The Sculptor” Ellis', 'Jay “Cleanline” Morris'];
+  const winner = names[Math.floor(Math.random() * names.length)];
+  document.getElementById('winnerBox').textContent = winner + ' advances toward the championship.';
+  showToast(winner + ' advances!');
+}
+</script>
+</body>
+</html>

@@ -155,6 +155,16 @@ export default function Lineup({ demo = false, onOpenPro }) {
             {(comp.metro || comp.scope) ?? ''} · {stage}{contestantCount ? ` · ${contestantCount} contestants` : ''}
           </p>
 
+          <a
+            href="/the-lineup/index.html"
+            target="_blank"
+            rel="noreferrer"
+            className="mt-4 inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold shadow-sm transition hover:brightness-95"
+            style={{ backgroundColor: GOLD, color: '#06403a' }}
+          >
+            ▶ Watch the Making The Cut showcase
+          </a>
+
           {champion ? (
             <button onClick={() => champion.pro && onOpenPro?.(champion.pro, GOLD)} className="mt-5 flex items-center gap-3 text-left">
               <span className="flex h-12 w-12 items-center justify-center rounded-full text-base font-semibold" style={{ backgroundColor: '#22341f', color: GOLD }}>
