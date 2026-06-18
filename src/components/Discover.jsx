@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabaseClient.js'
 import { centsToUsd, initials } from '../lib/format.js'
 import SearchHero from './SearchHero.jsx'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 const RADII = [25, 50, 100]
 
 // Discover: live pro storefronts, fronted by a video search hero. Default sorts

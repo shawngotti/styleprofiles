@@ -5,7 +5,7 @@ import { stripePromise } from '../lib/stripe.js'
 import { centsToUsd as money } from '../lib/format.js'
 import { track } from '../lib/analytics.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 
 // Self-care marketplace (first-party). Catalog is RLS-gated on marketplace_on,
 // so this only renders meaningfully when the shop is open. Checkout is fully

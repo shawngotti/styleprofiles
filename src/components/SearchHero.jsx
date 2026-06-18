@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 
 // The signed-in home hero. Background is an admin-set looping video (muted,
 // autoplay, loop) with a poster fallback; respects prefers-reduced-motion (shows
@@ -59,7 +59,7 @@ export default function SearchHero({ videoUrl, posterUrl, query, onQuery, onNear
           <button
             onClick={nearMeActive ? onClearNearMe : onNearMe}
             className="shrink-0 rounded-full px-5 py-3 text-sm font-semibold transition hover:brightness-95"
-            style={{ backgroundColor: GOLD, color: '#2c1d04' }}
+            style={{ backgroundColor: GOLD, color: '#06403a' }}
           >
             {nearMeActive ? '✓ Near you' : '📍 Near me'}
           </button>

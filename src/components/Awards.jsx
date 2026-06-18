@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabaseClient.js'
 import { initials } from '../lib/format.js'
 import { track } from '../lib/analytics.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 
 // Monthly Awards: approved nominees per category with one vote per category.
 // Votes go through the cast_award_vote integrity function. Tallies are not shown

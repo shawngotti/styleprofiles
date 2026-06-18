@@ -5,7 +5,7 @@ import { stripePromise } from '../lib/stripe.js'
 import { centsToUsd as money } from '../lib/format.js'
 import { track } from '../lib/analytics.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 
 // Published events for a competition, with in-app Stripe ticketing. The platform
 // is merchant of record (buy_event_ticket -> platform PaymentIntent). Tickets

@@ -7,7 +7,7 @@ import { stripePromise } from '../lib/stripe.js'
 import { centsToUsd } from '../lib/format.js'
 import { track } from '../lib/analytics.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 const YOU = { id: 'you', label: 'You', household_member_id: null }
 
 // Booking flow modal. People step (group booking) appears only when the client

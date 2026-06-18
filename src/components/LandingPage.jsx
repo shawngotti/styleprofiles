@@ -2,7 +2,7 @@
 // modern, photo-rich. Public front door for logged-out visitors; CTAs hand off
 // to the auth screen. Stock photos are Unsplash (free license) for the prototype
 // — swap for owned/properly-licensed assets before a wide launch.
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 const PINK = '#FF6FA5'
 const INK = '#15110e'
 
@@ -12,7 +12,7 @@ const HERO = img('1585747860715-2ba37e788b70', 1100)
 const FEATURE = img('1580618672591-eb180b1a973f', 1000)
 const TESTIMONIAL = img('1599351431202-1e0f0137899a', 400)
 const SPECIALTIES = [
-  ['Barbers', '1503951914875-452162b0f3f1', '#F4A93C'],
+  ['Barbers', '1503951914875-452162b0f3f1', '#0FB9A6'],
   ['Stylists', '1562322140-8baeececf3df', '#FF6FA5'],
   ['Nail techs', '1633681926022-84c23e8cb2d6', '#F472D0'],
   ['Makeup', '1487412947147-5cebf100ffc2', '#FF8A5B'],
@@ -187,7 +187,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             Use code <strong style={{ color: INK }}>TRY50</strong> for 50% off your first month · cancel anytime
           </p>
           <p className="mt-2 text-sm text-black/45">
-            Already with us? <button onClick={onSignIn} className="font-semibold underline" style={{ color: '#9A6512' }}>Sign in</button>
+            Already with us? <button onClick={onSignIn} className="font-semibold underline" style={{ color: '#0d9488' }}>Sign in</button>
           </p>
         </div>
       </section>

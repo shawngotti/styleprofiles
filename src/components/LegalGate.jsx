@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabaseClient.js'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import { track } from '../lib/analytics.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 
 // Gates the app on acceptance of the current Terms + Privacy versions. Required
 // versions live in platform_settings so legal can bump them without a deploy;

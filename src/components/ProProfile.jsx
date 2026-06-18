@@ -4,7 +4,7 @@ import { centsToUsd, initials } from '../lib/format.js'
 import BookingFlow from './BookingFlow.jsx'
 import MembershipCard from './MembershipCard.jsx'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 
 function Stars({ value = 0 }) {
   const full = Math.round(value)

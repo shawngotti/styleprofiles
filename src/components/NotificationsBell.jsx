@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import { useAuth } from '../auth/AuthProvider.jsx'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 const ICON = { awards: '🏆', lineup: '🎬', booking: '📅', points: '✨', review: '⭐', review_reply: '💬', chair: '📣', tag: '🏷' }
 
 // Notification inbox in the header. Reads the user's notifications (RLS: self

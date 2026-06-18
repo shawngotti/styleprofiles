@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import { useAuth } from '../auth/AuthProvider.jsx'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 
 // Per-user email opt-out (profiles.email_notifications; RLS self-write). The
 // enqueue_email trigger honors this before queueing anything.

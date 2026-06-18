@@ -5,7 +5,7 @@ import { stripePromise } from '../lib/stripe.js'
 import { centsToUsd } from '../lib/format.js'
 import { initials } from '../lib/format.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 const TYPE_LABEL = { last_minute: 'Last-minute', cancellation: 'Cancellation fill', slow_day: 'Slow-day deal' }
 
 // Client-facing flash deals (Fill My Chair). Open slots are public-read; claiming

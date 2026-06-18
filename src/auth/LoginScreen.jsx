@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import { track } from '../lib/analytics.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 
 export default function LoginScreen({ initialMode = 'signin', onBack }) {
   const [mode, setMode] = useState(initialMode) // 'signin' | 'signup'

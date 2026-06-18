@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabaseClient.js'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import { track } from '../lib/analytics.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 
 // Tag & Consent inbox. A pro who features you in a look (portfolio, Awards, The
 // Lineup, Cut of the Week) opens a consent request; nothing publishes until you

@@ -21,7 +21,7 @@ import LineupBand from './LineupBand.jsx'
 import { useSettings } from '../lib/useSettings.js'
 import { track } from '../lib/analytics.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 
 // Map roles -> available perspectives. Every signed-in user has 'client'.
 // The switcher is a VIEW convenience only; RLS is the real boundary.

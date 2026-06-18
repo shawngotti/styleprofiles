@@ -8,7 +8,7 @@ import FillMyChair from './FillMyChair.jsx'
 import ProReviews from './ProReviews.jsx'
 import ProInsights from './ProInsights.jsx'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 
 // Pro dashboard — a tabbed workspace: Overview (payouts, storefront, chair,
 // awards), Reviews (inbox + replies), and Memberships. Booking acceptance is

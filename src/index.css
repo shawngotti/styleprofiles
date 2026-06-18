@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
-/* StyleProfiles theme: bright/white surface, gold accents */
+/* StyleProfiles theme: bright/white surface, mint-teal accents */
 :root {
-  --sp-gold: #F4A93C;
+  --sp-gold: #0FB9A6;
 }
 
 html,

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import { useAuth } from '../auth/AuthProvider.jsx'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 const TRAVEL = [
   { value: 'shop', label: 'Clients come to my shop' },
   { value: 'mobile', label: 'I travel to clients' },

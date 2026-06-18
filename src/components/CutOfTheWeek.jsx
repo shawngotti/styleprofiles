@@ -4,7 +4,7 @@ import { useAuth } from '../auth/AuthProvider.jsx'
 import { initials } from '../lib/format.js'
 import { track } from '../lib/analytics.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 const TAG_OPTIONS = [
   { value: 'none', label: 'No client tagged' },
   { value: 'public', label: 'Request public tag' },

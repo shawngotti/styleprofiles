@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import { useAuth } from '../auth/AuthProvider.jsx'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 
 // Privacy opt-out: when off, the pros whose pages you view see you as "Someone"
 // instead of your name (profiles.hide_profile_views; RLS self-write).

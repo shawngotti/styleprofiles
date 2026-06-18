@@ -1,7 +1,7 @@
 import { Component } from 'react'
 import { reportError } from '../lib/analytics.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 
 // Catches render-time crashes so a single broken screen doesn't white-screen the
 // app, and reports them (reportError is the single place to wire a monitoring

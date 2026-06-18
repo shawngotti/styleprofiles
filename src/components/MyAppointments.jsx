@@ -3,9 +3,9 @@ import { supabase } from '../lib/supabaseClient.js'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import { centsToUsd } from '../lib/format.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 const STATUS = {
-  pending: { label: 'Pending', color: '#F4A93C' },
+  pending: { label: 'Pending', color: '#0FB9A6' },
   confirmed: { label: 'Confirmed', color: '#34D399' },
   completed: { label: 'Completed', color: '#56C2FF' },
   cancelled: { label: 'Cancelled', color: '#9CA3AF' },

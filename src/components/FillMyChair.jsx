@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import { centsToUsd } from '../lib/format.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 const TYPES = [
   ['last_minute', 'Last-minute opening'],
   ['cancellation', 'Cancellation fill'],

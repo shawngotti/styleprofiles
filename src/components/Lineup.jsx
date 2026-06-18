@@ -4,7 +4,7 @@ import { initials } from '../lib/format.js'
 import EventTickets from './EventTickets.jsx'
 import { track } from '../lib/analytics.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 const PRO_FIELDS = 'id,handle,display_name,category,bio,city,verified,rating_avg,rating_count,price_from,charges_enabled'
 
 // The Lineup — public, read-only season bracket (top-of-funnel). Bracket outcomes

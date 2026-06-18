@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import { useAuth } from '../auth/AuthProvider.jsx'
 
-const GOLD = '#F4A93C'
-const TIER_COLOR = { Bronze: '#CD7F32', Silver: '#C0C0C0', Gold: '#F4A93C', Platinum: '#56C2FF' }
+const GOLD = '#0FB9A6'
+const TIER_COLOR = { Bronze: '#CD7F32', Silver: '#C0C0C0', Gold: '#0FB9A6', Platinum: '#56C2FF' }
 
 // Client loyalty: StylePoints balance + tier, redeemable rewards, and recent
 // ledger activity. Earning happens server-side on booking completion; redeeming

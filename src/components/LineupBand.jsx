@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import { initials } from '../lib/format.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 
 function countdown(closesAt) {
   if (!closesAt) return null
@@ -122,7 +122,7 @@ export default function LineupBand({ onOpen, demo }) {
         ) : null}
 
         <div className="mt-5 flex items-center gap-3">
-          <span className="rounded-lg px-4 py-2 text-sm font-semibold" style={{ backgroundColor: GOLD, color: '#2c1d04' }}>
+          <span className="rounded-lg px-4 py-2 text-sm font-semibold" style={{ backgroundColor: GOLD, color: '#06403a' }}>
             {demo ? 'Preview the bracket' : champion ? 'See the results' : 'Vote now'}
           </span>
           {cd && (

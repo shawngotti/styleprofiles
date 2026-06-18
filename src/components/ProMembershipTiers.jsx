@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import { centsToUsd } from '../lib/format.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 const EMPTY = { name: '', price: '', disc: '', includes: '' }
 
 // Pro-authored membership tiers (RLS tiers_owner_write — direct, no Edge Function).

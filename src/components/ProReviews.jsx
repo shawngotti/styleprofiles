@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 
 // Status pill styling for the pro's own view (clients only ever see 'approved').
 const STATUS_BADGE = {

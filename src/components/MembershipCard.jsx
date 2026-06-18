@@ -6,7 +6,7 @@ import { stripePromise } from '../lib/stripe.js'
 import { centsToUsd } from '../lib/format.js'
 import { track } from '../lib/analytics.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 
 // Membership offer on a pro's profile. Shows the tier, lets a client subscribe
 // (Stripe Connect subscription via membership_subscribe + PaymentElement), and

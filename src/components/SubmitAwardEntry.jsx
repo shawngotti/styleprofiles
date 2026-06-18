@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 
 const TAG_OPTIONS = [
   { value: 'none', label: 'No client tagged' },

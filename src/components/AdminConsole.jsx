@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 const TABS = [
   ['directory', 'Directory'],
   ['analytics', 'Analytics'],
@@ -638,7 +638,7 @@ function HomeHero() {
       </p>
 
       {/* Live preview */}
-      <div className="relative h-40 overflow-hidden rounded-2xl" style={{ background: 'linear-gradient(125deg,#181410,#3a2a12,#F4A93C)' }}>
+      <div className="relative h-40 overflow-hidden rounded-2xl" style={{ background: 'linear-gradient(125deg,#181410,#3a2a12,#0FB9A6)' }}>
         {video ? (
           <video src={video} poster={poster || undefined} autoPlay muted loop playsInline className="h-full w-full object-cover" />
         ) : poster ? (

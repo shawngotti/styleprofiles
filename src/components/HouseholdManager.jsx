@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import { listMembers, addMember, removeMember } from '../lib/household.js'
 
-const GOLD = '#F4A93C'
+const GOLD = '#0FB9A6'
 const TYPES = [
   { key: 'adult', label: 'Adult' },
   { key: 'child', label: 'Child' },
