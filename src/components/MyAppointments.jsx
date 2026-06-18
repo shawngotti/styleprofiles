@@ -162,7 +162,7 @@ function BookingCard({ b, children }) {
     .map((l) => l.service_name)
     .join(', ')
   return (
-    <div className="rounded-2xl border border-black/10 bg-black/5 p-4">
+    <div className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="font-semibold">{b.pro?.display_name || 'Pro'}</div>

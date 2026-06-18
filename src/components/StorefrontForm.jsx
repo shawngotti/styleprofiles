@@ -106,7 +106,7 @@ export default function StorefrontForm({ pro, onSaved }) {
   }
 
   return (
-    <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
+    <section className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-5">
       <h3 className="text-sm font-semibold uppercase tracking-wide text-black/55">
         {editing ? 'Edit storefront' : 'Create your storefront'}
       </h3>

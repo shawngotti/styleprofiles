@@ -65,7 +65,7 @@ export default function LegalGate({ children }) {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-lg flex-col justify-center p-6">
-      <div className="rounded-2xl border border-black/10 bg-black/5 p-6">
+      <div className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-6">
         <h1 className="text-lg font-semibold">
           Before you continue
         </h1>

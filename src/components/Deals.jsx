@@ -95,7 +95,7 @@ export default function Deals({ onClaimed }) {
             const full = d.service?.price ?? 0
             const discounted = Math.round(full * (1 - (d.discount_pct || 0) / 100))
             return (
-              <div key={d.id} className="rounded-2xl border border-black/10 bg-black/5 p-4">
+              <div key={d.id} className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-4">
                 <div className="flex items-center justify-between">
                   <span className="rounded-full px-2 py-0.5 text-xs font-medium" style={{ backgroundColor: `${GOLD}1a`, color: GOLD }}>
                     {TYPE_LABEL[d.promo_type] || 'Deal'}

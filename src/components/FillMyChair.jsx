@@ -73,7 +73,7 @@ export default function FillMyChair({ proId }) {
   }
 
   return (
-    <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
+    <section className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-5">
       <h3 className="text-sm font-semibold uppercase tracking-wide text-black/55">Fill my chair</h3>
       <p className="mt-1 text-sm text-black/60">Turn a cancellation or slow day into a booked slot — post a flash deal and blast it to your clients.</p>
 

@@ -108,7 +108,7 @@ export default function SubmitAwardEntry({ proId, category }) {
   if (cycle === undefined) return null
   if (cycle === null) {
     return (
-      <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
+      <section className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-5">
         <h3 className="text-sm font-semibold uppercase tracking-wide text-black/55">Monthly Awards</h3>
         <p className="mt-2 text-sm text-black/50">No awards cycle is accepting entries right now.</p>
       </section>
@@ -124,7 +124,7 @@ export default function SubmitAwardEntry({ proId, category }) {
         : null
 
   return (
-    <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
+    <section className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-5">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold uppercase tracking-wide text-black/55">Awards · {period}</h3>
         {statusBadge && (

@@ -155,7 +155,7 @@ export default function ProDashboard({ onPreviewProfile }) {
 
       {tab === 'overview' && (
         <div className="space-y-5">
-          <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
+          <section className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-5">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-black/55">Payouts</h3>
               <span

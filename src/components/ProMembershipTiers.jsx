@@ -78,7 +78,7 @@ export default function ProMembershipTiers({ proId }) {
   }
 
   return (
-    <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
+    <section className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-5">
       <h3 className="text-sm font-semibold uppercase tracking-wide text-black/55">Membership tiers</h3>
       {tiers.length > 0 ? (
         <div className="mt-3 space-y-2">

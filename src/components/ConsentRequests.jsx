@@ -67,7 +67,7 @@ export default function ConsentRequests() {
         ) : (
           <div className="space-y-3">
             {pending.map((r) => (
-              <div key={r.id} className="rounded-2xl border border-black/10 bg-black/5 p-4">
+              <div key={r.id} className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-4">
                 <div className="text-sm">
                   <span className="font-medium">{r.pro?.display_name}</span>{' '}
                   <span className="text-black/50">wants to feature {r.look_label ? `“${r.look_label}”` : 'a look'}</span>

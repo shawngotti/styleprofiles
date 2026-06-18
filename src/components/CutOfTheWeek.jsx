@@ -198,7 +198,7 @@ function SubmitPanel({ proId, onDone }) {
   }
 
   return (
-    <section className="rounded-2xl border border-black/10 bg-black/5 p-4">
+    <section className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-4">
       {!open ? (
         <div className="flex items-center justify-between">
           <span className="text-sm text-black/60">Enter your best look for this week.</span>

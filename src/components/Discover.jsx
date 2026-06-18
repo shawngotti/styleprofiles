@@ -98,36 +98,32 @@ export default function Discover({ onOpenPro, heroVideoUrl, heroPosterUrl }) {
         nearMeActive={!!coords}
         onNearMe={useMyLocation}
         onClearNearMe={() => setCoords(null)}
+        cats={cats}
+        active={active}
+        onPickCat={setActive}
       />
 
       {/* Radius selector — only while "near me" is active */}
       {coords && (
-        <div className="mb-3 flex flex-wrap items-center gap-2">
+        <div className="mb-1 mt-5 flex flex-wrap items-center gap-2">
           <span className="text-sm text-black/60">Within</span>
           {RADII.map((r) => (
             <button
               key={r}
               onClick={() => setRadiusMi(r)}
               className="rounded-full px-2.5 py-1 text-xs font-medium transition"
-              style={radiusMi === r ? { backgroundColor: GOLD, color: '#000' } : { backgroundColor: 'rgba(0,0,0,0.06)', color: '#1f1714' }}
+              style={radiusMi === r ? { backgroundColor: GOLD, color: '#06403a' } : { backgroundColor: 'rgba(0,0,0,0.06)', color: '#1f1714' }}
             >
               {r} mi
             </button>
           ))}
         </div>
       )}
-      {geoMsg && <p className="mb-2 text-xs text-amber-600" role="status" aria-live="polite">{geoMsg}</p>}
+      {geoMsg && <p className="mb-2 mt-2 text-xs text-amber-600" role="status" aria-live="polite">{geoMsg}</p>}
 
-      {/* Category filter */}
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="text-base font-semibold text-gray-900">Top pros near you</h2>
-      </div>
-      <div className="mt-2 flex flex-wrap gap-2">
-        <Chip active={active === 'all'} label="All" onClick={() => setActive('all')} />
-        {cats.map((c) => (
-          <Chip key={c.slug} active={active === c.slug} color={c.color} label={c.label} onClick={() => setActive(c.slug)} />
-        ))}
-      </div>
+      <h2 className="mt-6 text-lg font-semibold text-gray-900">
+        {active === 'all' ? 'Top pros near you' : (catLabel[active] || 'Pros')}
+      </h2>
 
       {loading ? (
         <p className="mt-5 text-sm text-black/50">Loading pros…</p>
@@ -135,7 +131,7 @@ export default function Discover({ onOpenPro, heroVideoUrl, heroPosterUrl }) {
         <p className="mt-5 text-sm text-red-600">Could not load pros: {error}</p>
       ) : (
         <>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {shown.map((p) => (
               <div
                 key={p.id}

@@ -93,7 +93,7 @@ export default function Shop({ demo = false }) {
     <div className="space-y-5">
       <h2 className="text-lg font-semibold">Self-care shop</h2>
       {demo && (
-        <div className="rounded-xl border border-black/10 bg-black/5 px-3 py-2 text-sm text-black/60">
+        <div className="rounded-xl border border-black/[0.06] bg-white shadow-sm px-3 py-2 text-sm text-black/60">
           👀 <strong>Demo preview</strong> — sample products to show the marketplace. Checkout is disabled until the shop launches.
         </div>
       )}
@@ -104,7 +104,7 @@ export default function Shop({ demo = false }) {
           const qty = cart[p.id] || 0
           const out = p.inventory_qty === 0
           return (
-            <div key={p.id} className="flex flex-col justify-between rounded-2xl border border-black/10 bg-black/5 p-4">
+            <div key={p.id} className="flex flex-col justify-between rounded-2xl border border-black/[0.06] bg-white shadow-sm p-4">
               <div>
                 <div className="flex items-start justify-between gap-2">
                   <div className="font-medium">{p.name}</div>

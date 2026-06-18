@@ -163,7 +163,7 @@ export default function ProProfile({ pro, catColor = GOLD, logSource, onBack, on
           {/* Services */}
           <section>
             <h3 className="mb-2 px-2 text-sm font-semibold uppercase tracking-wide text-black/55">Services</h3>
-            <div className="overflow-hidden rounded-2xl border border-black/10 bg-black/5">
+            <div className="overflow-hidden rounded-2xl border border-black/[0.06] bg-white shadow-sm">
               {mainServices.map((s, i) => (
                 <div key={s.id} className={`flex items-center justify-between gap-3 p-4 ${i ? 'border-t border-black/5' : ''}`}>
                   <div className="min-w-0">
@@ -190,7 +190,7 @@ export default function ProProfile({ pro, catColor = GOLD, logSource, onBack, on
                 <h3 className="mb-2 mt-5 px-2 text-sm font-semibold uppercase tracking-wide text-black/55">
                   Frequently added
                 </h3>
-                <div className="overflow-hidden rounded-2xl border border-black/10 bg-black/5">
+                <div className="overflow-hidden rounded-2xl border border-black/[0.06] bg-white shadow-sm">
                   {addons.map((s, i) => (
                     <div key={s.id} className={`flex items-center justify-between gap-3 p-3 ${i ? 'border-t border-black/5' : ''}`}>
                       <span className="truncate text-sm">{s.name}</span>
@@ -211,7 +211,7 @@ export default function ProProfile({ pro, catColor = GOLD, logSource, onBack, on
             ) : (
               <div className="space-y-3">
                 {reviews.map((r) => (
-                  <div key={r.id} className="rounded-2xl border border-black/10 bg-black/5 p-4">
+                  <div key={r.id} className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-4">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">{r.verified ? 'Verified client' : 'Client'}</span>
                       <Stars value={r.rating} />

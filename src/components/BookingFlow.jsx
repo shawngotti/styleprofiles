@@ -226,7 +226,7 @@ export default function BookingFlow({ pro, services, preselectServiceId, onClose
         {stepName === 'Confirm' && (
           <div>
             <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-black/55">Review</h3>
-            <div className="rounded-xl border border-black/10 bg-black/5 p-3 text-sm">
+            <div className="rounded-xl border border-black/[0.06] bg-white shadow-sm p-3 text-sm">
               {activePeople.map((p) => {
                 const ids = [...(svcSel[p.id] || [])]
                 if (!ids.length) return null

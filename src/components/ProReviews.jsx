@@ -82,7 +82,7 @@ export default function ProReviews({ proId, proName, onCount }) {
 
   if (reviews.length === 0) {
     return (
-      <section className="rounded-2xl border border-black/10 bg-black/5 p-6 text-center">
+      <section className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-6 text-center">
         <div className="text-3xl">⭐️</div>
         <h3 className="mt-2 text-sm font-semibold">No reviews yet</h3>
         <p className="mx-auto mt-1 max-w-sm text-sm text-black/55">
@@ -101,7 +101,7 @@ export default function ProReviews({ proId, proName, onCount }) {
         const reply = r.review_responses?.[0]
         const open = editing[r.id]
         return (
-          <section key={r.id} className="rounded-2xl border border-black/10 bg-black/5 p-4">
+          <section key={r.id} className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-4">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Stars value={r.rating} />

@@ -12,12 +12,11 @@ import Lineup from './Lineup.jsx'
 import CutOfTheWeek from './CutOfTheWeek.jsx'
 import ConsentRequests from './ConsentRequests.jsx'
 import NotificationsBell from './NotificationsBell.jsx'
+import AccountMenu from './AccountMenu.jsx'
 import AdminConsole from './AdminConsole.jsx'
 import Deals from './Deals.jsx'
-import EmailPrefToggle from './EmailPrefToggle.jsx'
-import ProfileViewsToggle from './ProfileViewsToggle.jsx'
 import LandingPage from './LandingPage.jsx'
-import LineupBand from './LineupBand.jsx'
+import LineupBracket from './LineupBracket.jsx'
 import { useSettings } from '../lib/useSettings.js'
 import { track } from '../lib/analytics.js'
 
@@ -68,7 +67,7 @@ export default function AuthedHome() {
     return (
       <div className="min-h-screen p-6">
         <div className="mx-auto max-w-3xl">
-          <div className="mb-4 flex items-center justify-between rounded-xl border border-black/10 bg-black/5 px-4 py-2 text-sm">
+          <div className="mb-4 flex items-center justify-between rounded-xl border border-black/[0.06] bg-white shadow-sm px-4 py-2 text-sm">
             <span className="text-black/60">👁 Previewing your public profile</span>
             <button
               onClick={() => setPreviewPro(null)}
@@ -91,78 +90,61 @@ export default function AuthedHome() {
     setSelectedPro({ pro, color, source })
   }
 
+  const CLIENT_TABS = [
+    ['discover', 'Discover'],
+    ['deals', 'Deals'],
+    ['appointments', 'My Appointments'],
+    ['rewards', 'Rewards'],
+    ['awards', 'Awards'],
+    ['tags', 'Tag requests'],
+    ['household', 'Household'],
+    ...(lineupVisible ? [['lineup', 'The Lineup'], ...(lineupOn ? [['cotw', 'Cut of the Week']] : [])] : []),
+    ...(shopVisible ? [['shop', 'Shop']] : []),
+  ]
+  const showClient = perspective === 'client' || (perspective === 'admin' && adminView === 'browse')
+  const goClient = (screen) => {
+    if (screen === 'fillchair' || screen === 'dashboard') { setPerspective('pro'); return }
+    setPerspective('client')
+    if (CLIENT_TABS.some(([k]) => k === screen) || screen === 'tags') {
+      setSelectedPro(null)
+      setClientTab(screen)
+    }
+  }
+
   return (
-    <div className="min-h-screen p-6">
-      <header className="mx-auto flex max-w-3xl items-center justify-between">
-        <h1 className="text-xl font-semibold">
-          Style<span style={{ color: GOLD }}>Profiles</span>
-        </h1>
-        <div className="flex items-center gap-3 text-sm">
-          <span className="hidden text-black/60 sm:inline">{user?.email}</span>
-          <NotificationsBell
-            lineupOn={lineupOn}
-            onNavigate={(screen) => {
-              // Pro-only destinations switch to the pro perspective.
-              if (screen === 'fillchair' || screen === 'dashboard') {
-                setPerspective('pro')
-                return
-              }
-              setPerspective('client')
-              if (['discover', 'deals', 'appointments', 'rewards', 'awards', 'household', 'lineup', 'cotw', 'shop', 'tags'].includes(screen)) {
-                setSelectedPro(null)
-                setClientTab(screen)
-              }
-            }}
-          />
+    <div className="min-h-screen bg-white">
+      <header className="sticky top-0 z-40 border-b border-black/[0.06] bg-white/85 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
           <button
-            onClick={signOut}
-            className="rounded-lg border border-black/15 px-3 py-1.5 hover:bg-black/10"
+            onClick={() => { setPerspective('client'); setClientTab('discover'); setSelectedPro(null) }}
+            className="text-xl font-semibold"
           >
-            Sign out
+            Style<span style={{ color: GOLD }}>Profiles</span>
           </button>
+          <div className="flex items-center gap-2">
+            <NotificationsBell lineupOn={lineupOn} onNavigate={goClient} />
+            <AccountMenu
+              user={user}
+              perspectives={available}
+              perspective={perspective}
+              setPerspective={(p) => { setPerspective(p); setSelectedPro(null) }}
+              onPreviewLanding={() => setPreviewLanding(true)}
+              signOut={signOut}
+            />
+          </div>
         </div>
       </header>
 
-      <main id="main-content" className="mx-auto mt-10 max-w-3xl space-y-6">
-        {/* Perspective switcher — only shows perspectives the user's roles allow */}
-        <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
-          <p className="text-xs uppercase tracking-wide text-black/55">Perspective</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {available.map((p) => {
-              const active = p.key === perspective
-              return (
-                <button
-                  key={p.key}
-                  onClick={() => setPerspective(p.key)}
-                  className="rounded-full px-4 py-1.5 text-sm font-medium transition"
-                  style={
-                    active
-                      ? { backgroundColor: GOLD, color: '#000' }
-                      : { backgroundColor: 'rgba(0,0,0,0.06)', color: '#1f1714' }
-                  }
-                >
-                  {p.label}
-                </button>
-              )
-            })}
-          </div>
-          {available.length === 1 && (
-            <p className="mt-3 text-xs text-black/55">
-              You have the <strong>client</strong> role only. Pro and Admin perspectives
-              appear here once those roles are granted.
-            </p>
-          )}
-        </section>
-
+      <main id="main-content" className="mx-auto max-w-5xl px-4 pb-20 sm:px-6">
         {/* Admin can browse the live client experience without leaving admin. */}
         {perspective === 'admin' && (
-          <div className="inline-flex rounded-full border border-black/10 p-0.5">
+          <div className="mt-5 inline-flex rounded-full border border-black/10 p-0.5">
             {[['console', 'Console'], ['browse', 'Browse site']].map(([k, label]) => (
               <button
                 key={k}
                 onClick={() => setAdminView(k)}
                 className="rounded-full px-4 py-1.5 text-sm font-medium transition"
-                style={adminView === k ? { backgroundColor: GOLD, color: '#000' } : { color: '#1f1714' }}
+                style={adminView === k ? { backgroundColor: GOLD, color: '#06403a' } : { color: '#1f1714' }}
               >
                 {label}
               </button>
@@ -171,119 +153,61 @@ export default function AuthedHome() {
         )}
 
         {/* Client experience (also shown to admins in Browse mode). */}
-        {(perspective === 'client' || (perspective === 'admin' && adminView === 'browse')) && (
-          <section>
-            {selectedPro ? (
+        {showClient && (
+          selectedPro ? (
+            <div className="mt-5">
               <ProProfile
                 pro={selectedPro.pro}
                 catColor={selectedPro.color}
                 logSource={selectedPro.source}
                 onBack={() => setSelectedPro(null)}
-                onBooked={() => {
-                  setSelectedPro(null)
-                  setClientTab('appointments')
-                }}
+                onBooked={() => { setSelectedPro(null); setClientTab('appointments') }}
               />
-            ) : (
-              <>
-                <div className="mb-4 flex gap-2">
-                  {[
-                    ['discover', 'Discover'],
-                    ['deals', 'Deals'],
-                    ['appointments', 'My Appointments'],
-                    ['rewards', 'Rewards'],
-                    ['awards', 'Awards'],
-                    ['tags', 'Tag requests'],
-                    ['household', 'Household'],
-                    ...(lineupVisible ? [['lineup', 'The Lineup'], ...(lineupOn ? [['cotw', 'Cut of the Week']] : [])] : []),
-                    ...(shopVisible ? [['shop', 'Shop']] : []),
-                  ].map(([key, label]) => (
-                    <button
-                      key={key}
-                      onClick={() => setClientTab(key)}
-                      className="rounded-full px-4 py-1.5 text-sm font-medium transition"
-                      style={
-                        clientTab === key
-                          ? { backgroundColor: GOLD, color: '#000' }
-                          : { backgroundColor: 'rgba(0,0,0,0.06)', color: '#1f1714' }
-                      }
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-                {clientTab === 'discover' && (
-                  <>
-                    <Discover
-                      onOpenPro={(pro, color) => openPro(pro, color, 'discover')}
-                      heroVideoUrl={heroVideoUrl}
-                      heroPosterUrl={heroPosterUrl}
-                    />
-                    {lineupVisible && <LineupBand demo={lineupDemoOnly} onOpen={() => setClientTab('lineup')} />}
-                  </>
-                )}
-                {clientTab === 'appointments' && (
-                  <MyAppointments onRebook={(pro) => setSelectedPro({ pro, color: GOLD })} />
-                )}
-                {clientTab === 'rewards' && <Rewards />}
-                {clientTab === 'awards' && <Awards />}
-                {clientTab === 'deals' && (
-                  <Deals onClaimed={() => setClientTab('appointments')} />
-                )}
-                {clientTab === 'tags' && <ConsentRequests />}
-                {clientTab === 'household' && <HouseholdManager />}
-                {clientTab === 'lineup' && lineupVisible && (
-                  <Lineup demo={lineupDemoOnly} onOpenPro={(pro, color) => openPro(pro, color, 'lineup')} />
-                )}
-                {clientTab === 'cotw' && lineupOn && <CutOfTheWeek />}
-                {clientTab === 'shop' && shopVisible && <Shop demo={shopDemoOnly} />}
-              </>
-            )}
-          </section>
-        )}
-        {perspective === 'pro' && <ProDashboard onPreviewProfile={setPreviewPro} />}
-        {perspective === 'admin' && adminView === 'console' && (
-          <AdminConsole
-            onOpenPro={(pro, color) => {
-              setAdminView('browse')
-              setClientTab('discover')
-              openPro(pro, color, 'admin')
-            }}
-          />
+            </div>
+          ) : (
+            <>
+              <nav className="mt-4 -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0" aria-label="Sections">
+                {CLIENT_TABS.map(([key, label]) => (
+                  <button
+                    key={key}
+                    onClick={() => setClientTab(key)}
+                    className="shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition"
+                    style={clientTab === key ? { backgroundColor: GOLD, color: '#06403a' } : { backgroundColor: 'rgba(0,0,0,0.05)', color: '#1f1714' }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </nav>
+
+              {clientTab === 'discover' && (
+                <>
+                  <Discover
+                    onOpenPro={(pro, color) => openPro(pro, color, 'discover')}
+                    heroVideoUrl={heroVideoUrl}
+                    heroPosterUrl={heroPosterUrl}
+                  />
+                  {lineupVisible && <LineupBracket demo={lineupDemoOnly} onOpen={() => setClientTab('lineup')} />}
+                </>
+              )}
+              {clientTab === 'appointments' && <div className="mt-5"><MyAppointments onRebook={(pro) => setSelectedPro({ pro, color: GOLD })} /></div>}
+              {clientTab === 'rewards' && <div className="mt-5"><Rewards /></div>}
+              {clientTab === 'awards' && <div className="mt-5"><Awards /></div>}
+              {clientTab === 'deals' && <div className="mt-5"><Deals onClaimed={() => setClientTab('appointments')} /></div>}
+              {clientTab === 'tags' && <div className="mt-5"><ConsentRequests /></div>}
+              {clientTab === 'household' && <div className="mt-5"><HouseholdManager /></div>}
+              {clientTab === 'lineup' && lineupVisible && <div className="mt-5"><Lineup demo={lineupDemoOnly} onOpenPro={(pro, color) => openPro(pro, color, 'lineup')} /></div>}
+              {clientTab === 'cotw' && lineupOn && <div className="mt-5"><CutOfTheWeek /></div>}
+              {clientTab === 'shop' && shopVisible && <div className="mt-5"><Shop demo={shopDemoOnly} /></div>}
+            </>
+          )
         )}
 
-        <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
-          <p className="text-xs uppercase tracking-wide text-black/55">Your account</p>
-          <dl className="mt-3 space-y-2 text-sm">
-            <div className="flex justify-between">
-              <dt className="text-black/50">User ID</dt>
-              <dd className="font-mono text-xs">{user?.id}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-black/50">Roles</dt>
-              <dd className="flex gap-1.5">
-                {roles.length ? (
-                  roles.map((r) => (
-                    <span
-                      key={r}
-                      className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs"
-                      style={{ color: GOLD }}
-                    >
-                      {r}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-black/55">none</span>
-                )}
-              </dd>
-            </div>
-            <EmailPrefToggle />
-            <ProfileViewsToggle />
-          </dl>
-          <button onClick={() => setPreviewLanding(true)} className="mt-4 text-sm underline" style={{ color: GOLD }}>
-            Preview the landing page →
-          </button>
-        </section>
+        {perspective === 'pro' && <div className="mt-6"><ProDashboard onPreviewProfile={setPreviewPro} /></div>}
+        {perspective === 'admin' && adminView === 'console' && (
+          <div className="mt-5">
+            <AdminConsole onOpenPro={(pro, color) => { setAdminView('browse'); setClientTab('discover'); openPro(pro, color, 'admin') }} />
+          </div>
+        )}
       </main>
     </div>
   )

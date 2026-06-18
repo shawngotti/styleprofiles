@@ -100,7 +100,7 @@ function Directory({ onOpenPro }) {
       <div className="space-y-4">
         <button onClick={() => setSel(null)} className="text-sm text-black/55 underline">← Back to directory</button>
         {sel.type === 'pro' ? (
-          <div className="rounded-2xl border border-black/10 bg-black/5 p-5">
+          <div className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-5">
             <div className="flex items-center gap-3">
               {r.avatar_url
                 ? <img src={r.avatar_url} alt="" className="h-14 w-14 rounded-full object-cover" />
@@ -127,7 +127,7 @@ function Directory({ onOpenPro }) {
             </button>
           </div>
         ) : (
-          <div className="rounded-2xl border border-black/10 bg-black/5 p-5">
+          <div className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-5">
             <div className="text-lg font-semibold">{r.display_name || 'Client'}</div>
             <div className="text-sm text-black/50">{r.email}</div>
             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -166,7 +166,7 @@ function Directory({ onOpenPro }) {
       {kind === 'pros' ? (
         <div className="space-y-2">
           {proRows.map((p) => (
-            <button key={p.id} onClick={() => openPro(p)} className="flex w-full items-center justify-between gap-3 rounded-xl border border-black/10 bg-black/5 p-3 text-left hover:bg-black/[0.07]">
+            <button key={p.id} onClick={() => openPro(p)} className="flex w-full items-center justify-between gap-3 rounded-xl border border-black/[0.06] bg-white shadow-sm p-3 text-left hover:bg-black/[0.07]">
               <div className="flex items-center gap-3">
                 {p.avatar_url
                   ? <img src={p.avatar_url} alt="" className="h-9 w-9 rounded-full object-cover" />
@@ -187,7 +187,7 @@ function Directory({ onOpenPro }) {
       ) : (
         <div className="space-y-2">
           {clientRows.map((c) => (
-            <button key={c.id} onClick={() => openClient(c)} className="flex w-full items-center justify-between gap-3 rounded-xl border border-black/10 bg-black/5 p-3 text-left hover:bg-black/[0.07]">
+            <button key={c.id} onClick={() => openClient(c)} className="flex w-full items-center justify-between gap-3 rounded-xl border border-black/[0.06] bg-white shadow-sm p-3 text-left hover:bg-black/[0.07]">
               <div>
                 <div className="text-sm font-medium">{c.display_name || c.email || 'Client'}</div>
                 <div className="text-xs text-black/50">{c.email}</div>
@@ -340,7 +340,7 @@ function Reports() {
         <p className="text-sm text-black/55">No reports.</p>
       ) : (
         rows.map((r) => (
-          <div key={r.id} className="rounded-2xl border border-black/10 bg-black/5 p-4">
+          <div key={r.id} className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="text-sm font-medium">
@@ -438,7 +438,7 @@ function ReviewsModeration() {
   return (
     <div className="space-y-4">
       {/* Posting mode */}
-      <div className="rounded-2xl border border-black/10 bg-black/5 p-4">
+      <div className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-4">
         <div className="text-sm font-semibold">Review posting</div>
         <p className="mt-0.5 text-xs text-black/55">
           Auto publishes clean reviews instantly; flagged ones always wait here. Manual holds every review for approval.
@@ -472,7 +472,7 @@ function ReviewsModeration() {
         <p className="text-sm text-black/55">Nothing here.</p>
       ) : (
         rows.map((r) => (
-          <div key={r.id} className="rounded-2xl border border-black/10 bg-black/5 p-4">
+          <div key={r.id} className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-4">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <div className="text-sm font-medium">
@@ -562,7 +562,7 @@ function Integrity() {
         <p className="text-sm text-black/55">No vote flags.</p>
       ) : (
         flags.map((f) => (
-          <div key={f.id} className="flex items-center justify-between gap-3 rounded-2xl border border-black/10 bg-black/5 p-3">
+          <div key={f.id} className="flex items-center justify-between gap-3 rounded-2xl border border-black/[0.06] bg-white shadow-sm p-3">
             <div className="min-w-0">
               <div className="text-sm">{f.note}</div>
               <div className="text-xs text-black/55">{f.context} · {f.vote_count} votes · {f.status}</div>
@@ -705,7 +705,7 @@ function Flags() {
       {TOGGLES.map((key) => {
         const on = valueOf(key)
         return (
-          <div key={key} className="flex items-center justify-between rounded-2xl border border-black/10 bg-black/5 p-4">
+          <div key={key} className="flex items-center justify-between rounded-2xl border border-black/[0.06] bg-white shadow-sm p-4">
             <span className="text-sm font-medium">{key}</span>
             <button
               onClick={() => toggle(key, on)}
@@ -911,7 +911,7 @@ function ImportAttendees() {
 
       {parseErr && <p className="text-sm text-red-600" role="alert">{parseErr}</p>}
       {parsed.length > 0 && (
-        <div className="rounded-2xl border border-black/10 bg-black/5 p-3 text-sm">
+        <div className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-3 text-sm">
           <div className="text-black/70">
             {parsed.length} row(s) parsed · {matched} with an email (matched to accounts on import)
           </div>
@@ -1010,7 +1010,7 @@ function Demo() {
       <div className="space-y-3">
         <div className="text-xs font-semibold uppercase tracking-wide text-black/40">Show / hide each aspect</div>
         {DEMO_TOGGLES.map(([key, label]) => (
-          <div key={key} className="flex items-center justify-between rounded-2xl border border-black/10 bg-black/5 p-4">
+          <div key={key} className="flex items-center justify-between rounded-2xl border border-black/[0.06] bg-white shadow-sm p-4">
             <span className="text-sm font-medium">{label}</span>
             <button
               onClick={() => toggle(key)}

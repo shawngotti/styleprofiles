@@ -59,7 +59,7 @@ export default function Rewards() {
   return (
     <div className="space-y-6">
       {/* Balance / tier */}
-      <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
+      <section className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-5">
         <p className="text-xs uppercase tracking-wide text-black/55">StylePoints</p>
         <div className="mt-1 flex items-end justify-between">
           <div className="text-3xl font-semibold" style={{ color: GOLD }}>
@@ -84,7 +84,7 @@ export default function Rewards() {
           {rewards.map((r) => {
             const affordable = balance >= r.cost_points
             return (
-              <div key={r.id} className="flex items-center justify-between rounded-2xl border border-black/10 bg-black/5 p-4">
+              <div key={r.id} className="flex items-center justify-between rounded-2xl border border-black/[0.06] bg-white shadow-sm p-4">
                 <div>
                   <div className="font-medium">{r.name}</div>
                   <div className="text-xs text-black/50">{r.cost_points.toLocaleString()} pts</div>
@@ -110,7 +110,7 @@ export default function Rewards() {
         {txns.length === 0 ? (
           <p className="text-sm text-black/55">No points activity yet — book and complete a visit to earn.</p>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-black/10 bg-black/5">
+          <div className="overflow-hidden rounded-2xl border border-black/[0.06] bg-white shadow-sm">
             {txns.map((t, i) => (
               <div key={t.id} className={`flex items-center justify-between p-3 text-sm ${i ? 'border-t border-black/5' : ''}`}>
                 <div>

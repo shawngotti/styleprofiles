@@ -65,7 +65,7 @@ export default function ProInsights({ pro }) {
   return (
     <div className="space-y-5">
       {/* Funnel */}
-      <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
+      <section className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-5">
         <h3 className="text-sm font-semibold uppercase tracking-wide text-black/55">Page visits → bookings</h3>
         <div className="mt-4 grid grid-cols-3 gap-3">
           <Funnel label="Page views" value={total} sub={`${stats?.views_7d || 0} this week`} />
@@ -79,7 +79,7 @@ export default function ProInsights({ pro }) {
       </section>
 
       {/* Completeness */}
-      <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
+      <section className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-5">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold uppercase tracking-wide text-black/55">Profile strength</h3>
           <span className="text-sm font-semibold" style={{ color: completeness >= 80 ? '#34D399' : GOLD }}>{completeness}%</span>
@@ -104,7 +104,7 @@ export default function ProInsights({ pro }) {
       </section>
 
       {/* Visitors */}
-      <section className="rounded-2xl border border-black/10 bg-black/5 p-5">
+      <section className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-5">
         <h3 className="text-sm font-semibold uppercase tracking-wide text-black/55">Recent visitors</h3>
         {visitors.length === 0 ? (
           <p className="mt-2 text-sm text-black/55">No visits yet. Share your profile link to start tracking.</p>

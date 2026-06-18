@@ -88,7 +88,7 @@ export default function EventTickets({ competitionId }) {
           const going = mine.has(ev.id)
           const inApp = ev.ticketing_provider === 'stripe' && ev.ticket_price
           return (
-            <div key={ev.id} className="rounded-2xl border border-black/10 bg-black/5 p-4">
+            <div key={ev.id} className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-4">
               <div className="font-medium">{ev.title || 'Event'}</div>
               <div className="mt-1 text-xs text-black/50">
                 {ev.venue}{ev.event_date ? ` · ${new Date(ev.event_date).toLocaleDateString()}` : ''}

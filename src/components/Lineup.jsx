@@ -122,7 +122,7 @@ export default function Lineup({ demo = false, onOpenPro }) {
   return (
     <div className="space-y-5">
       {demo && (
-        <div className="rounded-xl border border-black/10 bg-black/5 px-3 py-2 text-sm text-black/60">
+        <div className="rounded-xl border border-black/[0.06] bg-white shadow-sm px-3 py-2 text-sm text-black/60">
           👀 <strong>Demo preview</strong> — a sample bracket to show The Lineup. Voting is disabled until the season launches.
         </div>
       )}
@@ -143,7 +143,7 @@ export default function Lineup({ demo = false, onOpenPro }) {
       )}
 
       {openWindow && (
-        <section className="rounded-2xl border border-black/10 bg-black/5 p-4">
+        <section className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-4">
           <div className="flex items-center gap-2 text-sm">
             <span className="font-semibold" style={{ color: GOLD }}>
               {openWindow.vote_type === 'redemption' ? 'Redemption Wildcard' : openWindow.vote_type === 'fan_favorite' ? 'Fan Favorite' : 'Fan vote'} voting is open
@@ -169,7 +169,7 @@ export default function Lineup({ demo = false, onOpenPro }) {
               </h3>
               <div className="grid gap-3 sm:grid-cols-2">
                 {ms.map((m) => (
-                  <div key={m.id} className="space-y-2 rounded-2xl border border-black/10 bg-black/5 p-3">
+                  <div key={m.id} className="space-y-2 rounded-2xl border border-black/[0.06] bg-white shadow-sm p-3">
                     <Contestant id={m.contestant_a} isWinner={m.winner_contestant_id === m.contestant_a} />
                     <div className="border-t border-black/5" />
                     <Contestant id={m.contestant_b} isWinner={m.winner_contestant_id === m.contestant_b} />

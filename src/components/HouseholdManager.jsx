@@ -77,7 +77,7 @@ export default function HouseholdManager() {
 
       {error && <p className="text-sm text-red-600" role="alert">{error}</p>}
 
-      <div className="rounded-2xl border border-black/10 bg-black/5 p-2">
+      <div className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-2">
         <div className="flex items-center justify-between p-3">
           <span className="font-medium">You</span>
           <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs" style={{ color: GOLD }}>
@@ -103,7 +103,7 @@ export default function HouseholdManager() {
         )}
       </div>
 
-      <form onSubmit={add} className="rounded-2xl border border-black/10 bg-black/5 p-4">
+      <form onSubmit={add} className="rounded-2xl border border-black/[0.06] bg-white shadow-sm p-4">
         <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-black/55">Add a member</h3>
         <div className="flex flex-wrap gap-2">
           <input
